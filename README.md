@@ -5,14 +5,14 @@
 ### Give it a try today
 To use as a docker action
 ```
-wsk action update myAction myAction.php --docker openwhisk/nodejs6action:1.0.0
+wsk action update myAction myAction.js --docker openwhisk/nodejs6action:1.0.0
 ```
 This works on any deployment of Apache OpenWhisk
 
 ### To use on deployment that contains the rutime as a kind
 To use as a kind action
 ```
-wsk action update myAction myAction.php --kind nodejs:6
+wsk action update myAction myAction.js --kind nodejs:6
 ```
 
 ### Local development
@@ -56,7 +56,7 @@ docker push $user_prefix/nodejs6action
 ```
 Then create the action using your image from dockerhub
 ```
-wsk action update myAction myAction.php --docker $user_prefix/nodejs6action
+wsk action update myAction myAction.js --docker $user_prefix/nodejs6action
 ```
 The `$user_prefix` is usually your dockerhub user id.
 
