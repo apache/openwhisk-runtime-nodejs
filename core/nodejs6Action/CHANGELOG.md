@@ -2,6 +2,10 @@
 
 
 
+## 1.1.0
+Change: Update NodeJS version
+
+Node version = 6.11.4
 ## 1.0.0
 Change: Initial release
 
