@@ -1,8 +1,5 @@
 include 'tests'
-
-include 'core:nodejsActionBase'
 include 'core:nodejs6Action'
-
 include 'core:nodejs8Action'
 
 rootProject.name = 'runtime-nodejs'
