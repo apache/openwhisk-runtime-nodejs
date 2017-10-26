@@ -1,10 +1,18 @@
 FROM nodejsactionbase
 
 # based on https://github.com/nodejs/docker-node
+<<<<<<< HEAD
 ENV NODE_VERSION 6.12.2
 RUN curl -SLO "https://nodejs.org/dist/v$NODE_VERSION/node-v$NODE_VERSION-linux-$(uname -m).tar.gz" \
   && tar -xzf "node-v$NODE_VERSION-linux-$(uname -m).tar.gz" -C /usr/local --strip-components=1 \
   && rm "node-v$NODE_VERSION-linux-$(uname -m).tar.gz"
+=======
+ENV NODE_VERSION 6.11.4
+RUN node_arch=$(uname -m | sed -e 's/x86_64/x64/g') \
+  && curl -sSLO "https://nodejs.org/dist/v$NODE_VERSION/node-v$NODE_VERSION-linux-${node_arch}.tar.gz" \
+  && tar -xzf "node-v$NODE_VERSION-linux-${node_arch}.tar.gz" -C /usr/local --strip-components=1 \
+  && rm "node-v$NODE_VERSION-linux-${node_arch}.tar.gz"
+>>>>>>> Tinker with uname to make node download cross-platform
 
 # workaround for this: https://github.com/npm/npm/issues/9863
 RUN cd $(npm root -g)/npm \
