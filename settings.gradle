@@ -10,7 +10,7 @@ include 'core:controller'; project(':core:controller').projectDir = new File(owD
 include 'core:invoker'; project(':core:invoker').projectDir = new File(owDirectory, 'core/invoker')
 include 'whisktests'; project(':whisktests').projectDir = new File(owDirectory, 'tests')
 
-include 'tests'
+//include 'tests'
 
 include 'core:nodejsActionBase'
 include 'core:nodejs6Action'
