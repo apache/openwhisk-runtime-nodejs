@@ -42,14 +42,30 @@ if(project.hasProperty('dockerBuildArgs')) {
     }
 }
 
+def dockerDockersJsonFile = project.hasProperty('') ? file(dockerDockerJson) : rootProject.file('dockers.json')
+Map dockers = [ "default": null ]
+try {
+    dockers = dockerDockersJsonFile.withReader() {reader ->
+      (new groovy.json.JsonSlurper()).parse(reader)
+    }
+} catch (FileNotFoundException e) {
+  logger.debug('No dockers.json file found, so the script will build with system default docker')
+}
+
 task distDocker {
     doLast {
-        def start = new Date()
-        def cmd = dockerBinary + dockerBuildArg + ['-t', dockerImageName, project.buildscript.sourceFile.getParentFile().getAbsolutePath()]
-        retry(cmd, dockerRetries, dockerTimeout)
-        println("Building '${dockerImageName}' took ${TimeCategory.minus(new Date(), start)}")
+        dockers.each() { architecture, options ->
+            def dockerArgs = (options ?: [:]).collect() { k, v ->
+                v ? ['--'+k, v ] : '--'+k
+            }.flatten()
+            def start = new Date()
+            def cmd = dockerBinary + dockerArgs + dockerBuildArg + ['-t', dockerImageName, project.buildscript.sourceFile.getParentFile().getAbsolutePath()]
+            retry(cmd, dockerRetries, dockerTimeout)
+            println("Building '${dockerImageName}' took ${TimeCategory.minus(new Date(), start)}")
+        }
     }
 }
+
 task tagImage {
     doLast {
         def versionString = (dockerBinary + ['-v']).execute().text
