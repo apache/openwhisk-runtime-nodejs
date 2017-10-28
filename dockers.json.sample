@@ -1,0 +1,9 @@
+{
+  "amd64": null,
+  "s390x": {
+    "host": "127.0.0.1:2376",
+    "tlscacert": "/Users/user/.tls/s390x/ca.pem",
+    "tlscert": "/Users/user/.tls/s390x/cert.pem",
+    "tlskey": "/Users/user/.tls/s390x/key.pem"
+  }
+}
