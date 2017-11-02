@@ -42,6 +42,7 @@ build/
 
 # NodeJS
 node_modules
+package-lock.json
 
 # Vagrant
 .vagrant*

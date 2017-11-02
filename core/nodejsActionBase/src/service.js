@@ -18,7 +18,7 @@
 var NodeActionRunner = require('../runner');
 var fs = require('fs');
 
-function NodeActionService(config, logger) {
+function NodeActionService(config) {
     var Status = {
         ready: 'ready',
         starting: 'starting',
@@ -123,7 +123,7 @@ function NodeActionService(config, logger) {
                 return Promise.reject(errorMessage(500, "An error has occurred: " + error));
             });
         } else {
-            logger.info('[runCode]', 'cannot schedule runCode due to status', status);
+            console.log('[runCode]', 'cannot schedule runCode due to status', status);
             return Promise.reject(errorMessage(500, "Internal system error: container not ready, status: " + status));
         }
     };
@@ -168,8 +168,8 @@ function NodeActionService(config, logger) {
     }
 }
 
-NodeActionService.getService = function(config, logger) {
-    return new NodeActionService(config, logger);
+NodeActionService.getService = function(config) {
+    return new NodeActionService(config);
 };
 
 module.exports = NodeActionService;

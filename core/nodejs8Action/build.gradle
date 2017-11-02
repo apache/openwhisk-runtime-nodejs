@@ -1,0 +1,36 @@
+apply plugin: 'eclipse'
+eclipse {
+    project {
+        natures 'org.eclipse.wst.jsdt.core.jsNature'
+        buildCommand 'org.eclipse.wst.jsdt.core.javascriptValidator'
+    }
+}
+
+ext.dockerImageName = 'action-nodejs-v8'
+apply from: '../../gradle/docker.gradle'
+
+distDocker.dependsOn 'copyProxy'
+distDocker.dependsOn 'copyRunner'
+distDocker.dependsOn 'copyService'
+distDocker.finalizedBy('cleanup')
+
+task copyProxy(type: Copy) {
+    from '../nodejsActionBase/app.js'
+    into '.'
+}
+
+task copyRunner(type: Copy) {
+    from '../nodejsActionBase/runner.js'
+    into '.'
+}
+
+task copyService(type: Copy) {
+    from '../nodejsActionBase/src/service.js'
+    into './src'
+}
+
+task cleanup(type: Delete) {
+    delete 'app.js'
+    delete 'runner.js'
+    delete 'src'
+}
