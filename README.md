@@ -17,7 +17,7 @@ wsk action update myAction myAction.js --kind nodejs:6
 
 ### Local development
 ```
-./gradlew core:swiftAction:distDocker
+./gradlew core:nodejs6Action:distDocker
 ```
 This will produce the image `whisk/nodejs6action`
 
@@ -28,7 +28,7 @@ docker login
 ```
 
 Deploy OpenWhisk using ansible environment that contains the kind `nodejs:6`
-Assuming you have OpenWhisk already deploy localy and `OPENWHISK_HOME` pointing to root directory of OpenWhisk core repository.
+Assuming you have OpenWhisk already deployed locally and `OPENWHISK_HOME` pointing to root directory of OpenWhisk core repository.
 
 Set `ROOTDIR` to the root directory of this repository.
 
