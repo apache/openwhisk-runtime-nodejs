@@ -7,4 +7,5 @@ eclipse {
 }
 
 ext.dockerImageName = 'nodejsactionbase'
-apply from: '../../gradle/docker.gradle'
+//apply from: '../../gradle/docker.gradle'
+dockerBuildImage.tags += 'nodejsactionbase'
