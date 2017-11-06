@@ -1,0 +1,7 @@
+
+docker { dockerClientConfigurations = new HashSet<DockerClientConfiguration> ([
+    new DockerClientConfiguration(architecture: 'amd64'),
+    new DockerClientConfiguration(architecture: 's390x',
+         url: 'https://127.0.0.1:2376',
+         certPath: file('/Users/jpspring/.tls/s390x/'))
+    ]) }

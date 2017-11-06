@@ -35,7 +35,7 @@ bin/
 .gradle
 build/
 !/tools/build/
-dockers.json
+docker-local.gradle
 
 # Python
 .ipynb_checkpoints/
