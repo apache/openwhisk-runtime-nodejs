@@ -40,14 +40,13 @@ This will produce the image `whisk/action-nodejs-v8`
 Build and Push image for Node.js 6
 ```
 docker login
-./gradlew core:nodejs6Action:distDocker -PdockerImagePrefix=$prefix-user -PdockerRegistry=docker.io 
+./gradlew core:nodejs6Action:distDocker -PdockerImagePrefix=$prefix-user -PdockerRegistry=docker.io
 ```
 
-<<<<<<< HEAD
 Build and Push image for Node.js 8
 ```
 docker login
-./gradlew core:nodejs8Action:distDocker -PdockerImagePrefix=$prefix-user -PdockerRegistry=docker.io 
+./gradlew core:nodejs8Action:distDocker -PdockerImagePrefix=$prefix-user -PdockerRegistry=docker.io
 ```
 Then create the action using your image from dockerhub
 ```
@@ -56,9 +55,6 @@ wsk action update myAction myAction.js --docker $user_prefix/nodejs6action
 The `$user_prefix` is usually your dockerhub user id.
 
 Deploy OpenWhisk using ansible environment that contains the kind `nodejs:6` and `nodejs:8`
-=======
-Deploy OpenWhisk using ansible environment that contains the kind `nodejs:6`
->>>>>>> Upgrade to Xenial + S390X
 Assuming you have OpenWhisk already deployed locally and `OPENWHISK_HOME` pointing to root directory of OpenWhisk core repository.
 
 Set `ROOTDIR` to the root directory of this repository.
@@ -82,5 +78,3 @@ wskdev fresh -t local-nodejs
 
 # License
 [Apache 2.0](LICENSE.txt)
-
-
