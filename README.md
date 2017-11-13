@@ -58,13 +58,13 @@ This will produce the image `whisk/action-nodejs-v8`
 Build and Push image for Node.js 6
 ```
 docker login
-./gradlew core:nodejs6Action:distDocker -PdockerImagePrefix=$prefix-user -PdockerRegistry=docker.io 
+./gradlew core:nodejs6Action:distDocker -PdockerImagePrefix=$prefix-user -PdockerRegistry=docker.io
 ```
 
 Build and Push image for Node.js 8
 ```
 docker login
-./gradlew core:nodejs8Action:distDocker -PdockerImagePrefix=$prefix-user -PdockerRegistry=docker.io 
+./gradlew core:nodejs8Action:distDocker -PdockerImagePrefix=$prefix-user -PdockerRegistry=docker.io
 ```
 Then create the action using your image from dockerhub
 ```
@@ -126,5 +126,3 @@ Using IntelliJ:
 
 # License
 [Apache 2.0](LICENSE.txt)
-
-

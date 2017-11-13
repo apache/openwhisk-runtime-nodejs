@@ -1,7 +1,24 @@
 
-docker { dockerClientConfigurations = new HashSet<DockerClientConfiguration> ([
-    new DockerClientConfiguration(architecture: 'amd64'),
-    new DockerClientConfiguration(architecture: 's390x',
-         url: 'https://127.0.0.1:2376',
-         certPath: file('/Users/jpspring/.tls/s390x/'))
-    ]) }
+//  Connect to local system using TLS
+// docker {
+//   url = 'https://127.0.0.1:2376'
+//   certPath = new File(System.properties['user.home'], './.tls/default')
+// }
+
+//  Multi-architecture build - assumes an SSL pipeline to the s390x machine
+docker {
+    //  Multiarchitecture -- not overwrites
+    addDockerClientConfiguration { architecture = 'amd64' }
+    addDockerClientConfiguration {
+        architecture = 's390x'
+        url = 'https://mydockerserver:2376'
+        certPath = new File(System.properties['user.home'], "./.tls/${architecture}")
+    }
+
+    registryCredentials {
+        url = 'https://myrepository.com:5000/v2/'
+        username = 'username'
+        password = 'password'
+        email = 'user@gmail.com'
+    }
+}
