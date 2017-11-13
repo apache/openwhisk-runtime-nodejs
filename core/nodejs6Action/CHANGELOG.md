@@ -2,6 +2,13 @@
 
 
 
+## 1.3.0
+Change: Update openwhisk npm package
+
+Node version = 6.12.0
+
+- [openwhisk v3.10.0](https://www.npmjs.com/package/openwhisk) - JavaScript client library for the OpenWhisk platform. Provides a wrapper around the OpenWhisk APIs.
+
 ## 1.2.0
 Change: Update openwhisk npm package
 
