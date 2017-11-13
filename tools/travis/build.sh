@@ -15,6 +15,7 @@ IMAGE_PREFIX="testing"
 cd $ROOTDIR
 TERM=dumb ./gradlew \
 :core:nodejs6Action:distDocker \
+:core:nodejs8Action:distDocker \
 -PdockerImagePrefix=${IMAGE_PREFIX}
 
 

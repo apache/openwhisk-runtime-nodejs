@@ -25,12 +25,11 @@ var express    = require('express');
 
 var app = express();
 
-var logger  = require('./src/logger').getLogger('logs/nodejsaction.log', 'nodejsAction');
 
 /**
  * instantiate an object which handles REST calls from the Invoker
  */
-var service = require('./src/service').getService(config, logger);
+var service = require('./src/service').getService(config);
 
 app.set('port', config.port);
 app.use(bodyParser.json({ limit: "48mb" }));
@@ -65,7 +64,7 @@ function wrapEndpoint(ep) {
                 if (typeof error.code === "number" && typeof error.response !== "undefined") {
                     res.status(error.code).json(error.response);
                 } else {
-                    logger.error("[wrapEndpoint]", "invalid errored promise", JSON.stringify(error));
+                    console.error("[wrapEndpoint]", "invalid errored promise", JSON.stringify(error));
                     res.status(500).json({ error: "Internal error." });
                 }
             });
@@ -73,7 +72,7 @@ function wrapEndpoint(ep) {
             // This should not happen, as the contract for the endpoints is to
             // never (externally) throw, and wrap failures in the promise instead,
             // but, as they say, better safe than sorry.
-            logger.error("[wrapEndpoint]", "exception caught", e);
+            console.error("[wrapEndpoint]", "exception caught", e.message);
 
             res.status(500).json({ error: "Internal error (exception)." });
         }
