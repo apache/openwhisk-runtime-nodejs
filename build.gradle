@@ -4,35 +4,88 @@ buildscript {
     }
     dependencies {
         classpath "cz.alenkacz:gradle-scalafmt:${gradle.scalafmt.version}"
+        classpath "org.ajoberstar:grgit:2.1.0"
+
+        // TODO - clean this up to the point where it would be accepted by,
+        //        or suck up and fork it as part of a build support plugin
         classpath files('../gradle-docker-plugin/build/libs/gradle-docker-plugin-3.2.1-SNAPSHOT.jar')
+        classpath files('../gradle-docker-registry-plugin/build/libs/gradle-docker-registry-plugin.jar')
     }
 }
 
 import com.bmuschko.gradle.docker.tasks.DockerInfo
-import com.bmuschko.gradle.docker.tasks.image.DockerBuildImage
-import com.bmuschko.gradle.docker.tasks.DockerClientConfiguration
+import com.bmuschko.gradle.docker.tasks.image.*
+import com.bmuschko.gradle.docker.tasks.registry.*
 
-subprojects {
-    buildscript {
-        repositories {
-            jcenter()
+import groovy.json.*
+
+subprojects { subproject ->
+    //  We actually only care about the 'core:...' subprojects
+
+    println ("Configuring subproject '${subproject.path}'")
+    if (subproject.path =~ /^:core:/) {
+        buildscript.repositories { jcenter() }
+
+        apply plugin: 'scalafmt'
+        scalafmt.configFilePath = gradle.scalafmt.config
+
+        apply plugin: 'com.bmuschko.docker-remote-api'
+        //apply plugin: 'com.xanophis.docker-registry-api'
+
+        rootProject.file('./docker-local.gradle').with() {
+            if (it.exists()) { apply from: it }
         }
-    }
 
-    apply plugin: 'scalafmt'
-    scalafmt.configFilePath = gradle.scalafmt.config
+        task dockerInfo(type: DockerInfo)
 
-    apply plugin: 'com.bmuschko.docker-remote-api'
-    docker { dockerClientConfigurations = new HashSet<DockerClientConfiguration> ([
-        new DockerClientConfiguration(architecture: 'amd64'),
-        new DockerClientConfiguration(architecture: 's390x',
-             url: 'https://127.0.0.1:2376',
-             certPath: file('/Users/jpspring/.tls/s390x/'))
-        ]) }
+        task dockerBuildImage(type: DockerBuildImage) {
+            inputDir getProjectDir()
 
-    task dockerInfo(type: DockerInfo)
-    task dockerBuildImage(type: DockerBuildImage, dependsOn: dockerInfo) {
-        inputDir = getProjectDir()
-        onlyIf { new File(inputDir, 'Dockerfile').exists() }
+            //  Notice that this is a Closure so it resolves at execution time
+            tags({
+                //  TODO - I'd like to refactor the prefix and image into local functions
+                def prefix = findProperty('dockerPrefix') ?: 'openwhisk'
+                [   // Return a list of tags build from the environment
+                    "${dockerImageName}:latest-${architecture}",
+                    "${prefix}/${dockerImageName}:latest-${architecture}",
+                    "${dockerRegistry}/${prefix}/${dockerImageName}:latest-${architecture}"]
+            })
+        }
+
+        task dockerPushImage(type: DockerPushImage, dependsOn: dockerBuildImage) {
+            //  Notice that this is a Closure so it resolves at execution time
+            imageName ({
+                def prefix = findProperty('dockerPrefix') ?: 'openwhisk'
+                "${dockerRegistry}/${prefix}/${dockerImageName}"
+            })
+            tag ({"latest-${architecture}"})
+        }
+
+        def getManifestTasks = project.docker.dockerClientConfigurations.collect() { dcc ->
+            task("getRegistryManifest-${dcc.architecture}", type: GetManifest, dependsOn: dockerPushImage) {
+                os = 'linux'
+                architecture = dcc.architecture
+                imageName = ({
+                    def prefix = findProperty('dockerPrefix') ?: 'openwhisk'
+                    "${prefix}/${dockerImageName}"
+                })
+                tag "latest-${dcc.architecture}"
+            }
+        }
+
+        task printRegistryManifests() {
+            doLast {manifests.each() {println "${it.class}: ${it}"}}
+        }
+        task putFatManifest(type: PutFatManifest) {
+            imageName = ({
+                def prefix = findProperty('dockerPrefix') ?: 'openwhisk'
+                "${prefix}/${dockerImageName}"
+                })
+            tag 'latest'
+        }
+        getManifestTasks.each() {
+            printRegistryManifests.dependsOn it
+            putFatManifest.dependsOn it
+        }
     }
 }

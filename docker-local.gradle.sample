@@ -8,7 +8,7 @@
 //  Multi-architecture build - assumes an SSL pipeline to the s390x machine
 docker {
     //  Multiarchitecture -- not overwrites
-    addDockerClientConfiguration { architecture = 'amd64' }
+    addDockerClientConfiguration { architecture = 'x86_64' }
     addDockerClientConfiguration {
         architecture = 's390x'
         url = 'https://mydockerserver:2376'
