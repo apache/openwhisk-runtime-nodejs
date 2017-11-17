@@ -30,10 +30,6 @@ docker tag openwhisk/invoker ${IMAGE_PREFIX}/invoker
 docker pull openwhisk/nodejs6action
 docker tag openwhisk/nodejs6action ${IMAGE_PREFIX}/nodejs6action
 
-#Build CLI
-TERM=dumb ./gradlew \
-:tools:cli:distDocker \
--PdockerImagePrefix=${IMAGE_PREFIX}
 
 
 
