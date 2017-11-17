@@ -72,3 +72,6 @@ ansible/roles/nginx/files/*cert.pem
 !tests/dat/actions/python_virtualenv_dir.zip
 !tests/dat/actions/python_virtualenv_name.zip
 !tests/dat/actions/zippedaction.zip
+
+# Subprojects
+gradle-docker-plugin

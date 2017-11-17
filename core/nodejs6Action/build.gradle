@@ -6,11 +6,6 @@ eclipse {
     }
 }
 
-//ext.dockerImageName = 'nodejs6action'
+ext.dockerImageName = 'nodejs6action'
 
-//apply from: '../../gradle/docker.gradle'
-//distDocker.dependsOn ':core:nodejsActionBase:distDocker'
-dockerBuildImage.with() {
-    dependsOn ':core:nodejsActionBase:dockerBuildImage'
-    tags += 'nodejs6action'
-}
+dockerBuildImage.dependsOn ':core:nodejsActionBase:dockerBuildImage'
