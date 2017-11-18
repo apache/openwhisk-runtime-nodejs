@@ -9,11 +9,6 @@ eclipse {
 ext.dockerImageName = 'action-nodejs-v8'
 apply from: '../../gradle/docker.gradle'
 
-distDocker.dependsOn 'copyProxy'
-distDocker.dependsOn 'copyRunner'
-distDocker.dependsOn 'copyService'
-distDocker.finalizedBy('cleanup')
-
 task copyProxy(type: Copy) {
     from '../nodejsActionBase/app.js'
     into '.'
@@ -33,4 +28,11 @@ task cleanup(type: Delete) {
     delete 'app.js'
     delete 'runner.js'
     delete 'src'
+}
+
+dockerBuildImage.with() {
+    dependsOn copyProxy
+    dependsOn copyRunner
+    dependsOn copyService
+    finalizedBy(cleanup)
 }
