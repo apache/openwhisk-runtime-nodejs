@@ -19,7 +19,7 @@ $ANSIBLE_CMD prereq.yml
 $ANSIBLE_CMD couchdb.yml
 $ANSIBLE_CMD initdb.yml
 $ANSIBLE_CMD wipe.yml
-$ANSIBLE_CMD openwhisk.yml
+$ANSIBLE_CMD openwhisk.yml -e cli_installation_mode=remote
 
 docker images
 docker ps
