@@ -6,6 +6,8 @@ eclipse {
     }
 }
 
-ext.dockerImageName = 'nodejs6action'
+//ext.dockerImageName = 'nodejs6action'
 
-dockerBuildImage.dependsOn ':core:nodejsActionBase:dockerBuildImage'
+subprojects {
+    dockerBuildImage.dependsOn ':core:nodejsActionBase:dockerBuildImage'
+}

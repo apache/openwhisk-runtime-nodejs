@@ -6,8 +6,13 @@ eclipse {
     }
 }
 
+<<<<<<< HEAD
 ext.dockerImageName = 'action-nodejs-v8'
 apply from: '../../gradle/docker.gradle'
+=======
+//ext.dockerImageName = 'action-nodejs-v8'
+//apply from: '../../gradle/docker.gradle'
+>>>>>>> Simplified to not need custom docker-gradle-plugin.
 
 task copyProxy(type: Copy) {
     from '../nodejsActionBase/app.js'
@@ -30,9 +35,20 @@ task cleanup(type: Delete) {
     delete 'src'
 }
 
+<<<<<<< HEAD
 dockerBuildImage.with() {
     dependsOn copyProxy
     dependsOn copyRunner
     dependsOn copyService
     finalizedBy(cleanup)
 }
+=======
+subprojects {
+    dockerBuildImage.with() { 
+        dependsOn copyProxy
+        dependsOn copyRunner
+        dependsOn copyService
+        finalizedBy(cleanup)
+    }
+}
+>>>>>>> Simplified to not need custom docker-gradle-plugin.
