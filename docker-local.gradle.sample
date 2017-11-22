@@ -1,24 +1,27 @@
+//
+//  If you intend to connect to a docker registry, either to push an image
+//  or to get and put manifests, you need to provide registry credentials.
+//
 
-//  Connect to local system using TLS
-// docker {
-//   url = 'https://127.0.0.1:2376'
-//   certPath = new File(System.properties['user.home'], './.tls/default')
-// }
+//  TODO - maybe we should just default to these environment variables
+//         and/or properties and skip using the file for this info?
 
-//  Multi-architecture build - assumes an SSL pipeline to the s390x machine
-docker {
-    //  Multiarchitecture -- not overwrites
-    addDockerClientConfiguration { architecture = 'x86_64' }
-    addDockerClientConfiguration {
-        architecture = 's390x'
-        url = 'https://mydockerserver:2376'
-        certPath = new File(System.properties['user.home'], "./.tls/${architecture}")
-    }
+gradle.ext.dockerRegistry = env['DOCKER_REGISTRY'] // e.g. 'registry.docker.com'
+gradle.ext.registryCredentials = [
+    name: gradle.ext.dockerRegistry,
+    url: "https://${gradle.ext.dockerRegistry}/v2/" as String,
+    username: env['DOCKER_REGISTRY_USERNAME'],
+    password: env['DOCKER_REGISTRY_PASSWORD']
+    email: env['DOCKER_REGISTRY_EMAIL']
+]
 
-    registryCredentials {
-        url = 'https://myrepository.com:5000/v2/'
-        username = 'username'
-        password = 'password'
-        email = 'user@gmail.com'
-    }
-}
+//
+// For multi-architecture builds:
+//
+gradle.ext.architectures = [
+    amd64: null,
+    s390x: [ 
+        url: 'https://sample.s390x.com:2376',
+        certPath: new File(System.properties['user.home'], "./.tls/s390x")        
+    ]
+]
