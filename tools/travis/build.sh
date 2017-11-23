@@ -28,6 +28,17 @@ export OPENWHISK_HOME=$WHISKDIR
 
 IMAGE_PREFIX="testing"
 
+<<<<<<< 9879cd0ecc4bf1110cc0c1fee710d4430e6c7304
+=======
+# Build runtime
+cd $ROOTDIR
+TERM=dumb ./gradlew \
+:core:nodejs6Action:dockerBuildImage \
+:core:nodejs8Action:dockerBuildImage \
+-PdockerImagePrefix=${IMAGE_PREFIX}
+
+
+>>>>>>> Re-integrate testing into build.
 # Build OpenWhisk
 cd $WHISKDIR
 
