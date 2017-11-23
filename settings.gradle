@@ -18,7 +18,7 @@ file('./docker-local.gradle').with() {
     }
 }
  
-if (!gradle.ext.has('architectures')) gradle.ext.architectures = [ default: {} ]
+if (!gradle.ext.has('architectures')) gradle.ext.architectures = [ default: [:] ]
 
 gradle.ext.dockerImages =
 [
