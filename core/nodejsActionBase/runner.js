@@ -129,21 +129,39 @@ function NodeActionRunner() {
         return exec(mkTempCmd).then(function (tmpDir1) {
             return new Promise(
                 function (resolve, reject) {
-                    var zipFile = path.join(tmpDir1, "action.zip");
-                    fs.writeFile(zipFile, base64, "base64", function (err) {
+                    var outFile = path.join(tmpDir1, "action.zip-or-tgz");
+                    fs.writeFile(outFile, base64, "base64", function (err) {
                         if (err) {
                             reject("There was an error reading the action archive.");
                         }
-                        resolve(zipFile);
+                        resolve(outFile);
                     });
                 }
             );
-        }).then(function (zipFile) {
+        }).then(function (outFile) {
             return exec(mkTempCmd).then(function (tmpDir2) {
-                return exec("unzip -qq " + zipFile + " -d " + tmpDir2).then(function (res) {
-                   return path.resolve(tmpDir2);
-                }).catch(function (error) {
-                   return Promise.reject("There was an error uncompressing the action archive.");
+                // either zip or tar file currently supported, determine which it is
+                return new Promise(function(resolve, reject) {
+                    fs.open(outFile, 'r', function(err, fd) {
+                        // read two bytes, tar file (1F 8B) or zip file (50 4B)
+                        const buffer = new Buffer(2);
+                        fs.read(fd, buffer, 0, 2, 0, function (err, num) {
+                            let uncompressCmd = ''
+                            if (buffer[0] == 31 && buffer[1] == 139) {
+                                // this is a tar file
+                                uncompressCmd = "tar zxf " + outFile + " -C " + tmpDir2
+                            } else {
+                                // otherwise assume zip
+                                uncompressCmd = "unzip -qq " + outFile + " -d " + tmpDir2
+                            }
+
+                            exec(uncompressCmd).then(function (res) {
+                                resolve(path.resolve(tmpDir2));
+                            }).catch(function (error) {
+                                reject("There was an error uncompressing the action archive.");
+                            });
+                        });
+                    });
                 });
             });
         });
