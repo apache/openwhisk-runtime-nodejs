@@ -1,6 +1,6 @@
 # NodeJS 8 OpenWhisk Runtime Container
 
-## 1.2.0
+## 1.1.0
 Change: Update openwhisk npm package
 
 Node version = 8.9.1
