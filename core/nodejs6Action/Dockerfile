@@ -1,7 +1,7 @@
 FROM nodejsactionbase
 
 # based on https://github.com/nodejs/docker-node
-ENV NODE_VERSION 6.12.0
+ENV NODE_VERSION 6.12.2
 RUN curl -SLO "https://nodejs.org/dist/v$NODE_VERSION/node-v$NODE_VERSION-linux-x64.tar.gz" \
   && tar -xzf "node-v$NODE_VERSION-linux-x64.tar.gz" -C /usr/local --strip-components=1 \
   && rm "node-v$NODE_VERSION-linux-x64.tar.gz"
@@ -46,7 +46,7 @@ nano@6.2.0 \
 node-uuid@1.4.7 \
 nodemailer@2.6.4 \
 oauth2-server@2.4.1 \
-openwhisk@3.10.0 \
+openwhisk@3.11.0 \
 pkgcloud@1.4.0 \
 process@0.11.9 \
 pug@">=2.0.0-beta6 <2.0.1" \

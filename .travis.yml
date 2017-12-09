@@ -1,8 +1,6 @@
 sudo: required
 group: deprecated-2017Q3
 language: scala
-scala:
-- 2.11.8
 services:
 - docker
 before_install:
