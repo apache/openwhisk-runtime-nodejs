@@ -45,6 +45,7 @@ dockerBuildImage.with() {
 =======
 subprojects {
     dockerBuildImage.with() { 
+        inputDir=projectDir
         dependsOn copyProxy
         dependsOn copyRunner
         dependsOn copyService
