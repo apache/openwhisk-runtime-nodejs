@@ -9,5 +9,9 @@ eclipse {
 //ext.dockerImageName = 'nodejs6action'
 
 subprojects {
-    dockerBuildImage.dependsOn ':core:nodejsActionBase:dockerBuildImage'
+    dockerBuildImage.with() {
+        dependsOn ':core:nodejsActionBase:dockerBuildImage'
+        inputDir=projectDir
+    }
 }
+
