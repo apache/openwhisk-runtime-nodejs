@@ -22,11 +22,13 @@ buildscript {
     dependencies {
         classpath "cz.alenkacz:gradle-scalafmt:${gradle.scalafmt.version}"
         classpath "org.ajoberstar:grgit:2.1.0"
-        classpath 'com.bmuschko:gradle-docker-plugin:3.0.11'
+        //classpath 'com.bmuschko:gradle-docker-plugin:3.0.11'
+        classpath 'com.xanophis:gradle-fatmanifest-plugin:0.0.4'
 
         //  TODO - Finish this up; give it a version and deploy it.
         //         (Save the local line in a comment for testing...)
-        classpath files('../gradle-fatmanifest-plugin/build/libs/gradle-fatmanifest-plugin.jar')
+        //classpath files('../gradle-fatmanifest-plugin/build/libs/gradle-fatmanifest-plugin.jar')
+        classpath files('../gradle-docker-plugin/build/libs/gradle-docker-plugin-3.2.2-SNAPSHOT.jar')
     }
 }
 
@@ -145,6 +147,15 @@ configure (subprojects.findAll() { gradle.ext.architectures.containsKey(it.name)
 
     task dockerInfo(type: DockerInfo)
     (parent.tasks.find() {it.name=='dockerInfo'} ?: parent.task('dockerInfo'))\
+        .dependsOn dockerInfo
+
+    task dockerInfoJson(type: DockerInfo) {
+        project.ext.dockerInfoFile = new File(project.buildDir, 'dockerInfo.json')
+        onNext {
+            project.dockerInfoFile.write(groovy.json.JsonOutput.toJson(it))
+        }
+    }
+    (parent.tasks.find() {it.name=='dockerInfoJson'} ?: parent.task('dockerInfoJson'))\
         .dependsOn dockerInfo
 
     task dockerBuildImage(type: DockerBuildImage) {

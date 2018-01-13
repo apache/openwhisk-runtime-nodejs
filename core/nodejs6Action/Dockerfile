@@ -2,7 +2,7 @@ FROM nodejsactionbase
 
 # based on https://github.com/nodejs/docker-node
 ENV NODE_VERSION 6.12.2
-RUN node_arch=$(uname -m | sed -e 's/x86_64/x64/g') \
+RUN node_arch=$(uname -m | sed -e 's/x86_64/x64/g' -e 's/aarch64/arm64/g') \
   && curl -sSLO "https://nodejs.org/dist/v$NODE_VERSION/node-v$NODE_VERSION-linux-${node_arch}.tar.gz" \
   && tar -xzf "node-v$NODE_VERSION-linux-${node_arch}.tar.gz" -C /usr/local --strip-components=1 \
   && rm "node-v$NODE_VERSION-linux-${node_arch}.tar.gz"
