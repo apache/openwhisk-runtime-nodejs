@@ -1,4 +1,4 @@
-<% dockerInfo = new groovy.json.JsonSlurper().parse(dockerInfoFile) %>
+<% dockerInfo = dockerInfoClosure.call() %>
 FROM buildpack-deps:${(dockerInfo.architecture=='s390x')?'xenial':'trusty'}-curl
 
 ENV DEBIAN_FRONTEND noninteractive

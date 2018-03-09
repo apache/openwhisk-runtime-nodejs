@@ -35,6 +35,7 @@ subprojects {
         dependsOn copyProxy
         dependsOn copyRunner
         dependsOn copyService
+        inputDir=projectDir
         finalizedBy(cleanup)
     }
 }

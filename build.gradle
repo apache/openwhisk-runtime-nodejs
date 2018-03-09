@@ -21,14 +21,15 @@ buildscript {
     }
     dependencies {
         classpath "cz.alenkacz:gradle-scalafmt:${gradle.scalafmt.version}"
-        classpath "org.ajoberstar:grgit:2.1.0"
-        //classpath 'com.bmuschko:gradle-docker-plugin:3.0.11'
-        classpath 'com.xanophis:gradle-fatmanifest-plugin:0.0.4'
+        classpath 'org.ajoberstar:grgit:2.1.0'
+        classpath 'com.bmuschko:gradle-docker-plugin:3.2.2'
+        //classpath 'com.s390x:gradle-multidocker-plugin:0.1.0'
 
-        //  TODO - Finish this up; give it a version and deploy it.
-        //         (Save the local line in a comment for testing...)
-        //classpath files('../gradle-fatmanifest-plugin/build/libs/gradle-fatmanifest-plugin.jar')
-        classpath files('../gradle-docker-plugin/build/libs/gradle-docker-plugin-3.2.2-SNAPSHOT.jar')
+        /*
+            Leaving this here to demonstrate how plugin development and
+            patching can be integrated.
+        */
+        classpath files('../gradle-multidocker-plugin/build/libs/gradle-multidocker-plugin-0.0.5-SNAPSHOT.jar')
     }
 }
 
@@ -36,7 +37,7 @@ import com.bmuschko.gradle.docker.DockerRegistryCredentials
 import com.bmuschko.gradle.docker.tasks.DockerInfo
 import com.bmuschko.gradle.docker.tasks.image.*
 
-import com.xanophis.gradle.fatmanifest.tasks.*
+import com.s390x.gradle.multidocker.tasks.*
 
 /*
     So you called a registry method without providing any registry
@@ -55,35 +56,37 @@ private def warnNoRegistryCredentials() {
 }
 
 /*
-    Every project in ':core:* is some form of Docker build for the action image
-    and is therefore assumed to need to be able to push a Fat Manifest for
-    eventual publication.  This block activates the plugin and configures it
-    from information included in the docker-local file (which was loaded in
-    settings.gradle and applied as extension properties to the gradle object).
+    These two lists will hold the projects to be managed throughout the
+    remainder of the process -- the 'top-level' builds and the individual
+    architecture builds created beneath each of them.
 
-    We only do the configuration if registryCredentials exist, because
-    otherwise what's the point?
+    Note:  The lists could possible be created by re-constructing the project
+    paths, which in a performance-oriented system I'd consider doing.  But
+    the findAll based approach works for now, and provides flexibility if we
+    add later capability to settings to gradle to select only certain builds
+    for certain projects (more of a matrix)
  */
-configure (subprojects.findAll() { it.path =~ /^:core:/ }) {
-    buildscript.repositories { jcenter() }
+Collection<Project> buildProjects = subprojects.findAll { subproject ->
+        gradle.dockerBuildProjects.containsKey(subproject.path)
+    }
 
-    if (gradle?.registryCredentials) {
-        apply plugin: 'com.xanophis.fatmanifest'
-
-        logger.debug "Applying registry credentials to ${it.path}"
-        registry {
-            name = gradle.ext.registryCredentials.name
-            url = gradle.ext.registryCredentials.url
-            username = gradle.ext.registryCredentials.username
-            password = gradle.ext.registryCredentials.password
+Collection<Project> individualArchProjects = buildProjects.collectMany { buildProject ->
+        buildProject.subprojects.findAll() {
+            gradle.architectures.containsKey(it.name)
         }
     }
-}
 
 /*
+    Every project in ':core:* is some form of Docker build for the action image
+    and is therefore assumed to need to be able to push a Manifest List for
+    eventual publication.  This block activates the Docker and Manifest List
+    plugins and configures them from information provided in the docker-local
+    file.  Recall that the docker-local file was loaded in
+    settings.gradle and applied as extension properties to the gradle object.
+
     The :core:* projects (parent projects) should all have been set up and
-    logged in 'grade.dockerImages' (by settings.gradle), along with the image
-    name for each.  This is where we pull that image name and configure it
+    logged in 'grade.dockerBuildProjects' (by settings.gradle), along with the
+    image name for each.  This is where we pull that image name and configure it
     into the project.
 
     Why put it in a gradle extension property first?  Frankly, we don't want
@@ -94,17 +97,38 @@ configure (subprojects.findAll() { it.path =~ /^:core:/ }) {
     (Side note:  Maybe these need to be in a plugin or sub-file, but IMO that
     actually makes maintenance more difficult.)
  */
-configure (subprojects.findAll() { gradle.dockerImages.containsKey(it.path) }) {
-    logger.quiet "Setting properties for ${path}"
-    gradle.ext.dockerImages[path].each() { k,v -> ext.set(k,v) }
+
+configure (buildProjects) {
+    buildscript.repositories { jcenter() }
+
+    logger.info ("Configuring subproject '${path}'")
+
+    /*
+        We only configure Manifest List processing if registryCredentials exist,
+        because otherwise what's the point?
+    */
+    if (gradle?.registryCredentials) {
+        apply plugin: 'com.s390x.gradle.multidocker'
+
+        logger.debug "Applying registry credentials to ${it.path}"
+        multidocker.registry('default',gradle.registryCredentials)
+    }
+
+    /*
+        Retrieve project properties from the Map created in settings.gradle
+        and apply to the projects.  Now the properties are available during
+        configuration in the remainder of this script.
+     */
+    logger.info "Setting properties for ${path}"
+    gradle.dockerBuildProjects[path].each { k,v -> ext.set(k,v) }
     ext.dockerRegistry = gradle.dockerRegistry
-    logger.quiet "Project ${path} has dockerImageName of ${dockerImageName}"
+    logger.info "Project ${path} has dockerImageName of ${dockerImageName}"
 }
 
 /*
     Each architecture gets its own project sharing a project directory with the
-    root project.  It's EXPECTED (but not required) that the local build scripts
-    with override the build directory with architecture-specific build directories
+    root project.  It's EXPECTED (but not required) for the local build scripts
+    to override the build directory with architecture-specific build directories
     as needed, which will also ease maintenance of the source tree for docker
     builds.
 
@@ -112,13 +136,15 @@ configure (subprojects.findAll() { gradle.dockerImages.containsKey(it.path) }) {
     the underlying architecture tasks.  That way, we can still
     './gradlew core:<image>:<task>' and all architectures will be built.
  */
-configure (subprojects.findAll() { gradle.ext.architectures.containsKey(it.name) }) {
 
-    logger.quiet ("Configuring subproject '${path}'")
+configure (individualArchProjects) {
+    buildscript.repositories { jcenter() }
+
+    logger.info ("Configuring subproject '${path}'")
 
     //  Since this is an architecture-specific subproject, we can copy all the
     //  properties from the parent project to make our code more readable
-    parent.ext.getProperties().each() { k,v -> ext.set(k,v) }
+    parent.ext.properties.each { k,v -> ext.set(k,v) }
 
     apply plugin: 'com.bmuschko.docker-remote-api'
     docker {
@@ -127,9 +153,12 @@ configure (subprojects.findAll() { gradle.ext.architectures.containsKey(it.name)
             which means fewer guard clauses.  Hooray!
          */
         if (gradle.architectures[name]?.url) {
+            // Don't overwrite a default if it was defined!
             url = gradle.architectures[name].url
         }
-        certPath = gradle.architectures[name]?.certPath
+        if (gradle.architectures[name]?.certPath) {
+            certPath = gradle.architectures[name].certPath
+        }
 
         /*
             Yet another place to check whether registryCredentials were
@@ -138,34 +167,29 @@ configure (subprojects.findAll() { gradle.ext.architectures.containsKey(it.name)
             responsiblity for the runtime developer.
          */
         if (gradle?.registryCredentials) registryCredentials {
-                url = gradle.registryCredentials.url
-                username = gradle.registryCredentials.username
-                password = gradle.registryCredentials.password
-                email = gradle.registryCredentials.email
+            url = gradle.registryCredentials.url
+            username = gradle.registryCredentials.username
+            password = gradle.registryCredentials.password
+            email = gradle.registryCredentials.email
         }
     }
 
-    task dockerInfo(type: DockerInfo)
-    (parent.tasks.find() {it.name=='dockerInfo'} ?: parent.task('dockerInfo'))\
-        .dependsOn dockerInfo
-
-    task dockerInfoJson(type: DockerInfo) {
-        project.ext.dockerInfoFile = new File(project.buildDir, 'dockerInfo.json')
+    task dockerInfo(type: DockerInfo) {
         onNext {
-            project.dockerInfoFile.write(groovy.json.JsonOutput.toJson(it))
+            logger.quiet "Docker Info retreived for project ${project.name}:"
+            logger.quiet "  OSType = ${it.osType}"
+            logger.quiet "  Architecture = ${it.architecture}"
+            owner.ext.dockerInfo = it
         }
     }
-    (parent.tasks.find() {it.name=='dockerInfoJson'} ?: parent.task('dockerInfoJson'))\
+    (parent.tasks.find() {it.name=='dockerInfo'} ?: parent.task('dockerInfo'))\
         .dependsOn dockerInfo
 
     task dockerBuildImage(type: DockerBuildImage) {
         /*
-            This is a default to get along with existing repositories.  In
-            newer repositories, it should end up overridden to
-            "${getBuildDir}/docker/${architecture}".  At some point we may
-            make that the default to force stragglers to migrate.
+            Recommended default for inputDir
          */
-        inputDir getProjectDir()
+        inputDir "${getBuildDir}/docker/${architecture}"
 
         /*
             The tags list is out of hand and is doing a bang-up job of making
@@ -175,12 +199,23 @@ configure (subprojects.findAll() { gradle.ext.architectures.containsKey(it.name)
             prefixed tag seems critical, however, to working with local-build
             openwhisk deployments.
          */
+
+        //  Is this an appropriate prefix?  Perhaps we should use 'whisk' as the
+        //  default local-build prefix?  Again -- not sure I have a sense of tags.
         def prefix = findProperty('dockerPrefix') ?: 'openwhisk'
+
+        //  Note that project.name will be the docker engine name from settings.gradle
+        //  We could set up an option to declare suffixes in docker.gradle, but so far
+        //  this works.
         tags = [   // Return a list of tags build from the environment
                 "${parent.dockerImageName}:latest",
                 "${parent.dockerImageName}:latest-${project.name}",
                 "${prefix}/${parent.dockerImageName}:latest-${project.name}"
         ] as String[]
+
+        //  This tag is created to support uploads if there's a target registry.
+        //  Note that the script DOES NOT support multiple target registries.
+        //  As of the writing, there was no need to.
         if (dockerRegistry) {
             tags += new String("${dockerRegistry}/${prefix}/"+
                 "${parent.dockerImageName}:latest-${project.name}")
@@ -205,33 +240,49 @@ configure (subprojects.findAll() { gradle.ext.architectures.containsKey(it.name)
         (parent.tasks.find() {it.name=='dockerPushImage'} ?: parent.task('dockerPushImage'))\
             .dependsOn dockerPushImage
 
-        task getManifest(type: GetManifest, dependsOn: dockerPushImage) {
-            //  TODO: Is there a smarter way to handle os than hardcoding?
-            //        Maybe from DockerInfo?  Which requires us to know where
-            //        the image was built.
-            os = 'linux'
-            architecture = project.name
+        task getImageManifest(type: GetImageManifest, dependsOn: [ dockerPushImage, dockerInfo ] ) {
+
+            targetRegistry = 'default'
+
             imageName =
                 "${findProperty('dockerPrefix') ?: 'openwhisk'}/${parent.dockerImageName}"
             tag = "latest-${project.name}"
 
-            logger.debug "getManifest classpath = '${classpath}'"
+            //  Store the relevant details of the received manifest as an
+            //  extension of the task.
+            onNext {
+                logger.quiet "Manifest retreived for ${imageName}:${tag}"
+                logger.quiet "  Digest: ${it.digest}"
+                logger.quiet "  Media Type: ${it.mediaType}"
+                logger.quiet "  Size: ${it.size}"
+
+                owner.ext.manifestMap = [
+                    mediaType: it.mediaType,
+                    digest: it.digest,
+                    size: it.size,
+                    os: project.dockerInfo.dockerInfo.osType,
+                    architecture: project.dockerInfo.dockerInfo.architecture
+                ]
+            }
         }
-        (parent.tasks.find() {it.name=='getManifest'} ?: parent.task('getManifest'))\
-            .dependsOn getManifest
+        (parent.tasks.find() {it.name=='getImageManifest'} ?: parent.task('getImageManifest'))\
+            .dependsOn getImageManifest
     } else {
         task dockerPushImage() { warnNoRegistryCredentials() }
-        task getManifest() { warnNoRegistryCredentials() }
+        task getImageManifest() { warnNoRegistryCredentials() }
     }
 }
 
 /*
-    And now, the Fat Manifest.  It's a multi-architecture manifest, so there's
-    no point to putting it in the individual architecture builds.
+    And now, the Manifest List.  It's a multi-architecture manifest, so there's
+    no point to putting it in the individual architecture builds.  Instead, it
+    will collect the individual manifests from the getManifest steps.
  */
-configure (subprojects.findAll() { gradle.dockerImages.containsKey(it.path) }) {
+configure (buildProjects) {
     if (gradle?.registryCredentials) {
-        task putFatManifest(type: PutFatManifest, dependsOn: 'getManifest') {
+        task putManifestList(type: PutManifestList, dependsOn: 'getImageManifest') {
+
+            targetRegistry = 'default'
 
             imageName = "${findProperty('dockerPrefix') ?: 'openwhisk'}/" +
                 "${project.dockerImageName}"
@@ -239,18 +290,16 @@ configure (subprojects.findAll() { gradle.dockerImages.containsKey(it.path) }) {
             tag = 'latest'
 
             /*
-                Note that this is a closure so it will resolve at execution time,
-                after the targets for the files have been set.
+                Collect the manifests to be built from the subprojects
              */
-            metadataFiles = {
-                project.getSubprojects().collectMany() { subproject ->
-                    subproject.getTasks().withType(GetManifest)
-                }.collect(){ getManifestTask -> getManifestTask.metadataFile }
+            project.subprojects.collectMany { subproject ->
+                subproject.tasks.withType(GetImageManifest)
+            }.each { task ->
+                logger.info "Adding manifest ${it.path} to Manifest List"
+                manifests << { task.manifestMap }
             }
-
-            logger.debug "putFatManifest classpath = '${classpath}'"
         }
     } else {
-        task putFatManifest() { warnNoRegistryCredentials() }
+        task putManifestList() { warnNoRegistryCredentials() }
     }
 }

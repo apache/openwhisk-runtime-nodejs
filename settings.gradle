@@ -1,6 +1,6 @@
-def owPath = System.getenv("OPENWHISK_HOME") ?: '../open'
+def owPath = System.getenv("OPENWHISK_HOME") ?: '../incubator-openwhisk'
 def owDirectory = new File(owPath)
- 
+
 if (!owDirectory.exists()) {
     throw new GradleScriptException("Environment variable OPENWHISK_HOME must point to a valid OpenWhisk build", null)
 }
@@ -12,15 +12,15 @@ include 'whisktests'; project(':whisktests').projectDir = new File(owDirectory, 
 
 include 'tests'
 
-file('./docker-local.gradle').with() { 
-    if (it.exists()) { 
-        apply from: it 
+file('./docker-local.gradle').with() {
+    if (it.exists()) {
+        apply from: it
     }
 }
- 
+
 if (!gradle.ext.has('architectures')) gradle.ext.architectures = [ default: [:] ]
 
-gradle.ext.dockerImages =
+gradle.ext.dockerBuildProjects =
 [
     ':core:nodejsActionBase': [
         'dockerImageName': 'nodejsactionbase'
@@ -33,18 +33,18 @@ gradle.ext.dockerImages =
     ]
 ]
 
-gradle.dockerImages.each() { baseProjectName, extensions -> 
+gradle.dockerBuildProjects.each() { baseProjectName, extensions ->
     include baseProjectName
     def baseProject = findProject(baseProjectName)
-    
+
     gradle.architectures.each() { architectureName, architectureClosure ->
         def architectureProjectName = "${baseProjectName}:${architectureName}"
         include architectureProjectName
         def architectureProject = findProject(architectureProjectName)
-        
+
         logger.debug 'Setup baseProject: ' + baseProject?.path
         logger.debug 'Setup architectureProject: ' + architectureProject?.path
-        
+
         architectureProject.projectDir = baseProject.projectDir
     }
 }

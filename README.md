@@ -100,7 +100,7 @@ multi-architecture manifest with a tag of simply `latest`.
 
 To make the magic happen:
 ```
-./gradlew core:nodejs8Action:putFatManifest -PdockerImagePrefix=$user_prefix
+./gradlew core:nodejs8Action:putMultidocker -PdockerImagePrefix=$user_prefix
 ```
 
 (The `user_prefix` will default to `whisk` if it isn't set to something).

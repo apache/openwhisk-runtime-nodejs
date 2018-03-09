@@ -8,25 +8,20 @@ eclipse {
 
 import com.bmuschko.gradle.docker.tasks.DockerInfo
 
-subprojects { 
-    // task dockerInfoJson(type: DockerInfo) {
-    //     dockerInfoFile new File(buildDir, "dockerInfo.json")
-    // }
-    
-    task dockerFiles(type: Copy) {        
-        dependsOn dockerInfoJson
-        
+subprojects {
+    task dockerFiles(type: Copy, dependsOn: dockerInfo) {
+
         from('.') {
             include '*.js'
             include 'package.json'
         }
         from('./Dockerfile.in') {
             rename { 'Dockerfile' }
-            expand(dockerInfoFile: project.dockerInfoFile)
+            expand( dockerInfoClosure: { project.dockerInfo.dockerInfo } )
         }
         into new File(buildDir, "docker")
     }
-    
+
     dockerBuildImage.with() {
         dependsOn dockerFiles
         inputDir=new File(buildDir, "docker")
