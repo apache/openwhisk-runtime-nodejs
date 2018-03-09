@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 def owPath = System.getenv("OPENWHISK_HOME") ?: '../incubator-openwhisk'
 def owDirectory = new File(owPath)
 
@@ -10,6 +11,8 @@ include 'core:controller'; project(':core:controller').projectDir = new File(owD
 include 'core:invoker'; project(':core:invoker').projectDir = new File(owDirectory, 'core/invoker')
 include 'whisktests'; project(':whisktests').projectDir = new File(owDirectory, 'tests')
 
+=======
+>>>>>>> upstream/master
 include 'tests'
 
 file('./docker-local.gradle').with() {
@@ -50,6 +53,10 @@ gradle.dockerBuildProjects.each() { baseProjectName, extensions ->
 }
 
 rootProject.name = 'runtime-nodejs'
+
+gradle.ext.openwhisk = [
+        version: '1.0.0-SNAPSHOT'
+]
 
 gradle.ext.scala = [
     version: '2.11.11',
