@@ -18,18 +18,21 @@
 buildscript {
     repositories {
         jcenter()
+        maven {
+            url  "http://dl.bintray.com/jonpspri/gradle-plugins/"
+        }
     }
     dependencies {
         classpath "cz.alenkacz:gradle-scalafmt:${gradle.scalafmt.version}"
         classpath 'org.ajoberstar:grgit:2.1.0'
         classpath 'com.bmuschko:gradle-docker-plugin:3.2.2'
-        //classpath 'com.s390x:gradle-multidocker-plugin:0.1.0'
+        classpath 'com.xanophis:gradle-fatmanifest-plugin:0.0.5'
 
         /*
             Leaving this here to demonstrate how plugin development and
             patching can be integrated.
         */
-        classpath files('../gradle-multidocker-plugin/build/libs/gradle-multidocker-plugin-0.0.5-SNAPSHOT.jar')
+        //classpath files('../gradle-multidocker-plugin/build/libs/gradle-multidocker-plugin-0.0.5.jar')
     }
 }
 
@@ -37,6 +40,7 @@ import com.bmuschko.gradle.docker.DockerRegistryCredentials
 import com.bmuschko.gradle.docker.tasks.DockerInfo
 import com.bmuschko.gradle.docker.tasks.image.*
 
+//  There are some serious naming mismatchees to be dealt with in v0.0.6 of gradle-fatmanifest-plugin :(
 import com.s390x.gradle.multidocker.tasks.*
 
 /*
@@ -189,7 +193,7 @@ configure (individualArchProjects) {
         /*
             Recommended default for inputDir
          */
-        inputDir "${getBuildDir}/docker/${architecture}"
+        inputDir = file("${project.buildDir}/docker/${project.name}")
 
         /*
             The tags list is out of hand and is doing a bang-up job of making

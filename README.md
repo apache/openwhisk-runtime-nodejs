@@ -1,16 +1,16 @@
 <!--
 #
-# Licensed to the Apache Software Foundation (ASF) under one or more contributor 
-# license agreements.  See the NOTICE file distributed with this work for additional 
+# Licensed to the Apache Software Foundation (ASF) under one or more contributor
+# license agreements.  See the NOTICE file distributed with this work for additional
 # information regarding copyright ownership.  The ASF licenses this file to you
-# under the Apache License, Version 2.0 (the # "License"); you may not use this 
-# file except in compliance with the License.  You may obtain a copy of the License 
+# under the Apache License, Version 2.0 (the # "License"); you may not use this
+# file except in compliance with the License.  You may obtain a copy of the License
 # at:
 #
 # http://www.apache.org/licenses/LICENSE-2.0
 #
-# Unless required by applicable law or agreed to in writing, software distributed 
-# under the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR 
+# Unless required by applicable law or agreed to in writing, software distributed
+# under the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR
 # CONDITIONS OF ANY KIND, either express or implied.  See the License for the
 # specific language governing permissions and limitations under the License.
 #
@@ -60,12 +60,12 @@ You will need to configure registry information (at least username and password)
 
 Build and Push image for Node.js 6
 ```
-./gradlew core:nodejs6Action:pushDockerImage -PdockerImagePrefix=$user_prefix
+./gradlew core:nodejs6Action:dockerPushImage -PdockerImagePrefix=$user_prefix
 ```
 
 Build and Push image for Node.js 8
 ```
-./gradlew core:nodejs8Action:pushDockerImage -PdockerImagePrefix=$user_prefix
+./gradlew core:nodejs8Action:dockerPushImage -PdockerImagePrefix=$user_prefix
 ```
 Then create the action using your image from dockerhub
 ```
@@ -98,42 +98,7 @@ ln -s ${ROOTDIR}/ansible/environments/local ${OPENWHISK_HOME}/ansible/environmen
 wskdev fresh -t local-nodejs
 ```
 
-<<<<<<< HEAD
 ### Multi-architecture image builds
-=======
-### Testing
-Install dependencies from the root directory on $OPENWHISK_HOME repository
-```
-./gradlew install
-```
-
-Using gradle for the ActionContainer tests you need to use a proxy if running on Mac, if Linux then don't use proxy options
-You can pass the flags `-Dhttp.proxyHost=localhost -Dhttp.proxyPort=3128` directly in gradle command.
-Or save in your `$HOME/.gradle/gradle.properties`
-```
-systemProp.http.proxyHost=localhost
-systemProp.http.proxyPort=3128
-```
-Using gradle to run all tests
-```
-./gradlew :tests:test
-```
-Using gradle to run some tests
-```
-./gradlew :tests:test --tests *ActionContainerTests*
-```
-Using IntelliJ:
-- Import project as gradle project.
-- Make sure working directory is root of the project/repo
-- Add the following Java VM properties in ScalaTests Run Configuration, easiest is to change the Defaults for all ScalaTests to use this VM properties
-```
--Dhttp.proxyHost=localhost
--Dhttp.proxyPort=3128
-```
-
-# License
-[Apache 2.0](LICENSE.txt)
->>>>>>> upstream/master
 
 Docker supports multi-architecture manifests -- essentially "images" that pick
 the appropriate download binaries depending on the architecture of the target
