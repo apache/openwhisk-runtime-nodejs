@@ -44,13 +44,13 @@ wsk action update myAction myAction.js --kind nodejs:8
 ### Local development
 For Node.js 6
 ```
-./gradlew core:nodejs6Action:buildDockerImage
+./gradlew core:nodejs6Action:dockerBuildImage
 ```
 This will produce the image `whisk/nodejs6action`
 
 For Node.js 8
 ```
-./gradlew core:nodejs8Action:buildDockerImage
+./gradlew core:nodejs8Action:dockerBuildImage
 ```
 This will produce the image `whisk/action-nodejs-v8`
 
