@@ -14,8 +14,8 @@ IMAGE_PREFIX="testing"
 # Build runtime
 cd $ROOTDIR
 TERM=dumb ./gradlew \
-:core:nodejs6Action:distDocker \
-:core:nodejs8Action:distDocker \
+:core:nodejs6Action:buildDockerImage \
+:core:nodejs8Action:buildDockerImage \
 -PdockerImagePrefix=${IMAGE_PREFIX}
 
 
@@ -27,9 +27,5 @@ docker pull openwhisk/controller
 docker tag openwhisk/controller ${IMAGE_PREFIX}/controller
 docker pull openwhisk/invoker
 docker tag openwhisk/invoker ${IMAGE_PREFIX}/invoker
-docker pull openwhisk/nodejs6action
-docker tag openwhisk/nodejs6action ${IMAGE_PREFIX}/nodejs6action
-
-
-
-
+#docker pull openwhisk/nodejs6action
+#docker tag openwhisk/nodejs6action ${IMAGE_PREFIX}/nodejs6action
