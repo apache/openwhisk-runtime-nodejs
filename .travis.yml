@@ -9,9 +9,9 @@ before_install:
   #  contributor, contact maintainer to have a newly-encrypted GPG passphrase
   #  communicated.
 - for i in ./tools/travis/tls/*/*.pem.gpg; do
-    echo '${multiarch_encryption_pwd}' | gpg --passphrase-fd 0 "$i";
+    echo "${multiarch_encryption_pwd}" | gpg --passphrase-fd 0 "$i";
   done
-- echo '${multiarch_encryption_pwd}' | gpg --passphrase-fd 0 ./tools/travis/docker-local.gradle.gpg
+- echo "${multiarch_encryption_pwd}"| gpg --passphrase-fd 0 ./tools/travis/docker-local.gradle.gpg
 - cp ./tools/travis/docker-local.gradle .
 - "./tools/travis/setup.sh"
 install: true
