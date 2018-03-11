@@ -206,7 +206,7 @@ configure (individualArchProjects) {
 
         //  Is this an appropriate prefix?  Perhaps we should use 'whisk' as the
         //  default local-build prefix?  Again -- not sure I have a sense of tags.
-        def prefix = findProperty('dockerPrefix') ?: 'openwhisk'
+        def prefix = findProperty('dockerImagePrefix') ?: 'openwhisk'
 
         //  Note that project.name will be the docker engine name from settings.gradle
         //  We could set up an option to declare suffixes in docker.gradle, but so far
