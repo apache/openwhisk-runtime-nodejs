@@ -307,3 +307,8 @@ configure (buildProjects) {
         task putManifestList() { warnNoRegistryCredentials() }
     }
 }
+
+subprojects {
+    apply plugin: 'scalafmt'
+    scalafmt.configFilePath = gradle.scalafmt.config
+}
