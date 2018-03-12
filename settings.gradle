@@ -1,9 +1,42 @@
 include 'tests'
 
-include 'core:nodejsActionBase'
-include 'core:nodejs6Action'
+//  TODO: Can this file be specified as a parameter?
+file('./docker-local.gradle').with() {
+    if (it.exists()) {
+        apply from: it
+    }
+}
 
-include 'core:nodejs8Action'
+if (!gradle.ext.has('architectures')) gradle.ext.architectures = [ default: [:] ]
+
+gradle.ext.dockerBuildProjects =
+[
+    ':core:nodejsActionBase': [
+        'dockerImageName': 'nodejsactionbase'
+    ],
+    ':core:nodejs6Action': [
+        'dockerImageName': 'nodejs6action'
+    ],
+    ':core:nodejs8Action': [
+        'dockerImageName': 'action-nodejs-v8'
+    ]
+]
+
+gradle.dockerBuildProjects.each() { baseProjectName, extensions ->
+    include baseProjectName
+    def baseProject = findProject(baseProjectName)
+
+    gradle.architectures.each() { architectureName, architectureClosure ->
+        def architectureProjectName = "${baseProjectName}:${architectureName}"
+        include architectureProjectName
+        def architectureProject = findProject(architectureProjectName)
+
+        logger.debug 'Setup baseProject: ' + baseProject?.path
+        logger.debug 'Setup architectureProject: ' + architectureProject?.path
+
+        architectureProject.projectDir = baseProject.projectDir
+    }
+}
 
 rootProject.name = 'runtime-nodejs'
 

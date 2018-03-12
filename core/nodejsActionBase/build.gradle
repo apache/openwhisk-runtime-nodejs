@@ -6,5 +6,26 @@ eclipse {
     }
 }
 
+import com.bmuschko.gradle.docker.tasks.DockerInfo
+
+subprojects {
+    task dockerFiles(type: Copy, dependsOn: dockerInfo) {
+
+        from('.') {
+            include '*.js'
+            include 'package.json'
+        }
+        from('./Dockerfile.in') {
+            rename { 'Dockerfile' }
+            expand( dockerInfoClosure: { project.dockerInfo.dockerInfo } )
+        }
+        into new File(buildDir, "docker")
+    }
+
+    dockerBuildImage.with() {
+        dependsOn dockerFiles
+        inputDir=new File(buildDir, "docker")
+    }
+}
+
 ext.dockerImageName = 'nodejsactionbase'
-apply from: '../../gradle/docker.gradle'

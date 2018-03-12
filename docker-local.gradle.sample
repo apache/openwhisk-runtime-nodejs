@@ -1,0 +1,27 @@
+//
+//  If you intend to connect to a docker registry, either to push an image
+//  or to get and put manifests, you need to provide registry credentials.
+//
+
+//  TODO - maybe we should just default to these environment variables
+//         and/or properties and skip using the file for this info?
+
+gradle.ext.dockerRegistry = env['DOCKER_REGISTRY'] // e.g. 'registry.docker.com'
+gradle.ext.registryCredentials = [
+    name: gradle.ext.dockerRegistry,
+    url: "https://${gradle.ext.dockerRegistry}/v2/" as String,
+    username: env['DOCKER_REGISTRY_USERNAME'],
+    password: env['DOCKER_REGISTRY_PASSWORD']
+    email: env['DOCKER_REGISTRY_EMAIL']
+]
+
+//
+// For multi-architecture builds:
+//
+gradle.ext.architectures = [
+    amd64: null,
+    s390x: [ 
+        url: 'https://sample.s390x.com:2376',
+        certPath: new File(System.properties['user.home'], "./.tls/s390x")        
+    ]
+]
