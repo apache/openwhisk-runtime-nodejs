@@ -207,14 +207,15 @@ configure (individualArchProjects) {
         //  Is this an appropriate prefix?  Perhaps we should use 'whisk' as the
         //  default local-build prefix?  Again -- not sure I have a sense of tags.
         def prefix = findProperty('dockerImagePrefix') ?: 'openwhisk'
+        def tag = findProperty('dockerImageTag') ?: 'latest'
 
         //  Note that project.name will be the docker engine name from settings.gradle
         //  We could set up an option to declare suffixes in docker.gradle, but so far
         //  this works.
         tags = [   // Return a list of tags build from the environment
-                "${parent.dockerImageName}:latest",
-                "${parent.dockerImageName}:latest-${project.name}",
-                "${prefix}/${parent.dockerImageName}:latest-${project.name}"
+                "${parent.dockerImageName}:${tag}",
+                "${parent.dockerImageName}:${tag}-${project.name}",
+                "${prefix}/${parent.dockerImageName}:${tag}-${project.name}"
         ] as String[]
 
         //  This tag is created to support uploads if there's a target registry.
@@ -222,7 +223,7 @@ configure (individualArchProjects) {
         //  As of the writing, there was no need to.
         if (dockerRegistry) {
             tags += new String("${dockerRegistry}/${prefix}/"+
-                "${parent.dockerImageName}:latest-${project.name}")
+                "${parent.dockerImageName}:${tag}-${project.name}")
         }
     }
     (parent.tasks.find() {it.name=='dockerBuildImage'} ?: parent.task('dockerBuildImage'))\
@@ -237,9 +238,9 @@ configure (individualArchProjects) {
     if (gradle?.registryCredentials) {
         task dockerPushImage(type: DockerPushImage, dependsOn: dockerBuildImage) {
             imageName = "${dockerRegistry}/" +
-                "${findProperty('dockerPrefix') ?: 'openwhisk'}/" +
+                "${findProperty('dockerImagePrefix') ?: 'openwhisk'}/" +
                 "${parent.dockerImageName}"
-            tag = "latest-${project.name}"
+            tag = "${findProperty('dockerImageTag') ?: 'latest'}-${project.name}"
         }
         (parent.tasks.find() {it.name=='dockerPushImage'} ?: parent.task('dockerPushImage'))\
             .dependsOn dockerPushImage
@@ -249,8 +250,8 @@ configure (individualArchProjects) {
             targetRegistry = 'default'
 
             imageName =
-                "${findProperty('dockerPrefix') ?: 'openwhisk'}/${parent.dockerImageName}"
-            tag = "latest-${project.name}"
+                "${findProperty('dockerImagePrefix') ?: 'openwhisk'}/${parent.dockerImageName}"
+            tag = "${findProperty('dockerImageTag') ?: 'latest'}-${project.name}"
 
             //  Store the relevant details of the received manifest as an
             //  extension of the task.
@@ -288,10 +289,10 @@ configure (buildProjects) {
 
             targetRegistry = 'default'
 
-            imageName = "${findProperty('dockerPrefix') ?: 'openwhisk'}/" +
+            imageName = "${findProperty('dockerImagePrefix') ?: 'openwhisk'}/" +
                 "${project.dockerImageName}"
             // TODO - Project property candidate to support release builds?
-            tag = 'latest'
+            tag = "${findProperty('dockerImageTag') ?: 'latest' }"
 
             /*
                 Collect the manifests to be built from the subprojects
