@@ -4,6 +4,8 @@ config_root_dir: "{{ openwhisk_tmp_dir }}/wskconf"
 whisk_logs_dir: "{{ openwhisk_tmp_dir }}/wsklogs"
 docker_registry: ""
 docker_dns: ""
+runtimes_bypass_pull_for_local_images: true
+invoker_use_runc: "{{ ansible_distribution != 'MacOSX' }}"
 
 db_prefix: whisk_local_
 
@@ -24,6 +26,8 @@ controller_arguments: '-Dcom.sun.management.jmxremote -Dcom.sun.management.jmxre
 invoker_arguments: "{{ controller_arguments }}"
 
 invoker_allow_multiple_instances: true
+
+env_hosts_dir: "{{ playbook_dir }}/environments/local"
 
 runtimes_manifest:
   defaultImagePrefix: "openwhisk"
