@@ -15,19 +15,15 @@
  * limitations under the License.
  */
 
-package actionContainers
-
-import org.junit.runner.RunWith
-import org.scalatest.junit.JUnitRunner
-
-import ActionContainer.withContainer
-import ResourceHelpers.ZipBuilder
+package runtime.actionContainers
 
 import common.WskActorSystem
+import actionContainers.{ActionContainer, BasicActionRunnerTests}
+import actionContainers.ActionContainer.withContainer
+import actionContainers.ResourceHelpers.ZipBuilder
 import spray.json._
 
-@RunWith(classOf[JUnitRunner])
-class NodeJsActionContainerTests extends BasicActionRunnerTests with WskActorSystem {
+abstract class NodeJsActionContainerTests extends BasicActionRunnerTests with WskActorSystem {
 
   lazy val nodejsContainerImageName = "nodejs6action"
 
