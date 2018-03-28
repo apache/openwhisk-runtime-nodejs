@@ -1,5 +1,12 @@
 # NodeJS 8 OpenWhisk Runtime Container
 
+## 1.4.0
+Change: Update nodejs and openwhisk npm package
+
+Node version = 8.10.0
+
+- [openwhisk v3.14.0](https://www.npmjs.com/package/openwhisk) - JavaScript client library for the OpenWhisk platform. Provides a wrapper around the OpenWhisk APIs.
+
 ## 1.3.0
 Change: Update npm openwhisk package
 
