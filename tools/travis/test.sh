@@ -26,9 +26,16 @@ WHISKDIR="$ROOTDIR/../openwhisk"
 
 export OPENWHISK_HOME=$WHISKDIR
 
+# Nothing sucks more than collisions during a tagged build.
+case "${TRAVIS_TAG%@*}" in
+  6) tests='*NodeJsActionContainerTests*' ;;
+  8) tests='*NodeJs8ActionContainerTests*' ;;
+  *) tests='*NodeJs*Tests*'
+esac
+
 cd ${ROOTDIR}
 TERM=dumb ./gradlew :tests:checkScalafmtAll
-TERM=dumb ./gradlew :tests:test --tests *NodeJs*Tests
+TERM=dumb ./gradlew :tests:test --tests "${tests}"
 
 
 

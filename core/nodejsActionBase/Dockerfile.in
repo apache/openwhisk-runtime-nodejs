@@ -14,7 +14,8 @@
 # specific language governing permissions and limitations under the License.
 #
 
-FROM buildpack-deps:trusty-curl
+<% dockerInfo = dockerInfoClosure.call() %>
+FROM buildpack-deps:${(dockerInfo.architecture=='s390x')?'xenial':'trusty'}-curl
 
 ENV DEBIAN_FRONTEND noninteractive
 

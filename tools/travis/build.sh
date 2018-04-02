@@ -20,39 +20,53 @@ set -ex
 
 # Build script for Travis-CI.
 
-SCRIPTDIR=$(cd $(dirname "$0") && pwd)
-ROOTDIR="$SCRIPTDIR/../.."
-WHISKDIR="$ROOTDIR/../openwhisk"
-UTILDIR="$ROOTDIR/../incubator-openwhisk-utilities"
+SCRIPTDIR=$(cd "$(dirname "$0")" && pwd)
+ROOTDIR=$(cd "$SCRIPTDIR/../.." && pwd)
+WHISKDIR=$(cd "$ROOTDIR/../openwhisk" && pwd)
+UTILDIR=$(cd "$ROOTDIR/../incubator-openwhisk-utilities" && pwd)
 
 export OPENWHISK_HOME=$WHISKDIR
 
 IMAGE_PREFIX="testing"
 
 # run scancode using the ASF Release configuration
-cd $UTILDIR
-scancode/scanCode.py --config scancode/ASF-Release-v2.cfg $ROOTDIR
+cd "$UTILDIR"
+scancode/scanCode.py --config scancode/ASF-Release-v2.cfg "$ROOTDIR"
 
 # Build OpenWhisk
-cd $WHISKDIR
+cd "$WHISKDIR"
 
 #pull down images
 docker pull openwhisk/controller
 docker tag openwhisk/controller ${IMAGE_PREFIX}/controller
 docker pull openwhisk/invoker
 docker tag openwhisk/invoker ${IMAGE_PREFIX}/invoker
-docker pull openwhisk/nodejs6action
-docker tag openwhisk/nodejs6action ${IMAGE_PREFIX}/nodejs6action
 
-TERM=dumb ./gradlew \
+./gradlew --console=plain \
 :common:scala:install \
 :core:controller:install \
 :core:invoker:install \
 :tests:install
 
+# Nothing sucks more than collisions during a tagged build.
+case "${TRAVIS_TAG%@*}" in
+  6) builds=( :core:nodejs6Action:dockerBuildImage );;
+  8) builds=( :core:nodejs8Action:dockerBuildImage );;
+  *) builds=( :core:nodejs6Action:dockerBuildImage :core:nodejs8Action:dockerBuildImage )
+esac
+
+# For pull requests, force a local-only build
+if [ "$TRAVIS_PULL_REQUEST" != "false" ]; then
+  export docker_local_json='{"amd64":null}'
+fi
+
 # Build runtime
-cd $ROOTDIR
-TERM=dumb ./gradlew \
-:core:nodejs6Action:distDocker \
-:core:nodejs8Action:distDocker \
--PdockerImagePrefix=${IMAGE_PREFIX}
+echo "---------------------------------------------------------------------------------------"
+echo " Building " "${builds[@]}"
+echo "---------------------------------------------------------------------------------------"
+
+cd "$ROOTDIR"
+./gradlew --console=plain "${builds[@]}" -PdockerImagePrefix=${IMAGE_PREFIX}
+
+echo "---------------------------------------------------------------------------------------"
+
