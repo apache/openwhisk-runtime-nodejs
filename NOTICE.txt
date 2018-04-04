@@ -1,0 +1,31 @@
+Apache OpenWhisk Runtime NodeJS
+Copyright 2016-2018 The Apache Software Foundation
+
+This product includes software developed at
+The Apache Software Foundation (http://www.apache.org/).
+
+========================================================================
+MIT License
+========================================================================
+
+The following components are provided under the MIT License. See project link for details.
+
+     (MIT License) gradle-scalafmt (cz.alenkacz:gradle-scalafmt:1.6.0 - https://github.com/alenkacz/gradle-scalafmt)
+     (MIT License) body-parser (body-parser:1.15.2 - https://www.npmjs.com/package/body-parser)
+     (MIT License) express (express:4.14.0 - https://www.npmjs.com/package/express)
+
+========================================================================
+MIT License and Apache 2.0 License
+========================================================================
+
+The following components are provided under the MIT License and Apache 2.0 License. See project link for details.
+
+     (Dual-licensed MIT License and Apache-2.0 License)   "btoa": "1.1.2", (https://www.npmjs.com/package/btoa)
+
+========================================================================
+BSD 3-Clause "New" or "Revised" License
+========================================================================
+
+The following components are provided under the BSD 3-Clause "New" or "Revised" License. See project link for details.
+
+     (BSD 3-Clause "New" or "Revised" License) Scala Library (org.scala-lang:scala-library - https://mvnrepository.com/artifact/org.scala-lang/scala-library)
