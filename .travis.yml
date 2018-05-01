@@ -19,7 +19,7 @@ sudo: required
 group: deprecated-2017Q3
 language: scala
 services:
-- docker
+  - docker
 
 notifications:
   email: false
@@ -29,16 +29,21 @@ notifications:
       secure: "uCb2cZQRl1aJzdzQvI5acERfxqnQMQHwQn1eq/Vm6aD9yHLZBdYJ+g6Uj6a6QtVo/AodNsyQvj3MtcOEIim5ZyC8UTVISEAo7QmtwPdjLuH7mC57jFY48RPTJ7GUdpxUkwF2hVK4VtM3mF1nWeKUaLOdgu80EV4yLqLfTsLPsH45GLxnZ4+lF95ofYRTUDg3gZ34PoHxzMZkOStRHRmN3ceRmlUkfWanWqBx2MsU80D7hf7JIRjOdXRw3hyrjyRiF5c0mAprh9R7J4i9BdM5dyI0UfDXZ13afS9w9wRpvO4LQZ2F3NyhbK+Dn0V9kXEuY+gQJnDJOrz+pyKjQxpIgQ/I9jP6OizUt+4lWJ9c9IxPVSAoMllQuww5LFHcL6Ch10aVn1iqo/VeLyvZUZoqrvNRNwXR4RyAaQ3NrNIo1HVK56LIsBtq3i6ePFwJJHcI9cL5opqTUec4VFFTivNC5Jo+pSOYkYEzk+eXacIMYUPd0T0AlzR4ZbH1BDcZuDjZpb+jbJdHzTPYlYCtyGUyFMm7hqrDsO4VTLYbl3f6ZutgODM1/IycDJ99Y3620n8dFXLjiIZCkvmJIKjMrmWoPWdSfKFcxL/jfdcvyue3j+tOPnCWwJFqoJPH+4N+8B+QG1SQGURrZ0sqFZcTrbDA4jzv1fHZJMe9Omh75wkHf7k="
 
 before_install:
-- "./tools/travis/setup.sh"
+  - "./tools/travis/setup.sh"
 install: true
 script:
-- "./tools/travis/build.sh && ./tools/travis/deploy.sh && ./tools/travis/test.sh"
+  - "./tools/travis/build.sh && ./tools/travis/deploy.sh && ./tools/travis/test.sh"
 deploy:
-- provider: script
-  script: "./tools/travis/publish.sh openwhisk ${TRAVIS_TAG%@*} ${TRAVIS_TAG##*@}"
-  on:
-    tags: true
-    all_branches: true
+  - provider: script
+    script: "./tools/travis/publish.sh openwhisk ${TRAVIS_TAG%@*} ${TRAVIS_TAG##*@}"
+    on:
+      tags: true
+      all_branches: true
+  - provider: script
+    script: "./tools/travis/publish.sh openwhisk 6 master && ./tools/travis/publish.sh openwhisk 8 master"
+    on:
+      branch: master
+
 env:
   global:
   - secure: Y1ldwIQ6bc3/3Pc0E+qQ6K2M830B9BObYDlsNilPwF/kak3YSfF7SuXuRbJGjTdhH2KOotZD2CwONgP2yvOSPBToC/HpnXYfAGtgblrxQORvgdik88CFWa3Lli1pwlpdzKQNWhBvglzq+IIS98wqzmwqGr8zKA+Iau2ByHdb1j3M9rrIY9V6oU9Gwim1apcRyfI/as3+QfPtt8BUAl2U7+PprxwJigyF/mcZnBJbd7IjrilE2gldZLxKlBiffoKVBinrEg3IQGJPt6k8riw264pBQEpcA0ZBsPUvMaISSxLb+d1ymp3WsiTJUjv+URR/HcdDa7P9jY+ouc8PQz4Yt+Ii38lM2tQU480APfVTyfj6drkjL/+54mYuxm8TzkBWcM2j6/FYT+8HvK/pF35wDJ3El+jGq7BARXg8HVxFsZgynJnhqhWDQb3xX9fK+N4K8+ct+HlsOSa5mP5i5Yo6WRTrWrFpyxVnv9crKePCiYqA2Y8ta8Wnh0sM06nLRtDbfbDjvXPQbaZqSnL4B2Cto08YoT/W/lu8QgJ3EEFlUdDOke4kv9yoXtuE0h7+8dwOvBNMVrBis3G2EYObgR4WmWjk4loYhqT9h3jrH0/5bGLzSKc++qYW0rOZ/RB21cRSe1ILQvSzWkImUoPI8b0i5baGSDq3EjTXYr3pIXSYpQk=
