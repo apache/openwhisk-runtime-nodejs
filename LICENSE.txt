@@ -422,7 +422,7 @@ Apache CouchDB Nano 6.2.0 (nano - https://github.com/apache/couchdb-nano/)
   License included at licenses/LICENSE-nano.txt, or https://github.com/apache/couchdb-nano/blob/master/LICENSE
   Copyright (c) 2016 IBM Cloudant, Inc. All rights reserved.
 
-OpenWhisk Client for JavaScript 3.14.0 (openwhisk - https://github.com/apache/incubator-openwhisk-client-js/)
+OpenWhisk Client for JavaScript 3.15.0 (openwhisk - https://github.com/apache/incubator-openwhisk-client-js/)
   License included at licenses/LICENSE-openwhisk.txt, or https://github.com/apache/incubator-openwhisk-client-js/blob/master/LICENSE.txt
   Copyright 2015-2016  IBM Corporation
 
