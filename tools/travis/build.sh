@@ -31,7 +31,7 @@ IMAGE_PREFIX="testing"
 
 # run scancode using the ASF Release configuration
 cd $UTILDIR
-scancode/scanCode.py --config scancode/ASF-Release.cfg $ROOTDIR
+scancode/scanCode.py --config scancode/ASF-Release-v2.cfg $ROOTDIR
 
 # Build OpenWhisk
 cd $WHISKDIR
