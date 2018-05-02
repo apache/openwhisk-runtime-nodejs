@@ -125,8 +125,3 @@ Using IntelliJ:
 -Dhttp.proxyHost=localhost
 -Dhttp.proxyPort=3128
 ```
-
-# License
-[Apache 2.0](LICENSE.txt)
-
-
