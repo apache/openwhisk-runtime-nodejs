@@ -25,40 +25,34 @@ ROOTDIR=$(cd "$SCRIPTDIR/../.." && pwd)
 WHISKDIR=$(cd "$ROOTDIR/../openwhisk" && pwd)
 UTILDIR=$(cd "$ROOTDIR/../incubator-openwhisk-utilities" && pwd)
 
-export OPENWHISK_HOME=$WHISKDIR
-
 IMAGE_PREFIX="testing"
 
 # run scancode using the ASF Release configuration
+echo "---------------------------------------------------------------------------------------"
+echo " Checking for well-formed code "
+echo "---------------------------------------------------------------------------------------"
 cd "$UTILDIR"
 scancode/scanCode.py --config scancode/ASF-Release-v2.cfg "$ROOTDIR"
 
 # Build OpenWhisk
+echo "---------------------------------------------------------------------------------------"
+echo " Building common test components "
+echo "---------------------------------------------------------------------------------------"
 cd "$WHISKDIR"
 
-#pull down images
-docker pull openwhisk/controller
-docker tag openwhisk/controller ${IMAGE_PREFIX}/controller
-docker pull openwhisk/invoker
-docker tag openwhisk/invoker ${IMAGE_PREFIX}/invoker
-
 ./gradlew --console=plain \
-:common:scala:install \
-:core:controller:install \
-:core:invoker:install \
-:tests:install
+  :common:scala:install \
+  :core:controller:install \
+  :core:invoker:install \
+  :tests:install
 
-# Nothing sucks more than collisions during a tagged build.
-case "${TRAVIS_TAG%@*}" in
+# Determine which NodeJS(s) are to be built in this run
+# shellcheck disable=SC2016
+case "$NODEJS_VERSION" in
   6) builds=( :core:nodejs6Action:dockerBuildImage );;
   8) builds=( :core:nodejs8Action:dockerBuildImage );;
-  *) builds=( :core:nodejs6Action:dockerBuildImage :core:nodejs8Action:dockerBuildImage )
+  *) echo 'Must set a value $NODEJS_VERSION'; exit 256;;
 esac
-
-# For pull requests, force a local-only build
-if [ "$TRAVIS_PULL_REQUEST" != "false" ]; then
-  export docker_local_json='{"amd64":null}'
-fi
 
 # Build runtime
 echo "---------------------------------------------------------------------------------------"
@@ -66,6 +60,7 @@ echo " Building " "${builds[@]}"
 echo "---------------------------------------------------------------------------------------"
 
 cd "$ROOTDIR"
+export docker_local_json='{"local":null}'
 ./gradlew --console=plain "${builds[@]}" -PdockerImagePrefix=${IMAGE_PREFIX}
 
 echo "---------------------------------------------------------------------------------------"
