@@ -61,7 +61,7 @@ echo "--------------------------------------------------------------------------
 
 cd "$ROOTDIR"
 export docker_local_json='{"local":null}'
-./gradlew --console=plain "${builds[@]}" -PdockerImagePrefix=${IMAGE_PREFIX}
+./gradlew --stacktrace --console=plain "${builds[@]}" -PdockerImagePrefix=${IMAGE_PREFIX}
 
 echo "---------------------------------------------------------------------------------------"
 
