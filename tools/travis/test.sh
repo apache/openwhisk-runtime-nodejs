@@ -16,26 +16,17 @@
 # limitations under the License.
 #
 
-set -ex
-
-# Build script for Travis-CI.
+set -e
 
 SCRIPTDIR=$(cd $(dirname "$0") && pwd)
-ROOTDIR="$SCRIPTDIR/../.."
-WHISKDIR="$ROOTDIR/../openwhisk"
+ROOTDIR=$(cd "$SCRIPTDIR/../.." && pwd)
 
-export OPENWHISK_HOME=$WHISKDIR
-
-# Nothing sucks more than collisions during a tagged build.
-case "${TRAVIS_TAG%@*}" in
+case "$NODEJS_VERSION" in
   6) tests='*NodeJsActionContainerTests*' ;;
   8) tests='*NodeJs8ActionContainerTests*' ;;
-  *) tests='*NodeJs*Tests*'
+  *) echo 'Must set a value $NODEJS_VERSION'; exit 256;;
 esac
 
-cd ${ROOTDIR}
+cd "$ROOTDIR"
 TERM=dumb ./gradlew :tests:checkScalafmtAll
 TERM=dumb ./gradlew :tests:test --tests "${tests}"
-
-
-
