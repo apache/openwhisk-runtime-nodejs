@@ -22,7 +22,7 @@ SCRIPTDIR=$(cd $(dirname "$0") && pwd)
 ROOTDIR=$(cd "$SCRIPTDIR/../.." && pwd)
 
 case "$NODEJS_VERSION" in
-  6) tests='*NodeJsActionContainerTests*' ;;
+  6) tests='*NodeJs6ActionContainerTests*' ;;
   8) tests='*NodeJs8ActionContainerTests*' ;;
   *) echo 'Must set a value $NODEJS_VERSION'; exit 256;;
 esac
