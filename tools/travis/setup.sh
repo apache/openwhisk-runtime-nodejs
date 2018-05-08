@@ -29,7 +29,7 @@ cd $HOMEDIR
 git clone https://github.com/apache/incubator-openwhisk-utilities.git
 
 # clone main openwhisk repo. for testing purposes
-git clone --branch "${OW_REPO_BRANCH:-master} --depth=1 \
+git clone --branch "${OW_REPO_BRANCH:-master}" --depth=1 \
   "https://github.com/${OW_REPO_OWNER:-apache}/incubator-openwhisk.git" openwhisk
 cd openwhisk
 ./tools/travis/setup.sh
