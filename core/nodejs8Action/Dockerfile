@@ -14,7 +14,7 @@
 # specific language governing permissions and limitations under the License.
 #
 
-FROM node:8.11.1
+FROM node:8.11.2
 RUN apt-get update && apt-get install -y \
     imagemagick \
     unzip \
