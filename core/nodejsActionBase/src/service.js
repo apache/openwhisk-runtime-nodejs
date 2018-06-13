@@ -16,7 +16,7 @@
  */
 
 var NodeActionRunner = require('../runner');
-var fs = require('fs');
+const fs = require('fs');
 
 function NodeActionService(config) {
     var Status = {
