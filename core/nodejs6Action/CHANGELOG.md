@@ -19,6 +19,11 @@
 
 # NodeJS 6 OpenWhisk Runtime Container
 
+## 1.9.2
+Change: Update Node.js
+
+Node.js version = 6.14.3
+
 ## 1.9.1
 Change: Update Node.js
 
