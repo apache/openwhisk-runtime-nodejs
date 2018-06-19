@@ -16,25 +16,11 @@
  */
 
 var NodeActionRunner = require('../runner');
-var fs = require('fs');
 
 function NodeActionService(config) {
-    var Status = {
-        ready: 'ready',
-        starting: 'starting',
-        running: 'running',
-        stopped: 'stopped'
-    };
 
-    var status = Status.ready;
     var server = undefined;
     var userCodeRunner = undefined;
-
-    function setStatus(newStatus) {
-        if (status !== Status.stopped) {
-            status = newStatus;
-        }
-    }
 
     /**
      * An ad-hoc format for the endpoints returning a Promise representing,
