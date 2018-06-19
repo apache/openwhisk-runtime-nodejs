@@ -30,9 +30,8 @@ invoker_allow_multiple_instances: true
 
 env_hosts_dir: "{{ playbook_dir }}/environments/local"
 
+skip_pull_runtimes: true
 runtimes_manifest:
-  defaultImagePrefix: "openwhisk"
-  defaultImageTag: "latest"
   runtimes:
     nodejs:
     - kind: "nodejs:6"
