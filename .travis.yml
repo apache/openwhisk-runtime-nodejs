@@ -39,10 +39,12 @@ deploy:
     on:
       tags: true
       all_branches: true
+      repo: apache/openwhisk-incubator-runtime-nodejs
   - provider: script
     script: "./tools/travis/publish.sh openwhisk 6 master && ./tools/travis/publish.sh openwhisk 8 master"
     on:
       branch: master
+      repo: apache/openwhisk-incubator-runtime-nodejs
 
 env:
   global:
