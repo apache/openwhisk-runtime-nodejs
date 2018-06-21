@@ -588,14 +588,20 @@ abstract class NodeJsActionContainerTests extends BasicActionRunnerTests with Ws
 
   it should "allow running activations concurrently" in {
     val (out, err) = withNodeJsContainer { c =>
-      //this action will create a log entry, and only complete once all 3 activations have arrived and emitted logs
+      //this action will create a log entry, and only complete once all activations have arrived and emitted logs
       val code =
         s"""
+           | global.count = 0;
            | function main(args) {
+           |     global.count++;
            |     console.log("interleave me");
            |     return new Promise(function(resolve, reject) {
            |         setTimeout(function() {
-           |             resolve({ args: args});
+           |             if (global.count == 2) {
+           |                 resolve({ args: args});
+           |             } else {
+           |                 reject("did not receive 2 activations within 10s");
+           |             }
            |         }, 10000);
            |    });
            | }
@@ -609,7 +615,7 @@ abstract class NodeJsActionContainerTests extends BasicActionRunnerTests with Ws
         runPayload(_)
       })
       payloads.foreach { a =>
-        //responses should contain(200, Some(JsObject("args" -> a)))
+        responses should contain(200, Some(JsObject("args" -> a)))
       }
     }
 
