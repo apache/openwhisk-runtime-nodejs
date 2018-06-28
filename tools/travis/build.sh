@@ -48,6 +48,7 @@ TERM=dumb ./gradlew \
 :common:scala:install \
 :core:controller:install \
 :core:invoker:install \
+:tools:admin:install \
 :tests:install
 
 # Build runtime
