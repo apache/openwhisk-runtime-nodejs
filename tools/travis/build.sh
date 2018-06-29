@@ -31,10 +31,6 @@ export OPENWHISK_HOME=$WHISKDIR
 cd $UTILDIR
 scancode/scanCode.py --config scancode/ASF-Release.cfg $ROOTDIR
 
-# Build OpenWhisk deps
-cd $OPENWHISK_HOME
-TERM=dumb ./gradlew install
-
 # Build runtime
 cd $ROOTDIR
 TERM=dumb ./gradlew \
