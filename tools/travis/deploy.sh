@@ -26,17 +26,19 @@ WHISKDIR="$ROOTDIR/../openwhisk"
 
 export OPENWHISK_HOME=$WHISKDIR
 
-IMAGE_PREFIX="testing"
+# Pull core images
+docker pull openwhisk/controller
+docker pull openwhisk/invoker
 
 # Deploy OpenWhisk
 cd $WHISKDIR/ansible
-ANSIBLE_CMD="ansible-playbook -i ${ROOTDIR}/ansible/environments/local -e docker_image_prefix=${IMAGE_PREFIX}"
+ANSIBLE_CMD="ansible-playbook -i ${ROOTDIR}/ansible/environments/local"
 $ANSIBLE_CMD setup.yml
 $ANSIBLE_CMD prereq.yml
 $ANSIBLE_CMD couchdb.yml
 $ANSIBLE_CMD initdb.yml
 $ANSIBLE_CMD wipe.yml
-$ANSIBLE_CMD openwhisk.yml -e cli_installation_mode=remote
+$ANSIBLE_CMD openwhisk.yml
 
 docker images
 docker ps
