@@ -523,6 +523,30 @@ abstract class NodeJsActionContainerTests extends BasicActionRunnerTests with Ws
     }
   }
 
+  it should "set correct cwd for zipped actions" in {
+    val srcs = Seq(
+      Seq("package.json") -> examplePackageDotJson,
+      Seq("test.txt") -> "test text",
+      Seq("index.js") -> s"""
+                           | const fs = require('fs');
+                           | exports.main = function (args) {
+                           |     const fileData = fs.readFileSync('./test.txt').toString();
+                           |     return { result1: fileData,
+                           |              result2: __dirname === process.cwd() };
+                           | }
+                         """.stripMargin)
+
+    val code = ZipBuilder.mkBase64Zip(srcs)
+
+    withNodeJsContainer { c =>
+      c.init(initPayload(code))._1 should be(200)
+
+      val (runCode, runRes) = c.run(runPayload(JsObject()))
+      runRes.get.fields.get("result1") shouldBe Some(JsString("test text"))
+      runRes.get.fields.get("result2") shouldBe Some(JsBoolean(true))
+    }
+  }
+
   it should "support default function parameters" in {
     val (out, err) = withNodeJsContainer { c =>
       val code = """
