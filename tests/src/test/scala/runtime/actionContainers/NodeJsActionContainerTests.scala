@@ -35,58 +35,80 @@ abstract class NodeJsActionContainerTests extends BasicActionRunnerTests with Ws
 
   behavior of nodejsContainerImageName
 
-  testNotReturningJson("""
+  override val testNoSourceOrExec = {
+    TestConfig("")
+  }
+
+  override val testNotReturningJson = {
+    TestConfig(
+      """
         |function main(args) {
         |    return "not a json object"
         |}
-        """.stripMargin)
+      """.stripMargin,
+      enforceEmptyErrorStream = false)
+  }
 
-  testEcho(Seq {
-    (
-      "node",
+  override val testEcho = {
+    TestConfig("""
+      |function main(args) {
+      |    console.log('hello stdout')
+      |    console.error('hello stderr')
+      |    return args
+      |}
+    """.stripMargin)
+  }
+
+  override val testUnicode = {
+    TestConfig("""
+      |function main(args) {
+      |    var str = args.delimiter + " ☃ " + args.delimiter;
+      |    console.log(str);
+      |    return { "winter": str };
+      |}
+    """.stripMargin.trim)
+  }
+
+  override val testEnv = {
+    TestConfig("""
+      |function main(args) {
+      |    return {
+      |       "api_host": process.env['__OW_API_HOST'],
+      |       "api_key": process.env['__OW_API_KEY'],
+      |       "namespace": process.env['__OW_NAMESPACE'],
+      |       "action_name": process.env['__OW_ACTION_NAME'],
+      |       "activation_id": process.env['__OW_ACTIVATION_ID'],
+      |       "deadline": process.env['__OW_DEADLINE']
+      |    }
+      |}
+    """.stripMargin.trim)
+  }
+
+  override val testInitCannotBeCalledMoreThanOnce = {
+    TestConfig("""
+      |function main(args) {
+      |    return args
+      |}
+    """.stripMargin)
+  }
+
+  override val testEntryPointOtherThanMain = {
+    TestConfig(
       """
-          |function main(args) {
-          |    console.log('hello stdout')
-          |    console.error('hello stderr')
-          |    return args
-          |}
-          """.stripMargin)
-  })
+      | function niam(args) {
+      |     return args;
+      | }
+    """.stripMargin,
+      main = "niam")
+  }
 
-  testUnicode(Seq {
-    (
-      "node",
-      """
-         |function main(args) {
-         |    var str = args.delimiter + " ☃ " + args.delimiter;
-         |    console.log(str);
-         |    return { "winter": str };
-         |}
-         """.stripMargin.trim)
-  })
-
-  testEnv(Seq {
-    (
-      "node",
-      """
-         |function main(args) {
-         |    return {
-         |       "api_host": process.env['__OW_API_HOST'],
-         |       "api_key": process.env['__OW_API_KEY'],
-         |       "namespace": process.env['__OW_NAMESPACE'],
-         |       "action_name": process.env['__OW_ACTION_NAME'],
-         |       "activation_id": process.env['__OW_ACTIVATION_ID'],
-         |       "deadline": process.env['__OW_DEADLINE']
-         |    }
-         |}
-         """.stripMargin.trim)
-  })
-
-  testInitCannotBeCalledMoreThanOnce("""
+  override val testLargeInput = {
+    TestConfig("""
         |function main(args) {
         |    return args
         |}
       """.stripMargin)
+  }
 
   it should "fail to initialize with bad code" in {
     val (out, err) = withNodeJsContainer { c =>
@@ -494,20 +516,6 @@ abstract class NodeJsActionContainerTests extends BasicActionRunnerTests with Ws
         (o + e).toLowerCase should include("error")
         (o + e).toLowerCase should include("zipped actions must contain either package.json or index.js at the root.")
     })
-  }
-
-  it should "support actions using non-default entry point" in {
-    val (out, err) = withNodeJsContainer { c =>
-      val code = """
-            | function niam(args) {
-            |     return { result: "it works" };
-            | }
-            """.stripMargin
-
-      c.init(initPayload(code, main = "niam"))._1 should be(200)
-      val (runCode, runRes) = c.run(runPayload(JsObject()))
-      runRes.get.fields.get("result") shouldBe Some(JsString("it works"))
-    }
   }
 
   it should "support zipped actions using non-default entry point" in {
