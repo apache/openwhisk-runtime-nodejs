@@ -19,6 +19,11 @@
 
 # NodeJS 6 OpenWhisk Runtime Container
 
+## 1.9.3
+Changes:
+  - Disallow re-initialization.
+  - Fix bug where some log messages appear after the log maker.
+
 ## 1.9.2
 Change: Update Node.js
 

@@ -25,7 +25,7 @@ import spray.json._
 
 abstract class NodeJsActionContainerTests extends BasicActionRunnerTests with WskActorSystem {
 
-  lazy val nodejsContainerImageName = "nodejs6action"
+  val nodejsContainerImageName: String
 
   override def withActionContainer(env: Map[String, String] = Map.empty)(code: ActionContainer => Unit) = {
     withContainer(nodejsContainerImageName, env)(code)
@@ -81,6 +81,12 @@ abstract class NodeJsActionContainerTests extends BasicActionRunnerTests with Ws
          |}
          """.stripMargin.trim)
   })
+
+  testInitCannotBeCalledMoreThanOnce("""
+        |function main(args) {
+        |    return args
+        |}
+      """.stripMargin)
 
   it should "fail to initialize with bad code" in {
     val (out, err) = withNodeJsContainer { c =>
