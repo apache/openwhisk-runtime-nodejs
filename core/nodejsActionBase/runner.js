@@ -58,6 +58,8 @@ function NodeActionRunner() {
                 }
 
                 try {
+                    // Set the executable directory to the project dir
+                    process.chdir(moduleDir);
                     thisRunner.userScriptMain = eval('require("' + moduleDir + '").' + message.main);
                     assertMainIsFunction();
                     // The value 'true' has no special meaning here;
