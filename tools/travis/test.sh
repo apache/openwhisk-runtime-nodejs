@@ -25,15 +25,6 @@ ROOTDIR="$SCRIPTDIR/../.."
 WHISKDIR="$ROOTDIR/../openwhisk"
 
 export OPENWHISK_HOME=$WHISKDIR
-
-# Build OpenWhisk deps before we run tests
-cd ${OPENWHISK_HOME}
-TERM=dumb ./gradlew install
-
-
 cd ${ROOTDIR}
 TERM=dumb ./gradlew :tests:checkScalafmtAll
-TERM=dumb ./gradlew :tests:test --tests *NodeJs*Tests
-
-
-
+TERM=dumb ./gradlew :tests:test

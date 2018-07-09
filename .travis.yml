@@ -32,7 +32,7 @@ before_install:
   - "./tools/travis/setup.sh"
 install: true
 script:
-  - "./tools/travis/build.sh && ./tools/travis/deploy.sh && ./tools/travis/test.sh"
+  - "./tools/travis/build.sh && ./tools/travis/test.sh"
 deploy:
   - provider: script
     script: "./tools/travis/publish.sh openwhisk ${TRAVIS_TAG%@*} ${TRAVIS_TAG##*@}"
