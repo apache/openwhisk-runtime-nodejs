@@ -33,9 +33,9 @@ WORKDIR /nodejsAction
 
 # Install app dependencies
 RUN rm -rf .project .settings build.xml Dockerfile README node_modules logs
-RUN npm install .
-
-RUN npm install \
+RUN cd / && npm install .
+# In nodejsActionBase we copied the package.json file to the root of the container, this is what we are installing here, as to not be overriden by user set packages
+RUN cd / && npm install --no-package-lock \
 apn@2.1.2 \
 async@2.1.4 \
 body-parser@1.15.2 \
