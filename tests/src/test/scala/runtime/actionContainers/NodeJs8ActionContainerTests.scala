@@ -19,12 +19,13 @@ package runtime.actionContainers
 
 import org.junit.runner.RunWith
 import org.scalatest.junit.JUnitRunner
-import spray.json.JsObject
+import spray.json.{JsObject}
 
 @RunWith(classOf[JUnitRunner])
 class NodeJs8ActionContainerTests extends NodeJsNonConcurrentTests {
 
   override lazy val nodejsContainerImageName = "action-nodejs-v8"
+  override lazy val nodejsTestDockerImageName = "nodejs8docker"
 
   it should "support async and await" in {
     withNodeJsContainer { c =>

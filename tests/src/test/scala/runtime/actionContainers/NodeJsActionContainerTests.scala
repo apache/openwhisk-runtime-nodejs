@@ -17,8 +17,10 @@
 
 package runtime.actionContainers
 
+import java.io.File
+
 import common.WskActorSystem
-import actionContainers.{ActionContainer, BasicActionRunnerTests}
+import actionContainers.{ActionContainer, BasicActionRunnerTests, ResourceHelpers}
 import actionContainers.ActionContainer.withContainer
 import actionContainers.ResourceHelpers.ZipBuilder
 import spray.json._
@@ -26,6 +28,7 @@ import spray.json._
 abstract class NodeJsActionContainerTests extends BasicActionRunnerTests with WskActorSystem {
 
   val nodejsContainerImageName: String
+  val nodejsTestDockerImageName: String
 
   override def withActionContainer(env: Map[String, String] = Map.empty)(code: ActionContainer => Unit) = {
     withContainer(nodejsContainerImageName, env)(code)
@@ -586,4 +589,44 @@ abstract class NodeJsActionContainerTests extends BasicActionRunnerTests with Ws
     })
   }
 
+  it should "use user provided npm packages in a zip file" in {
+    val datdir = "tests/dat/actions"
+    val filePath = new File(datdir, "nodejs-test.zip").toString()
+    val zipPath = new File(filePath).toPath
+    val code = ResourceHelpers.readAsBase64(zipPath)
+    withNodeJsContainer { c =>
+      c.init(initPayload(code))._1 should be(200)
+
+      val (runCode, runRes) = c.run(runPayload(JsObject()))
+      runRes.get.fields.get("message") shouldBe Some(JsString("success"))
+    }
+  }
+
+  it should "use user provided packages in Docker Actions" in {
+    withContainer(nodejsTestDockerImageName) { c =>
+      val code =
+        """
+                   | function main(args) {
+                   |  var ow = require('openwhisk');
+                   |  // actions only exists on 2.* versions of openwhisk, not 3.*, so if this was 3.* it would throw an error,
+                   |  var actions = ow().actions;
+                   |
+                   |  return { "message": "success" };
+                   |}
+                 """.stripMargin
+
+      val (initCode, err) = c.init(initPayload(code))
+
+      initCode should be(200)
+
+      // WHEN I run an action that requires ws and socket.io.client
+      val (runCode, runRes) = c.run(runPayload(JsObject()))
+
+      // THEN it should pass only when these packages are available
+      runCode should be(200)
+
+      runRes shouldBe defined
+      runRes.get.fields.get("message") shouldBe Some(JsString("success"))
+    }
+  }
 }
