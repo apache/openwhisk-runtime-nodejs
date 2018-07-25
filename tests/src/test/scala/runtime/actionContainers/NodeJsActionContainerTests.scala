@@ -586,47 +586,4 @@ abstract class NodeJsActionContainerTests extends BasicActionRunnerTests with Ws
     })
   }
 
-  it should "allow running activations concurrently" in {
-    val (out, err) = withNodeJsContainer { c =>
-      //this action will create a log entry, and only complete once all activations have arrived and emitted logs
-      val code =
-        s"""
-           | global.count = 0;
-           | function main(args) {
-           |     global.count++;
-           |     console.log("interleave me");
-           |     return new Promise(function(resolve, reject) {
-           |         setTimeout(function() {
-           |             if (global.count == 2) {
-           |                 resolve({ args: args});
-           |             } else {
-           |                 reject("did not receive 2 activations within 10s");
-           |             }
-           |         }, 10000);
-           |    });
-           | }
-        """.stripMargin
-
-      c.init(initPayload(code))._1 should be(200)
-
-      val payloads = Seq(JsObject("arg1" -> JsString("value1")), JsObject("arg2" -> JsString("value2")))
-
-      val responses = c.runMultiple(payloads.map {
-        runPayload(_)
-      })
-      payloads.foreach { a =>
-        responses should contain(200, Some(JsObject("args" -> a)))
-      }
-    }
-
-    checkStreams(out, err, {
-      case (o, e) =>
-        o.replaceAll("\n", "") shouldBe "interleave meinterleave me"
-        e shouldBe empty
-    }, 2)
-
-    withClue("expected grouping of stdout sentinels") {
-      out should include((1 to 2).map(_ => ActionContainer.sentinel + "\n").mkString)
-    }
-  }
 }
