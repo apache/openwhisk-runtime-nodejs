@@ -16,11 +16,26 @@
  */
 
 var NodeActionRunner = require('../runner');
+var fs = require('fs');
 
 function NodeActionService(config) {
+    var Status = {
+        ready: 'ready',
+        starting: 'starting',
+        running: 'running',
+        stopped: 'stopped'
+    };
 
+    var status = Status.ready;
+    var ignoreRunStatus = config.allowConcurrent === undefined ? false : config.allowConcurrent.toLowerCase() === "true";
     var server = undefined;
     var userCodeRunner = undefined;
+
+    function setStatus(newStatus) {
+        if (status !== Status.stopped) {
+            status = newStatus;
+        }
+    }
 
     /**
      * An ad-hoc format for the endpoints returning a Promise representing,
@@ -98,10 +113,14 @@ function NodeActionService(config) {
      */
     this.runCode = function runCode(req) {
         if (status === Status.ready) {
-            setStatus(Status.running);
+            if (!ignoreRunStatus) {
+                setStatus(Status.running);
+            }
 
             return doRun(req).then(function (result) {
-                setStatus(Status.ready);
+                if (!ignoreRunStatus) {
+                    setStatus(Status.ready);
+                }
 
                 if (typeof result !== "object") {
                     return errorMessage(502, "The action did not return a dictionary.");
