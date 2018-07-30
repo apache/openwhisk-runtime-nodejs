@@ -26,7 +26,7 @@ abstract class NodeJsConcurrentTests extends NodeJsActionContainerTests {
   override lazy val nodejsContainerImageName = "action-nodejs-v8"
 
   override def withNodeJsContainer(code: ActionContainer => Unit) =
-    withActionContainer(Map("OW_ALLOW_CONCURRENT" -> "true"))(code)
+    withActionContainer(Map("__OW_ALLOW_CONCURRENT" -> "true"))(code)
 
   it should "allow running activations concurrently" in {
 
