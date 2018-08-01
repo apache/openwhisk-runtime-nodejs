@@ -19,6 +19,11 @@
 
 # NodeJS 8 OpenWhisk Runtime Container
 
+## 1.8.0
+Change: Update runtime to work in concurrent mode
+
+- Update runtime to work in concurrent mode [#41](https://github.com/apache/incubator-openwhisk-runtime-nodejs/pull/41/files)
+
 ## 1.7.0
 Change: Update openwhisk npm package from `3.15.0` to `3.16.0`
 

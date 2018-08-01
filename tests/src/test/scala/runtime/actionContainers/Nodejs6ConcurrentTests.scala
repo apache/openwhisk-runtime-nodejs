@@ -21,8 +21,6 @@ import org.junit.runner.RunWith
 import org.scalatest.junit.JUnitRunner
 
 @RunWith(classOf[JUnitRunner])
-class NodeJs6ActionContainerTests extends NodeJsNonConcurrentTests {
-
+class Nodejs6ConcurrentTests extends NodeJsConcurrentTests {
   override lazy val nodejsContainerImageName = "nodejs6action"
-
 }

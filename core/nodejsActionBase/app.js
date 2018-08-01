@@ -17,7 +17,8 @@
 
 var config = {
         'port': 8080,
-        'apiHost': process.env.__OW_API_HOST
+        'apiHost': process.env.__OW_API_HOST,
+        'allowConcurrent': process.env.__OW_ALLOW_CONCURRENT
 };
 
 var bodyParser = require('body-parser');

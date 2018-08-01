@@ -27,6 +27,7 @@ function NodeActionService(config) {
     };
 
     var status = Status.ready;
+    var ignoreRunStatus = config.allowConcurrent === undefined ? false : config.allowConcurrent.toLowerCase() === "true";
     var server = undefined;
     var userCodeRunner = undefined;
 
@@ -112,10 +113,14 @@ function NodeActionService(config) {
      */
     this.runCode = function runCode(req) {
         if (status === Status.ready) {
-            setStatus(Status.running);
+            if (!ignoreRunStatus) {
+                setStatus(Status.running);
+            }
 
             return doRun(req).then(function (result) {
-                setStatus(Status.ready);
+                if (!ignoreRunStatus) {
+                    setStatus(Status.ready);
+                }
 
                 if (typeof result !== "object") {
                     return errorMessage(502, "The action did not return a dictionary.");

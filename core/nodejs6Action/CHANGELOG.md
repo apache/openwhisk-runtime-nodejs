@@ -19,6 +19,11 @@
 
 # NodeJS 6 OpenWhisk Runtime Container
 
+## 1.11.0
+Change: Update runtime to work in concurrent mode
+
+- Update runtime to work in concurrent mode [#41](https://github.com/apache/incubator-openwhisk-runtime-nodejs/pull/41/files)
+
 ## 1.10.0
 Change: Update npm openwhisk package from `3.15.0` to `3.16.0`
 

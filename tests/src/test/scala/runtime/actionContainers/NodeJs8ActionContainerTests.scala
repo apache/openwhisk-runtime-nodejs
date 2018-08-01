@@ -22,7 +22,7 @@ import org.scalatest.junit.JUnitRunner
 import spray.json.JsObject
 
 @RunWith(classOf[JUnitRunner])
-class NodeJs8ActionContainerTests extends NodeJsActionContainerTests {
+class NodeJs8ActionContainerTests extends NodeJsNonConcurrentTests {
 
   override lazy val nodejsContainerImageName = "action-nodejs-v8"
 
