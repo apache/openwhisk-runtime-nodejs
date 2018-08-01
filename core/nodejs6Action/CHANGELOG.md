@@ -19,6 +19,11 @@
 
 # NodeJS 6 OpenWhisk Runtime Container
 
+## 1.10.0
+Change: Update npm openwhisk package from `3.15.0` to `3.16.0`
+
+- [openwhisk v3.16.0](https://www.npmjs.com/package/openwhisk) - JavaScript client library for the OpenWhisk platform. Provides a wrapper around the OpenWhisk APIs.
+
 ## 1.9.3
 Changes:
   - Disallow re-initialization.
