@@ -156,12 +156,14 @@ function NodeActionService(config) {
     }
 
     function doRun(req) {
-        var msg = req.body || {};
-
-        var props = [ 'api_key', 'namespace', 'action_name', 'activation_id', 'deadline' ];
-        props.map(function (p) {
-            process.env['__OW_' + p.toUpperCase()] = msg[p];
-        });
+        var msg = req && req.body || {};
+        Object.keys(msg).forEach(
+            function (k) {
+                if(typeof msg[k] === 'string' && k !== 'value'){
+                    process.env['__OW_' + k.toUpperCase()] = msg[k];
+                }
+            }
+        );
 
         return userCodeRunner.run(msg.value).then(function(result) {
             if (typeof result !== "object") {
