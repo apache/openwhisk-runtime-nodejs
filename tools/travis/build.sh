@@ -41,13 +41,5 @@ echo "vcap.services.file=" >> whisk.properties
 # Build runtime and dependencies
 cd $ROOTDIR
 
-# Build runtime
-TERM=dumb ./gradlew \
-:core:nodejs6Action:distDocker \
-:core:nodejs8Action:distDocker
-
-# Build test dependency containers
-docker build --tag nodejs6docker ./tests/dat/docker/nodejs6docker/
-docker build --tag nodejs8docker ./tests/dat/docker/nodejs8docker/
-docker tag nodejs6docker nodejs6docker:latest
-docker tag nodejs8docker nodejs8docker:latest
+# Build runtime & test dependencies
+TERM=dumb ./gradlew distDocker

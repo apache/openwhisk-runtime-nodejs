@@ -590,9 +590,7 @@ abstract class NodeJsActionContainerTests extends BasicActionRunnerTests with Ws
   }
 
   it should "use user provided npm packages in a zip file" in {
-    val datdir = "tests/dat/actions"
-    val filePath = new File(datdir, "nodejs-test.zip").toString()
-    val zipPath = new File(filePath).toPath
+    val zipPath = new File("tests/dat/actions/nodejs-test.zip").toPath
     val code = ResourceHelpers.readAsBase64(zipPath)
     withNodeJsContainer { c =>
       c.init(initPayload(code))._1 should be(200)
@@ -614,15 +612,12 @@ abstract class NodeJsActionContainerTests extends BasicActionRunnerTests with Ws
                    |  return { "message": "success" };
                    |}
                  """.stripMargin
-
+      // Initialization of the code should be successful
       val (initCode, err) = c.init(initPayload(code))
-
       initCode should be(200)
 
-      // WHEN I run an action that requires ws and socket.io.client
+      // Running the code should be successful and return a 200 status
       val (runCode, runRes) = c.run(runPayload(JsObject()))
-
-      // THEN it should pass only when these packages are available
       runCode should be(200)
 
       runRes shouldBe defined

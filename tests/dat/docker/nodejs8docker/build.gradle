@@ -15,26 +15,5 @@
  * limitations under the License.
  */
 
-include 'tests'
-
-include 'core:nodejsActionBase'
-include 'core:nodejs6Action'
-include 'core:nodejs8Action'
-include 'tests:dat:docker:nodejs6docker'
-include 'tests:dat:docker:nodejs8docker'
-
-rootProject.name = 'runtime-nodejs'
-
-gradle.ext.openwhisk = [
-        version: '1.0.0-SNAPSHOT'
-]
-
-gradle.ext.scala = [
-    version: '2.11.11',
-    compileFlags: ['-feature', '-unchecked', '-deprecation', '-Xfatal-warnings', '-Ywarn-unused-import']
-]
-
-gradle.ext.scalafmt = [
-    version: '1.5.0',
-    config: new File(rootProject.projectDir, '.scalafmt.conf')
-]
+ext.dockerImageName = 'nodejs8docker'
+apply from: '../../../../gradle/docker.gradle'
