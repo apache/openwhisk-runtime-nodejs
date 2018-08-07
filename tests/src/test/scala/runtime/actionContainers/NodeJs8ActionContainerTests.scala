@@ -19,7 +19,7 @@ package runtime.actionContainers
 
 import org.junit.runner.RunWith
 import org.scalatest.junit.JUnitRunner
-import spray.json.{JsObject}
+import spray.json.JsObject
 
 @RunWith(classOf[JUnitRunner])
 class NodeJs8ActionContainerTests extends NodeJsNonConcurrentTests {
