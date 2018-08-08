@@ -20,7 +20,7 @@
 # NodeJS 8 OpenWhisk Runtime Container
 
 ## 1.8.1
-Change: Update runtime to put runtime npm modules at root leve, user npm modules at container invocation level
+Change: Update runtime to put runtime npm modules at root level, user npm modules at container invocation level
 
 - Don't override runtime npm packages when user provides their own [#73](https://github.com/apache/incubator-openwhisk-runtime-nodejs/pull/73/files)
 
