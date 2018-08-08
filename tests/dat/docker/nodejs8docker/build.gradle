@@ -15,13 +15,5 @@
  * limitations under the License.
  */
 
-package runtime.actionContainers
-
-import org.junit.runner.RunWith
-import org.scalatest.junit.JUnitRunner
-
-@RunWith(classOf[JUnitRunner])
-class Nodejs6ConcurrentTests extends NodeJsConcurrentTests {
-  override lazy val nodejsContainerImageName = "nodejs6action"
-  override lazy val nodejsTestDockerImageName = "nodejs6docker"
-}
+ext.dockerImageName = 'nodejs8docker'
+apply from: '../../../../gradle/docker.gradle'

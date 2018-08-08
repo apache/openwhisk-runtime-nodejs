@@ -25,6 +25,7 @@ import spray.json.JsObject
 class NodeJs8ActionContainerTests extends NodeJsNonConcurrentTests {
 
   override lazy val nodejsContainerImageName = "action-nodejs-v8"
+  override lazy val nodejsTestDockerImageName = "nodejs8docker"
 
   it should "support async and await" in {
     withNodeJsContainer { c =>

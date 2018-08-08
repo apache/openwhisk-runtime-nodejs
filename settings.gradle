@@ -19,8 +19,9 @@ include 'tests'
 
 include 'core:nodejsActionBase'
 include 'core:nodejs6Action'
-
 include 'core:nodejs8Action'
+include 'tests:dat:docker:nodejs6docker'
+include 'tests:dat:docker:nodejs8docker'
 
 rootProject.name = 'runtime-nodejs'
 

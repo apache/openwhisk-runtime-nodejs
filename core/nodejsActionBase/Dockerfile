@@ -23,3 +23,5 @@ ENV DEBIAN_FRONTEND noninteractive
 RUN apt-get update && apt-get install -y imagemagick && apt-get install -y unzip
 
 ADD . /nodejsAction
+# COPY the package.json to root container, so we can install npm packages a level up from user's packages, so user's packages take precedence
+COPY ./package.json /

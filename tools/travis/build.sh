@@ -38,8 +38,8 @@ TERM=dumb ./gradlew install
 echo "openwhisk.home=$WHISKDIR" > whisk.properties
 echo "vcap.services.file=" >> whisk.properties
 
-# Build runtime
+# Build runtime and dependencies
 cd $ROOTDIR
-TERM=dumb ./gradlew \
-:core:nodejs6Action:distDocker \
-:core:nodejs8Action:distDocker
+
+# Build runtime & test dependencies
+TERM=dumb ./gradlew distDocker
