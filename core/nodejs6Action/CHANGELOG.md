@@ -19,6 +19,11 @@
 
 # NodeJS 6 OpenWhisk Runtime Container
 
+## 1.11.2
+Change: Update runtime to allow more environment variables
+
+- Update run handler to accept more environment variables [#78](https://github.com/apache/incubator-openwhisk-runtime-nodejs/pull/78)
+
 ## 1.11.1
 Change: Update runtime to put runtime npm modules at root level, user npm modules at container invocation level
 
