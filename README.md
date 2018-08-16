@@ -17,11 +17,62 @@
 #
 -->
 
-# Apache OpenWhisk runtimes for nodejs
+# Apache OpenWhisk runtimes for Node.js
 
 [![License](https://img.shields.io/badge/license-Apache--2.0-blue.svg)](http://www.apache.org/licenses/LICENSE-2.0)
 [![Build Status](https://travis-ci.org/apache/incubator-openwhisk-runtime-nodejs.svg?branch=master)](https://travis-ci.org/apache/incubator-openwhisk-runtime-nodejs)
 
+
+### Create OpenWhisk Actions
+
+1. Create a JavaScript file named  `hello.js` with the following content:
+
+```javascript
+function main() {
+    return { msg: 'Hello world' };
+}
+```
+
+2. Create an action using `hello.js` with `wsk` CLI:
+
+```bash
+$ wsk action create hello hello.js
+ok: created action hello
+```
+
+3. Invoke the `hello` action as a blocking activation:
+
+```bash
+$ wsk action invoke hello --blocking
+{
+  "result": {
+      "payload": "Hello world"
+    },
+    "status": "success",
+    "success": true
+}
+```
+
+### Node.js Runtime Enviornments
+
+JavaScript actions can be executed in Node.js version 6 or Node.js version 8. Currently actions are executed by default in a Node.js version 6 environment.
+
+The `wsk` CLI automatically infers the type of the action by using the source file extension.
+For `.js` source files, the action runs by using a **Node.js** runtime. You may specify
+the Node.js runtime to use by explicitly specifying the parameter `--kind nodejs:6` or `--kind nodejs:8`.
+
+### Node.js version 8 Enviornment
+
+The Node.js version [8.11.3](https://github.com/apache/incubator-openwhisk-runtime-nodejs/blob/master/core/nodejs8Action/Dockerfile#L18) environment is used if the `--kind` flag is explicitly specified with a value of `nodejs:8` when creating or updating an action.
+
+The following packages are pre-installed in the Node.js version 8.11.3 environment:
+
+* body-parser v1.18.2
+* btoa v1.1.2
+* express v4.16.2
+* log4js v0.6.38
+* openwhisk v3.16.0
+* request v2.79.0
 
 ### Give it a try today
 To use as a docker action for Node.js 6
