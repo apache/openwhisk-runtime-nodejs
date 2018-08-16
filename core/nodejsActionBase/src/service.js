@@ -150,7 +150,7 @@ function NodeActionService(config) {
             // emit error to activation log then flush the logs as this
             // is the end of the activation
             console.error('Error during initialization:', error);
-            writeMarkers();
+            writeEndMarkers();
             return Promise.reject(error);
         });
     }
@@ -165,20 +165,27 @@ function NodeActionService(config) {
             }
         );
 
+        writeStartMarkers(msg.activation_id);
         return userCodeRunner.run(msg.value).then(function(result) {
             if (typeof result !== "object") {
                 console.error('Result must be of type object but has type "' + typeof result + '":', result);
             }
-            writeMarkers();
+            writeEndMarkers();
             return result;
         }).catch(function (error) {
             console.error(error);
-            writeMarkers();
+            writeEndMarkers();
             return Promise.reject(error);
         });
     }
 
-    function writeMarkers() {
+    function writeStartMarkers(activationId) {
+        var msg = 'XXX_THE_START_OF_A_WHISK_ACTIVATION_XXX with id '+activationId;
+        console.log(msg);
+        console.error(msg);
+    }
+
+    function writeEndMarkers() {
         console.log('XXX_THE_END_OF_A_WHISK_ACTIVATION_XXX');
         console.error('XXX_THE_END_OF_A_WHISK_ACTIVATION_XXX');
     }
