@@ -19,6 +19,11 @@
 
 # NodeJS 6 OpenWhisk Runtime Container
 
+## 1.11.3
+Change: Update Node.js
+
+Node.js version = [6.14.4](https://nodejs.org/en/blog/release/v6.14.4/)
+
 ## 1.11.2
 Change: Update runtime to allow more environment variables
 

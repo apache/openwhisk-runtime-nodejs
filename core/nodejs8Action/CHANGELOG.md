@@ -19,6 +19,11 @@
 
 # NodeJS 8 OpenWhisk Runtime Container
 
+## 1.8.3
+Change: Update Node.js
+
+Node.js version = [8.11.4](https://nodejs.org/en/blog/release/v8.11.4/)
+
 ## 1.8.2
 Change: Update runtime to allow more environment variables
 
