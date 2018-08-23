@@ -304,7 +304,7 @@ The following packages are pre-installed in the Node.js version 8.11.3 environme
 | ------------ | ------------------- |
 | [body-parser v1.18.2](https://www.npmjs.com/package/body-parser) | Node.js body parsing middleware.
 | [btoa v1.1.2](https://www.npmjs.com/package/btoa) | A port of the browser's btoa function.
-| [express v4.16.2](https://www.npmjs.com/package/express) | Fast, unopinionated, minimalist web framework for node.
+| [express v4.16.2](https://www.npmjs.com/package/expres) | Fast, unopinionated, minimalist web framework for node.
 | [log4js v0.6.38](https://www.npmjs.com/package/log4js) | A conversion of the log4js framework designed to work with Node.
 | [openwhisk v3.17.0](https://www.npmjs.com/package/openwhisk) | JavaScript client library for the OpenWhisk platform. Provides a wrapper around the OpenWhisk APIs.
 | [request v2.79.0](https://www.npmjs.com/package/request) | Request is the simplest way possible to make HTTP calls.
@@ -363,8 +363,7 @@ Or
 wsk action update hello hello.js --docker $USER_PREFIX/nodejs8action
 ```
 
-### 
-
+### Deployment
 
 Deploy OpenWhisk using ansible environment that contains the kind `nodejs:6` and `nodejs:8`
 Assuming you have OpenWhisk already deployed locally and `OPENWHISK_HOME` pointing to root directory of OpenWhisk core repository.
