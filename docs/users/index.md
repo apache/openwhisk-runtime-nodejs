@@ -17,7 +17,7 @@
 #
 -->
 
-# OpenWhisk Runtime Node.js - Users 
+# OpenWhisk Runtime Node.js - Users
 
 The basics of creating OpenWhisk action is explained in core OpenWhisk repo under [OpenWhisk Actions](https://github.com/apache/incubator-openwhisk/blob/master/docs/actions.md#the-basics). The following sections walks you through creating and invoking a simple JavaScript action such as `hello world`. Then add parameters to an action and invoke that action with parameters, followed by setting default parameters and invoking action. Finally, demonstrate how to bundle multiple JavaScript files and third party modules.
 
@@ -73,7 +73,7 @@ function main(params) {
 }
 ```
 
-The input parameters are passed as a JSON object parameter to the main function. 
+The input parameters are passed as a JSON object parameter to the main function.
 
 2. Update the action:
 
