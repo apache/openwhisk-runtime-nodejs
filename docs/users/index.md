@@ -228,6 +228,81 @@ Returns:
 }
 ```
 
+### Packaging an Action as a Node.js Module
+
+As an alternative to writing all your action code in a single JavaScript source file, you can write an action as a npm package. Consider as an example a directory `padding` with the following files:
+
+1. `package.json`:
+
+```json
+{
+    "name": "padding",
+    "main": "index.js",
+    "dependencies" : {
+        "left-pad" : "1.1.3"
+    }
+}
+```
+
+2. `index.js`:
+
+```javascript
+function padding(args) {
+    const leftPad = require("left-pad")
+    const lines = args.lines || [];
+    return { padded: lines.map(l => leftPad(l, 30, ".")) }
+}
+
+exports.main = padding;
+```
+
+> Note that the action is exposed through `exports.main`; the action handler itself can have any name, as long as it conforms to the usual signature of accepting an object and returning an object (or a Promise of an object). Per Node.js convention, you must either name this file `index.js` or specify the file name you prefer as the main property in `package.json`.
+
+3. To create an OpenWhisk action from this package:
+
+* First install all dependencies locally:
+
+```bash
+$ cd padding
+$ npm install
+```
+
+* Create a `.zip` archive containing all files (including all dependencies):
+
+```bash
+$ zip -r padding.zip *
+```
+
+> Please note: Using the Windows Explorer action for creating the zip file will result in an incorrect structure. OpenWhisk zip actions must have package.json at the root of the zip, while Windows Explorer will put it inside a nested folder. The safest option is to use the command line zip command as shown above.
+
+* Create the action:
+
+```bash
+wsk action create padding --kind nodejs:6 padding.zip
+```
+
+When creating an action from a `.zip` archive with the CLI tool, you must explicitly provide a value for the `--kind` flag by using `nodejs:6` or `nodejs:8`.
+
+* You can invoke the action like any other:
+
+```bash
+wsk action invoke --result padding --param lines "[\"and now\", \"for something completely\", \"different\" ]"
+```
+
+Returns:
+
+```bash
+{
+    "padded": [
+        ".......................and now",
+        "......for something completely",
+        ".....................different"
+    ]
+}
+```
+
+Finally, note that while most `npm` packages install JavaScript sources on `npm install`, some also install and compile binary artifacts. The archive file upload currently does not support binary dependencies but rather only JavaScript dependencies. Action invocations may fail if the archive includes binary dependencies.
+
 ### Node.js version 6 Environment
 
 The Node.js [6.14.4](https://github.com/apache/incubator-openwhisk-runtime-nodejs/blob/master/core/nodejs6Action/Dockerfile#L21) environment will be used for an action if the `--kind` flag is explicitly specified with a value of `nodejs:6` when creating/updating the action.
