@@ -19,10 +19,29 @@ FROM nodejsactionbase
 
 # based on https://github.com/nodejs/docker-node
 ENV NODE_VERSION 6.14.4
-RUN curl -SLO "https://nodejs.org/dist/v$NODE_VERSION/node-v$NODE_VERSION-linux-x64.tar.gz" \
-  && tar -xzf "node-v$NODE_VERSION-linux-x64.tar.gz" -C /usr/local --strip-components=1 \
-  && rm "node-v$NODE_VERSION-linux-x64.tar.gz"
 
+RUN addgroup -g 1000 node \
+    && adduser -u 1000 -G node -s /bin/sh -D node \
+    && apk add --no-cache \
+        libstdc++ \
+        binutils-gold \
+        curl \
+        g++ \
+        gcc \
+        gnupg \
+        libgcc \
+        linux-headers \
+        make \
+        python \
+    && curl -fsSLO --compressed "https://nodejs.org/dist/v$NODE_VERSION/node-v$NODE_VERSION.tar.xz" \
+    && tar -xf "node-v$NODE_VERSION.tar.xz" \
+    && cd "node-v$NODE_VERSION" \
+    && ./configure \
+    && make -j$(getconf _NPROCESSORS_ONLN) \
+    && make install \
+    && cd .. \
+    && rm -Rf "node-v$NODE_VERSION" \
+    && rm "node-v$NODE_VERSION.tar.xz"
 
 # workaround for this: https://github.com/npm/npm/issues/9863
 RUN cd $(npm root -g)/npm \

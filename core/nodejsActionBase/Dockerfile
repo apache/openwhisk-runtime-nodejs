@@ -15,12 +15,10 @@
 # limitations under the License.
 #
 
-FROM buildpack-deps:trusty-curl
-
-ENV DEBIAN_FRONTEND noninteractive
+FROM alpine:3.4
 
 # Initial update and some basics.
-RUN apt-get update && apt-get install -y imagemagick && apt-get install -y unzip
+RUN apk update && apk add imagemagick && apk --update add tar && apk add xz
 
 ADD . /nodejsAction
 # COPY the package.json to root container, so we can install npm packages a level up from user's packages, so user's packages take precedence
