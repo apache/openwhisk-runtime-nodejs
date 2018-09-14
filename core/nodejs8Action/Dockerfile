@@ -15,7 +15,7 @@
 # limitations under the License.
 #
 
-FROM node:8.11.4
+FROM node:8.12.0
 RUN apt-get update && apt-get install -y \
     imagemagick \
     unzip \
