@@ -20,7 +20,11 @@
 # NodeJS 8 OpenWhisk Runtime Container
 
 ## Apache 1.13 (next release)
-Change: Update Node.js
+Changes: 
+- Update Node.js
+- Update openwhisk npm package
+
+- [openwhisk v3.18.0](https://www.npmjs.com/package/openwhisk) - JavaScript client library for the OpenWhisk platform. Provides a wrapper around the OpenWhisk APIs.
 
 Node.js version = [8.12.0](https://nodejs.org/en/blog/release/v8.12.0/)
 
