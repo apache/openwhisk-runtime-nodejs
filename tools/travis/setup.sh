@@ -29,6 +29,6 @@ cd $HOMEDIR
 git clone https://github.com/apache/incubator-openwhisk-utilities.git
 
 # clone main openwhisk repo. for testing purposes
-git clone --depth=1 --single-branch -b scala-2-12 https://github.com/chetanmeh/incubator-openwhisk.git openwhisk
+git clone --depth=1 https://github.com/apache/incubator-openwhisk.git openwhisk
 cd openwhisk
 ./tools/travis/setup.sh
