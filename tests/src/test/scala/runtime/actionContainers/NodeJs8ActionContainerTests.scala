@@ -52,4 +52,44 @@ class NodeJs8ActionContainerTests extends NodeJsNonConcurrentTests {
     }
   }
 
+  it should "support errors thrown from async functions" in {
+    withNodeJsContainer { c =>
+      val code = """
+                   | async function main() {
+                   |   return a.b.c
+                   | }
+                 """.stripMargin;
+
+      val (initCode, _) = c.init(initPayload(code))
+      initCode should be(200)
+
+      val (runCode, runRes) = c.run(runPayload(JsObject()))
+      runCode should be(200) // action writer returning an error is OK
+
+      runRes shouldBe defined
+      runRes.get.fields.get("error") shouldBe defined
+      runRes.get.fields("error").toString.toLowerCase should include("referenceerror: a is not defined")
+    }
+  }
+
+  it should "support user thrown errors from async functions" in {
+    withNodeJsContainer { c =>
+      val code = """
+                   | async function main() {
+                   |   throw new Error('app error')
+                   | }
+                 """.stripMargin;
+
+      val (initCode, _) = c.init(initPayload(code))
+      initCode should be(200)
+
+      val (runCode, runRes) = c.run(runPayload(JsObject()))
+      runCode should be(200) // action writer returning an error is OK
+
+      runRes shouldBe defined
+      runRes.get.fields.get("error") shouldBe defined
+      runRes.get.fields("error").toString.toLowerCase should include("error: app error")
+    }
+  }
+
 }

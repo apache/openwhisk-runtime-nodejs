@@ -114,7 +114,11 @@ function NodeActionRunner() {
                     if (!error) {
                         resolve({ error: {}});
                     } else {
-                        resolve({ error: error });
+                        // Log stack trace for rejected promises.
+                        if (error.message) {
+                            console.error(error)
+                        }
+                        resolve({ error: error.toString() });
                     }
                 });
             }
