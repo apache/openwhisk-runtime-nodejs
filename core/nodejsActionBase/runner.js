@@ -25,6 +25,7 @@ var util = require('util');
 var child_process = require('child_process');
 var fs = require('fs');
 var path = require('path');
+const serializeError = require('serialize-error');
 
 function NodeActionRunner() {
     // Use this ref inside closures etc.
@@ -114,11 +115,7 @@ function NodeActionRunner() {
                     if (!error) {
                         resolve({ error: {}});
                     } else {
-                        // Log stack trace for rejected promises.
-                        if (error.message) {
-                            console.error(error)
-                        }
-                        resolve({ error: error.toString() });
+                        resolve({ error: serializeError(error) });
                     }
                 });
             }

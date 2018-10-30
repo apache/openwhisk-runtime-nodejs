@@ -6,6 +6,7 @@
     "btoa": "1.1.2",
     "express": "4.14.0",
     "log4js": "0.6.38",
-    "request": "2.79.0"
+    "request": "2.79.0",
+    "serialize-error": "3.0.0"
   }
 }
