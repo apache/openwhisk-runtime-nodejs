@@ -57,6 +57,12 @@ For Node.js 8
 ```
 This will produce the image `whisk/action-nodejs-v8`
 
+For Node.js 10
+```
+./gradlew core:nodejs10Action:distDocker
+```
+This will produce the image `whisk/action-nodejs-v10`
+
 
 Build and Push image for Node.js 6
 ```

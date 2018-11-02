@@ -15,28 +15,13 @@
  * limitations under the License.
  */
 
-include 'tests'
+package runtime.actionContainers
 
-include 'core:nodejsActionBase'
-include 'core:nodejs6Action'
-include 'core:nodejs8Action'
-include 'core:nodejs10Action'
-include 'tests:dat:docker:nodejs6docker'
-include 'tests:dat:docker:nodejs8docker'
-include 'tests:dat:docker:nodejs10docker'
+import org.junit.runner.RunWith
+import org.scalatest.junit.JUnitRunner
 
-rootProject.name = 'runtime-nodejs'
-
-gradle.ext.openwhisk = [
-        version: '1.0.0-SNAPSHOT'
-]
-
-gradle.ext.scala = [
-    version: '2.11.11',
-    compileFlags: ['-feature', '-unchecked', '-deprecation', '-Xfatal-warnings', '-Ywarn-unused-import']
-]
-
-gradle.ext.scalafmt = [
-    version: '1.5.0',
-    config: new File(rootProject.projectDir, '.scalafmt.conf')
-]
+@RunWith(classOf[JUnitRunner])
+class NodeJs10ActionContainerTests extends NodeJs8NonConcurrentTests {
+  override lazy val nodejsContainerImageName = "action-nodejs-v10"
+  override lazy val nodejsTestDockerImageName = "nodejs10docker"
+}
