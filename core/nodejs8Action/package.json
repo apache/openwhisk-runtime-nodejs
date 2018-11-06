@@ -10,6 +10,7 @@
   "dependencies": {
     "openwhisk": "3.18.0",
     "body-parser": "1.18.2",
-    "express": "4.16.2"
+    "express": "4.16.2",
+    "serialize-error": "3.0.0"
   }
 }

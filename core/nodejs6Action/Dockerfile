@@ -73,6 +73,7 @@ request-promise@4.1.1 \
 rimraf@2.5.4 \
 semver@5.3.0 \
 sendgrid@4.7.1 \
+serialize-error@3.0.0 \
 serve-favicon@2.3.2 \
 socket.io@1.6.0 \
 socket.io-client@1.6.0 \
