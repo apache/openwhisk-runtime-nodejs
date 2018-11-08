@@ -15,7 +15,7 @@
 # limitations under the License.
 #
 
-FROM node:10.13.0
+FROM node:10.13.0-stretch
 RUN apt-get update && apt-get install -y \
     imagemagick \
     unzip \
