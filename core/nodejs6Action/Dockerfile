@@ -94,4 +94,5 @@ yauzl@2.7.0
 
 
 # See app.js
-CMD node --expose-gc app.js
+ADD init.sh ./
+CMD ["./init.sh"]

@@ -1,3 +1,4 @@
+#!/usr/bin/env bash
 #
 # Licensed to the Apache Software Foundation (ASF) under one or more
 # contributor license agreements.  See the NOTICE file distributed with
@@ -15,17 +16,20 @@
 # limitations under the License.
 #
 
-FROM node:10.14.2-stretch
-RUN apt-get update && apt-get install -y \
-    imagemagick \
-    unzip \
-    && rm -rf /var/lib/apt/lists/*
-WORKDIR /nodejsAction
-COPY . .
-# COPY the package.json to root container, so we can install npm packages a level up from user's packages, so user's packages take precedence
-COPY ./package.json /
-RUN cd / && npm install --no-package-lock \
-    && npm cache clean --force
-EXPOSE 8080
-ADD init.sh ./
-CMD ["./init.sh"]
+limit_in_bytes=$(cat /sys/fs/cgroup/memory/memory.limit_in_bytes)
+heap_size=128
+export NODE_OPTS="--expose-gc"
+export RESERVED_MEGABYTES=96
+
+# If not default limit_in_bytes in cgroup
+if [ "$limit_in_bytes" -ne "9223372036854771712" ]
+then
+    limit_in_megabytes=$(expr $limit_in_bytes \/ 1048576)
+    heap_size=$(expr $limit_in_megabytes - $RESERVED_MEGABYTES)
+    export NODE_OPTS="--max-old-space-size=${heap_size} $NODE_OPTS"
+fi
+
+echo  NODE_OPTS= $NODE_OPTS
+
+# See app.js --gc-global
+node $NODE_OPTS app.js

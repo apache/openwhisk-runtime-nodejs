@@ -27,4 +27,5 @@ COPY ./package.json /
 RUN cd / && npm install --no-package-lock \
     && npm cache clean --force
 EXPOSE 8080
-CMD node --expose-gc app.js
+ADD init.sh ./
+CMD ["./init.sh"]
