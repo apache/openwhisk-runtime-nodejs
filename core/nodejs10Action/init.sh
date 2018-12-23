@@ -29,7 +29,5 @@ then
     export NODE_OPTS="--max-old-space-size=${heap_size} $NODE_OPTS"
 fi
 
-echo  NODE_OPTS= $NODE_OPTS
-
 # See app.js --gc-global
 node $NODE_OPTS app.js

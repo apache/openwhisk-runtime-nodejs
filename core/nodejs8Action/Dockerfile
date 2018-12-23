@@ -28,4 +28,5 @@ RUN cd / && npm install --no-package-lock \
     && npm cache clean --force
 EXPOSE 8080
 ADD init.sh ./
+RUN chmod 777 ./init.sh
 CMD ["./init.sh"]

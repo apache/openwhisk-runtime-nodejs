@@ -95,4 +95,5 @@ yauzl@2.7.0
 
 # See app.js
 ADD init.sh ./
+RUN chmod 777 ./init.sh
 CMD ["./init.sh"]
