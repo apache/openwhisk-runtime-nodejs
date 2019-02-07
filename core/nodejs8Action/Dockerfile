@@ -18,6 +18,7 @@
 FROM node:8.15.0
 RUN apt-get update && apt-get install -y \
     imagemagick \
+    graphicsmagick \
     unzip \
     && rm -rf /var/lib/apt/lists/*
 WORKDIR /nodejsAction

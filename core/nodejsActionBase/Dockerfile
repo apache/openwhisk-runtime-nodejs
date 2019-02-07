@@ -20,7 +20,11 @@ FROM buildpack-deps:trusty-curl
 ENV DEBIAN_FRONTEND noninteractive
 
 # Initial update and some basics.
-RUN apt-get update && apt-get install -y imagemagick && apt-get install -y unzip
+RUN apt-get update && apt-get install -y \
+    imagemagick \
+    graphicsmagick \
+    unzip \
+    && rm -rf /var/lib/apt/lists/*
 
 ADD . /nodejsAction
 # COPY the package.json to root container, so we can install npm packages a level up from user's packages, so user's packages take precedence
