@@ -15,7 +15,7 @@
 # limitations under the License.
 #
 
-FROM node:10.15.0-stretch
+FROM node:10.15.1-stretch
 RUN apt-get update && apt-get install -y \
     imagemagick \
     graphicsmagick \
@@ -28,4 +28,5 @@ COPY ./package.json /
 RUN cd / && npm install --no-package-lock \
     && npm cache clean --force
 EXPOSE 8080
-CMD node --expose-gc app.js
+# The flag --experimental-worker is to be use with care as it's an expirimental feature  more info here https://nodejs.org/docs/latest-v10.x/api/worker_threads.html
+CMD node --experimental-worker --expose-gc app.js
