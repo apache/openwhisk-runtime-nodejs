@@ -28,5 +28,5 @@ COPY ./package.json /
 RUN cd / && npm install --no-package-lock \
     && npm cache clean --force
 EXPOSE 8080
-# the flag --experimental-worker is to be use with care as it's an expirimental feature  more info here https://nodejs.org/docs/latest-v10.x/api/worker_threads.html
+# The flag --experimental-worker is to be use with care as it's an expirimental feature  more info here https://nodejs.org/docs/latest-v10.x/api/worker_threads.html
 CMD node --experimental-worker --expose-gc app.js
