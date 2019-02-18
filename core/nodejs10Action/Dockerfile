@@ -15,7 +15,7 @@
 # limitations under the License.
 #
 
-FROM node:10.15.0-stretch
+FROM node:10.15.1-stretch
 RUN apt-get update && apt-get install -y \
     imagemagick \
     graphicsmagick \
