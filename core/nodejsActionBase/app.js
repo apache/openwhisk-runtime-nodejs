@@ -38,7 +38,7 @@ app.use(bodyParser.json({ limit: "48mb" }));
 app.post('/init', wrapEndpoint(service.initCode));
 app.post('/run',  wrapEndpoint(service.runCode));
 
-app.use(function(err, req, res, next) {
+app.use(function(req, res, next) {
     console.error(err.stack);
     res.status(500).json({ error: "Bad request." });
   });
@@ -47,7 +47,7 @@ service.start(app);
 
 /**
  * Wraps an endpoint written to return a Promise into an express endpoint,
- * producing the appropriate HTTP response and closing it for all controlable
+ * producing the appropriate HTTP response and closing it for all controllable
  * failure modes.
  *
  * The expected signature for the promise value (both completed and failed)

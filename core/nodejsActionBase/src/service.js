@@ -58,7 +58,6 @@ function NodeActionService(config) {
      * @param app express app
      */
     this.start = function start(app) {
-        var self = this;
         server = app.listen(app.get('port'), function() {
             var host = server.address().address;
             var port = server.address().port;
