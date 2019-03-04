@@ -25,4 +25,4 @@ Changes:
 
 - [openwhisk v3.18.0](https://www.npmjs.com/package/openwhisk) - JavaScript client library for the OpenWhisk platform. Provides a wrapper around the OpenWhisk APIs.
 
-Node.js version = [10.14.2](https://nodejs.org/en/blog/release/v10.14.2/)
+Node.js version = [10.15.2](https://nodejs.org/en/blog/release/v10.15.2/)
