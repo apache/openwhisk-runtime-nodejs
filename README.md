@@ -34,7 +34,7 @@ wsk action update myAction myAction.js --docker openwhisk/action-nodejs-v8
 ```
 This works on any deployment of Apache OpenWhisk
 
-### To use on deployment that contains the rutime as a kind
+### To use on deployment that contains the runtime as a kind
 To use as a kind action using Node.js 6
 ```
 wsk action update myAction myAction.js --kind nodejs:6
