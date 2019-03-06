@@ -44,7 +44,7 @@ app.use(function (req, res, next) {
 });
 
 // register a default error handler. This effectively only gets called when invalid JSON is received (JSON Parser)
-// and we do not wish the default handler to send back HTML in the body of the response.
+// and we do not wish the default handler to error with a 400 and send back HTML in the body of the response.
 app.use(function (err, req, res, next) {
     console.log(err.stackTrace);
     res.status(500).json({error: "Bad request."});
