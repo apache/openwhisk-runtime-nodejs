@@ -38,16 +38,23 @@ app.use(bodyParser.json({ limit: "48mb" }));
 app.post('/init', wrapEndpoint(service.initCode));
 app.post('/run',  wrapEndpoint(service.runCode));
 
-app.use(function(err, req, res, next) {
-    console.error(err.stack);
-    res.status(500).json({ error: "Bad request." });
-  });
+// short-circuit any requests to invalid routes (endpoints) that we have no handlers for.
+app.use(function (req, res, next) {
+    res.status(500).json({error: "Bad request."});
+});
+
+// register a default error handler. This effectively only gets called when invalid JSON is received (JSON Parser)
+// and we do not wish the default handler to error with a 400 and send back HTML in the body of the response.
+app.use(function (err, req, res, next) {
+    console.log(err.stackTrace);
+    res.status(500).json({error: "Bad request."});
+});
 
 service.start(app);
 
 /**
  * Wraps an endpoint written to return a Promise into an express endpoint,
- * producing the appropriate HTTP response and closing it for all controlable
+ * producing the appropriate HTTP response and closing it for all controllable
  * failure modes.
  *
  * The expected signature for the promise value (both completed and failed)
