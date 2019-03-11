@@ -58,11 +58,11 @@ function NodeActionService(config) {
      * @param app express app
      */
     this.start = function start(app) {
-        server = app.listen(app.get('port'), function() {
+        server = app.listen(config.port, function() {
             var host = server.address().address;
             var port = server.address().port;
         });
-        //This is required as http server will auto disconnect in 2 minutes, this to not auto disconnect at all
+        // This is required as http server will auto disconnect in 2 minutes, this to not auto disconnect at all
         server.timeout = 0;
     };
 

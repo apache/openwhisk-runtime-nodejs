@@ -18,7 +18,8 @@
 var config = {
         'port': 8080,
         'apiHost': process.env.__OW_API_HOST,
-        'allowConcurrent': process.env.__OW_ALLOW_CONCURRENT
+        'allowConcurrent': process.env.__OW_ALLOW_CONCURRENT,
+        'requestBodyLimit': "48mb"
 };
 
 var bodyParser = require('body-parser');
@@ -26,14 +27,13 @@ var express    = require('express');
 
 var app = express();
 
-
 /**
  * instantiate an object which handles REST calls from the Invoker
  */
 var service = require('./src/service').getService(config);
 
-app.set('port', config.port);
-app.use(bodyParser.json({ limit: "48mb" }));
+// limit request payload size
+app.use(bodyParser.json({ limit: config.requestBodyLimit }));
 
 app.post('/init', wrapEndpoint(service.initCode));
 app.post('/run',  wrapEndpoint(service.runCode));
