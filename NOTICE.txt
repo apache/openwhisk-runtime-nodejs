@@ -1,4 +1,4 @@
-Apache OpenWhisk Runtime NodeJS
+Apache OpenWhisk Runtime Node.js
 Copyright 2016-2019 The Apache Software Foundation
 
 This product includes software developed at
