@@ -32,6 +32,7 @@ distDocker.dependsOn 'copyService'
 distDocker.dependsOn 'copyPlatform'
 distDocker.dependsOn 'copyOpenWhisk'
 distDocker.dependsOn 'copyKnative'
+distDocker.dependsOn 'copyBuildTemplate'
 distDocker.finalizedBy('cleanup')
 
 task copyProxy(type: Copy) {
@@ -64,9 +65,15 @@ task copyKnative(type: Copy) {
     into './platform'
 }
 
+task copyBuildTemplate(type: Copy) {
+    from '../nodejsActionBase/buildtemplate.yaml'
+    into '.'
+}
+
 task cleanup(type: Delete) {
     delete 'app.js'
     delete 'runner.js'
     delete 'src'
     delete 'platform'
+    delete 'buildtemplate.yaml'
 }
