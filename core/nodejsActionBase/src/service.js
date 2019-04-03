@@ -15,9 +15,11 @@
  * limitations under the License.
  */
 
+
 var NodeActionRunner = require('../runner');
 
-function NodeActionService(config) {
+function NodeActionService(cfg) {
+
     var Status = {
         ready: 'ready',
         starting: 'starting',
@@ -25,6 +27,9 @@ function NodeActionService(config) {
         stopped: 'stopped'
     };
 
+    var config = cfg;
+
+    // TODO: save the entire configuration for use by any of the route handlers
     var status = Status.ready;
     var ignoreRunStatus = config.allowConcurrent === undefined ? false : config.allowConcurrent.toLowerCase() === "true";
     var server = undefined;
@@ -53,16 +58,26 @@ function NodeActionService(config) {
     }
 
     /**
+     * Indicates if we have been initialized which is determined by if we have
+     * created a NodeActionRunner.
+     * @returns {boolean}
+     */
+    this.initialized = function isInitialized(){
+        return (typeof userCodeRunner !== "undefined");
+    };
+
+    /**
      * Starts the server.
      *
      * @param app express app
      */
     this.start = function start(app) {
-        server = app.listen(app.get('port'), function() {
+        server = app.listen(config.port, function() {
             var host = server.address().address;
             var port = server.address().port;
         });
-        //This is required as http server will auto disconnect in 2 minutes, this to not auto disconnect at all
+
+        // This is required as http server will auto disconnect in 2 minutes, this to not auto disconnect at all
         server.timeout = 0;
     };
 
@@ -71,7 +86,9 @@ function NodeActionService(config) {
      *  req.body = { main: String, code: String, binary: Boolean }
      */
     this.initCode = function initCode(req) {
+
         if (status === Status.ready && userCodeRunner === undefined) {
+
             setStatus(Status.starting);
 
             var body = req.body || {};
@@ -82,13 +99,15 @@ function NodeActionService(config) {
                     setStatus(Status.ready);
                     return responseMessage(200, { OK: true });
                 }).catch(function (error) {
-                    var errStr = error.stack ? String(error.stack) : error;
                     setStatus(Status.stopped);
-                    return Promise.reject(errorMessage(502, "Initialization has failed due to: " + errStr));
+                    var errStr = "Initialization has failed due to: " + error.stack ? String(error.stack) : error;
+                    return Promise.reject(errorMessage(502, errStr));
                 });
             } else {
                 setStatus(Status.ready);
-                return Promise.reject(errorMessage(403, "Missing main/no code to execute."));
+                var msg = "Missing main/no code to execute.";
+                console.error("Internal system error:", msg);
+                return Promise.reject(errorMessage(403, msg));
             }
         } else if (userCodeRunner !== undefined) {
             var msg = "Cannot initialize the action more than once.";
@@ -119,15 +138,15 @@ function NodeActionService(config) {
                 if (!ignoreRunStatus) {
                     setStatus(Status.ready);
                 }
-
                 if (typeof result !== "object") {
                     return errorMessage(502, "The action did not return a dictionary.");
                 } else {
                     return responseMessage(200, result);
                 }
             }).catch(function (error) {
+                var msg = "An error has occurred: " + error;
                 setStatus(Status.stopped);
-                return Promise.reject(errorMessage(502, "An error has occurred: " + error));
+                return Promise.reject(errorMessage(502, msg));
             });
         } else {
             var msg = "System not ready, status is " + status + ".";
@@ -155,10 +174,12 @@ function NodeActionService(config) {
 
     function doRun(req) {
         var msg = req && req.body || {};
+        // Move per-activation keys to process env. vars with __OW_ (reserved) prefix)
         Object.keys(msg).forEach(
             function (k) {
                 if(typeof msg[k] === 'string' && k !== 'value'){
-                    process.env['__OW_' + k.toUpperCase()] = msg[k];
+                    var envVariable = '__OW_' + k.toUpperCase();
+                    process.env[envVariable] = msg[k];
                 }
             }
         );
