@@ -68,4 +68,5 @@ task cleanup(type: Delete) {
     delete 'app.js'
     delete 'runner.js'
     delete 'src'
+    delete 'platform'
 }
