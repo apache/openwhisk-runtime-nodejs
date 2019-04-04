@@ -52,7 +52,7 @@ var targetPlatform = process.env.__OW_RUNTIME_PLATFORM;
 // TODO export isvalid() from platform, if undefined this is OK to default, but if not valid value then error out
 if(typeof targetPlatform === "undefined") {
     targetPlatform = platformFactory.PLATFORM_OPENWHISK;
-    console.log("__OW_RUNTIME_PLATFORM is undefined; defaulting to 'openwhisk' ...");
+    // console.log("__OW_RUNTIME_PLATFORM is undefined; defaulting to 'openwhisk' ...");
 }
 
 if(!platformFactory.isSupportedPlatform(targetPlatform)){
