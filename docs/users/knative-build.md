@@ -455,7 +455,7 @@ kubectl apply -f service.yaml
 
 ### See Hello World Live in Action
 
-![Screen Recording of Hello World](../../media/demo-nodejs-helloworld.gif)
+![Screen Recording of Hello World](../media/demo-nodejs-helloworld.gif)
 
 ## Troubleshooting
 
