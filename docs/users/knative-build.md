@@ -313,9 +313,18 @@ metadata:
 We will use the simple "helloworld" test case to demonstrate how to use Knative to Build your function into container image and then deploy it as a Service.
 
 The testcase resides within this repo. at:
-- [/runtimes/javascript/tests/helloworld/](/runtimes/javascript/tests/helloworld/)
+- [tests/src/test/knative/helloworld/](../../tests/src/test/knative/helloworld/)
+- [tests/src/test/knative/helloworldwithparams/](../../tests/src/test/knative/helloworldwithparams/)
+- [tests/src/test/knative/helloworldwithparamsfromenv/](../../tests/src/test/knative/helloworldwithparamsfromenv/)
+- [tests/src/test/knative/webactionhelloworld/](../../tests/src/test/knative/webactionhelloworld/)
+- [tests/src/test/knative/webactionhttpredirect/](../../tests/src/test/knative/webactionhttpredirect/)
+- [tests/src/test/knative/webactionjsonparams/](../../tests/src/test/knative/webactionjsonparams/)
+- [tests/src/test/knative/webactionoptions/](../../tests/src/test/knative/webactionoptions/)
+- [tests/src/test/knative/webactionpng/](../../tests/src/test/knative/webactionpng/)
+- [tests/src/test/knative/webactionraw/](../../tests/src/test/knative/webactionraw/)
+- [tests/src/test/knative/webactionsettingcookie/](../../tests/src/test/knative/webactionsettingcookie/)
 
-For a complete listing of testcases, please view the [README](tests/README.md) in the tests subdirectory.
+For a complete listing of testcases, please view the [README](../../tests/src/test/knative/README.md) in the tests subdirectory.
 
 ### Build HelloWorld
 
@@ -324,7 +333,7 @@ For a complete listing of testcases, please view the [README](tests/README.md) i
 You will need to configure the build template to point to the Docker Hub repo. you wish the image to be "pushed" to once built.
 
 To do this,
-- Copy [build.yaml.tmpl](tests/helloworld/build.yaml.tmpl) to `build.yaml`.
+- Copy [build.yaml.tmpl](../../tests/src/test/knative/helloworld/build.yaml.tmpl) to `build.yaml`.
 - Replace ```${DOCKER_USERNAME}``` with your own Docker username in `build.yaml`.
 
 If you wish to run repeated tests you MAY set an environment variable and use ```sed``` to replace the ```${DOCKER_USERNAME}``` within any of the test's Kubernetes Build YAML files as follows:
@@ -418,7 +427,7 @@ Now that you have built the OpenWhisk NodeJS runtime image with the `helloworld`
 You will need to configure the Service template to point to the Docker Hub repo. where your Knative OpenWhisk runtime (with the Hello World function) will be "pulled" from.
 
 To do this,
-- Copy [service.yaml.tmpl](tests/helloworld/service.yaml.tmpl) to `service.yaml`.
+- Copy [service.yaml.tmpl](../../tests/src/test/knative/helloworld/service.yaml.tmpl) to `service.yaml`.
 - Replace ```${DOCKER_USERNAME}``` with your own Docker username in `service.yaml`.
 
 As described for 'build.yaml.tmpl', you MAY set an environment variable and use ```sed``` to replace the ```${DOCKER_USERNAME}``` within any of the test's Kubernetes Build YAML files as follows:
