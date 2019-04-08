@@ -462,6 +462,12 @@ spec:
 kubectl apply -f service.yaml
 ```
 
+### Initialize and Run Hello World
+
+```bash
+curl -H "Host: nodejs-helloworld.default.example.com" -X POST http://${IP_ADDRESS}
+```
+
 ### See Hello World Live in Action
 
 ![Screen Recording of Hello World](../media/demo-nodejs-helloworld.gif)
