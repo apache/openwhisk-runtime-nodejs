@@ -315,14 +315,8 @@ We will use the simple "helloworld" test case to demonstrate how to use Knative 
 The testcase resides within this repo. at:
 - [tests/src/test/knative/helloworld/](../../tests/src/test/knative/helloworld/)
 - [tests/src/test/knative/helloworldwithparams/](../../tests/src/test/knative/helloworldwithparams/)
-- [tests/src/test/knative/helloworldwithparamsfromenv/](../../tests/src/test/knative/helloworldwithparamsfromenv/)
 - [tests/src/test/knative/webactionhelloworld/](../../tests/src/test/knative/webactionhelloworld/)
-- [tests/src/test/knative/webactionhttpredirect/](../../tests/src/test/knative/webactionhttpredirect/)
-- [tests/src/test/knative/webactionjsonparams/](../../tests/src/test/knative/webactionjsonparams/)
-- [tests/src/test/knative/webactionoptions/](../../tests/src/test/knative/webactionoptions/)
-- [tests/src/test/knative/webactionpng/](../../tests/src/test/knative/webactionpng/)
 - [tests/src/test/knative/webactionraw/](../../tests/src/test/knative/webactionraw/)
-- [tests/src/test/knative/webactionsettingcookie/](../../tests/src/test/knative/webactionsettingcookie/)
 
 For a complete listing of testcases, please view the [README](../../tests/src/test/knative/README.md) in the tests subdirectory.
 
