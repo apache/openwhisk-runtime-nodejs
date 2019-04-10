@@ -1,8 +1,0 @@
-{
-  "value": {
-    "name" : "nodejs-web-action-to-redirect",
-    "main" : "main",
-    "binary": false,
-    "code" : "function main() { return { headers: { location: 'http://openwhisk.org' }, statusCode: 302 }}"
-  }
-}
