@@ -18,7 +18,7 @@
 
 var NodeActionRunner = require('../runner');
 
-function NodeActionService(cfg) {
+function NodeActionService(config) {
 
     var Status = {
         ready: 'ready',
@@ -26,8 +26,6 @@ function NodeActionService(cfg) {
         running: 'running',
         stopped: 'stopped'
     };
-
-    var config = cfg;
 
     // TODO: save the entire configuration for use by any of the route handlers
     var status = Status.ready;
@@ -56,15 +54,6 @@ function NodeActionService(cfg) {
     function errorMessage (code, errorMsg) {
         return responseMessage(code, { error: errorMsg });
     }
-
-    /**
-     * Indicates if we have been initialized which is determined by if we have
-     * created a NodeActionRunner.
-     * @returns {boolean}
-     */
-    this.initialized = function isInitialized(){
-        return (typeof userCodeRunner !== "undefined");
-    };
 
     /**
      * Starts the server.
@@ -106,16 +95,13 @@ function NodeActionService(cfg) {
             } else {
                 setStatus(Status.ready);
                 var msg = "Missing main/no code to execute.";
-                console.error("Internal system error:", msg);
                 return Promise.reject(errorMessage(403, msg));
             }
         } else if (userCodeRunner !== undefined) {
             var msg = "Cannot initialize the action more than once.";
-            console.error("Internal system error:", msg);
             return Promise.reject(errorMessage(403, msg));
         } else {
             var msg = "System not ready, status is " + status + ".";
-            console.error("Internal system error:", msg);
             return Promise.reject(errorMessage(403, msg));
         }
     };
