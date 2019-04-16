@@ -99,9 +99,11 @@ function NodeActionService(config) {
             }
         } else if (userCodeRunner !== undefined) {
             var msg = "Cannot initialize the action more than once.";
+            console.error("Internal system error:", msg);
             return Promise.reject(errorMessage(403, msg));
         } else {
             var msg = "System not ready, status is " + status + ".";
+            console.error("Internal system error:", msg);
             return Promise.reject(errorMessage(403, msg));
         }
     };
