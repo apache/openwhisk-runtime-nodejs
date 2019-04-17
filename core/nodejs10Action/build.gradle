@@ -29,6 +29,10 @@ apply from: '../../gradle/docker.gradle'
 distDocker.dependsOn 'copyProxy'
 distDocker.dependsOn 'copyRunner'
 distDocker.dependsOn 'copyService'
+distDocker.dependsOn 'copyPlatform'
+distDocker.dependsOn 'copyOpenWhisk'
+distDocker.dependsOn 'copyKnative'
+distDocker.dependsOn 'copyBuildTemplate'
 distDocker.finalizedBy('cleanup')
 
 task copyProxy(type: Copy) {
@@ -46,8 +50,30 @@ task copyService(type: Copy) {
     into './src'
 }
 
+task copyPlatform(type: Copy) {
+    from '../nodejsActionBase/platform/platform.js'
+    into './platform'
+}
+
+task copyOpenWhisk(type: Copy) {
+    from '../nodejsActionBase/platform/openwhisk.js'
+    into './platform'
+}
+
+task copyKnative(type: Copy) {
+    from '../nodejsActionBase/platform/knative.js'
+    into './platform'
+}
+
+task copyBuildTemplate(type: Copy) {
+    from '../nodejsActionBase/buildtemplate.yaml'
+    into '.'
+}
+
 task cleanup(type: Delete) {
     delete 'app.js'
     delete 'runner.js'
     delete 'src'
+    delete 'platform'
+    delete 'buildtemplate.yaml'
 }
