@@ -129,38 +129,16 @@ function preProcessInitData(env, initdata, valuedata, activationdata) {
         // param. data (as they both appear within "body.value") so we must save it to its final location
         // as the default Action name as part of the activation data
         // NOTE: if action name is not present in the action data, we will set it regardless even if an empty string
-        if( typeof(activationdata) !== "undefined" ) {
-            if ( typeof(activationdata.action_name) === "undefined" ||
-                (typeof(activationdata.action_name) === "string" && activationdata.action_name.length == 0 )){
+        if (typeof(activationdata) !== "undefined" ) {
+            if (typeof(activationdata.action_name) === "undefined" ||
+                (typeof(activationdata.action_name) === "string" && activationdata.action_name.length == 0)){
                 activationdata.action_name = actionName;
             }
         }
 
     } catch(e){
         console.error(e);
-        throw("Unable to initialize the runtime: " + e.message);
-    }
-}
-
-/**
- * Pre-process the incoming http request data, moving it to where the
- * route handlers expect it to be for an openwhisk runtime.
- */
-function preProcessActivationData(env, activationdata) {
-    try {
-        // Note: we move the values here so that the "run()" handler does not have
-        // to move them again.
-        Object.keys(activationdata).forEach(
-            function (k) {
-                if (typeof activationdata[k] === 'string') {
-                    var envVariable = OW_ENV_PREFIX + k.toUpperCase();
-                    process.env[envVariable] = activationdata[k];
-                }
-            }
-        );
-    } catch(e){
-        console.error(e);
-        throw("Unable to initialize the runtime: " + e.message);
+        throw("Unable to process Initialization data: " + e.message);
     }
 }
 
@@ -198,6 +176,7 @@ function preProcessHTTPContext(req, valueData) {
                 // make value data available as __ow_body
                 const tmpBody = Object.assign({}, req.body.value);
                 // delete main, binary, raw, and code from the body before sending it as an action argument
+                removeInitData(tmpBody);
                 delete tmpBody.main;
                 delete tmpBody.code;
                 delete tmpBody.binary;
@@ -219,10 +198,31 @@ function preProcessHTTPContext(req, valueData) {
         valueData.__ow_path = "";
     } catch (e) {
         console.error(e);
-        throw ("Unable to initialize the runtime: " + e.message)
+        throw ("Unable to process HTTP Context: " + e.message)
     }
 }
 
+/**
+ * Pre-process the incoming http request data, moving it to where the
+ * route handlers expect it to be for an openwhisk runtime.
+ */
+function preProcessActivationData(env, activationdata) {
+    try {
+        // Note: we move the values here so that the "run()" handler does not have
+        // to move them again.
+        Object.keys(activationdata).forEach(
+            function (k) {
+                if (typeof activationdata[k] === 'string') {
+                    var envVariable = OW_ENV_PREFIX + k.toUpperCase();
+                    process.env[envVariable] = activationdata[k];
+                }
+            }
+        );
+    } catch(e){
+        console.error(e);
+        throw("Unable to process Activation data: " + e.message);
+    }
+}
 
 /**
  * Pre-process the incoming http request data, moving it to where the
@@ -230,13 +230,27 @@ function preProcessHTTPContext(req, valueData) {
  */
 function preProcessRequest(req){
     try {
+        let env = process.env || {};
+
         // Get or create valid references to the various data we might encounter
         // in a request such as Init., Activation and function parameter data.
         let body = req.body || {};
         let valueData = body.value || {};
         let initData = body.init || {};
         let activationData = body.activation || {};
-        let env = process.env || {};
+
+        // process initialization (i.e., "init") data
+        if (hasInitData(req)) {
+            preProcessInitData(env, initData, valueData, activationData);
+        }
+
+        if( hasActivationData(req)) {
+            // process HTTP request header and body to make it available to function as parameter data
+            preProcessHTTPContext(req, valueData);
+
+            // process per-activation (i.e, "run") data
+            preProcessActivationData(env, activationData);
+        }
 
         // Fix up pointers in case we had to allocate new maps
         req.body = body;
@@ -244,19 +258,10 @@ function preProcessRequest(req){
         req.body.init = initData;
         req.body.activation = activationData;
 
-        // process initialization (i.e., "init") data
-        preProcessInitData(env, initData, valueData, activationData);
-
-        // process HTTP request header and body to make it available to function as parameter data
-        preProcessHTTPContext(req, valueData);
-
-        // process per-activation (i.e, "run") data
-        preProcessActivationData(env, activationData);
-
     } catch(e){
         console.error(e);
         // TODO: test this error is handled properly and results in an HTTP error response
-        throw("Unable to initialize the runtime: " + e.message);
+        throw("Unable to process request data: " + e.message);
     }
 }
 
@@ -384,10 +389,11 @@ function PlatformKnativeImpl(platformFactory) {
                 // Process request and process env. variables to provide them in the manner
                 // an OpenWhisk Action expects them, as well as enable additional Http features.
                 preProcessRequest(req);
-
+                // Invoke the OW "init" entrypoint
                 service.initCode(req).then(function () {
                     // delete any INIT data (e.g., code, raw, etc.) from the 'value' data before calling run().
                     removeInitData(req.body);
+                    // Invoke the OW "run" entrypoint
                     service.runCode(req).then(function (result) {
                         postProcessResponse(req, result, res)
                     });
@@ -405,7 +411,7 @@ function PlatformKnativeImpl(platformFactory) {
                 // Process request and process env. variables to provide them in the manner
                 // an OpenWhisk Action expects them, as well as enable additional Http features.
                 preProcessRequest(req);
-
+                // Invoke the OW "init" entrypoint
                 service.initCode(req).then(function (result) {
                     res.status(result.code).send(result.response);
                 }).catch(function (error) {
@@ -421,7 +427,7 @@ function PlatformKnativeImpl(platformFactory) {
                 // Process request and process env. variables to provide them in the manner
                 // an OpenWhisk Action expects them, as well as enable additional Http features.
                 preProcessRequest(req);
-
+                // Invoke the OW "run" entrypoint
                 service.runCode(req).then(function (result) {
                     postProcessResponse(req, result, res)
                 }).catch(function (error) {
@@ -436,7 +442,7 @@ function PlatformKnativeImpl(platformFactory) {
             }
 
         } catch (e) {
-            res.status(500).json({error: "internal error during function initialization."})
+            res.status(500).json({error: "internal error during request processing."})
         }
     };
 
