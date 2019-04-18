@@ -46,7 +46,7 @@ app.use(bodyParser.json({ limit: config.requestBodyLimit }));
 // identify the target Serverless platform
 const platformFactory = require('./platform/platform.js');
 const factory = new platformFactory(app, config, service);
-const targetPlatform = process.env.__OW_RUNTIME_PLATFORM;
+var targetPlatform = process.env.__OW_RUNTIME_PLATFORM;
 
 // default to "openwhisk" platform initialization if not defined
 // TODO export isvalid() from platform, if undefined this is OK to default, but if not valid value then error out
