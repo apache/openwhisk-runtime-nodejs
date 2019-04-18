@@ -136,6 +136,7 @@ Using IntelliJ:
 ###
 
 ```
+cd core/nodejsActionBase
 npm install
 ./node_modules/.bin/eslint --fix --ignore-path .gitignore .
 ```
