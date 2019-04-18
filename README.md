@@ -133,13 +133,24 @@ Using IntelliJ:
 -Dhttp.proxyPort=3128
 ```
 
-###
+### How to use ESLint?
+
+ESLint can fix syntactic errors automatically by running:
 
 ```
+git clone https://github.com/apache/incubator-openwhisk-runtime-nodejs.git
 cd core/nodejsActionBase
 npm install
 ./node_modules/.bin/eslint --fix --ignore-path .gitignore .
 ```
+
+`eslint` might produce few errors/warnings along with auto fixing syntax errors:
+
+```
+✖ 3 problems (3 errors, 0 warnings)
+```
+
+ESLint configuration file is located at (.eslintrc.json)[core/nodejsActionBase/.eslintrc.json] which can be updated if needed. 
 
 # Disclaimer
 
