@@ -87,6 +87,25 @@ abstract class NodeJsActionContainerTests extends BasicActionRunnerTests with Ws
       """.stripMargin.trim)
   }
 
+  override val testEnvPartition = {
+    // the environment variables are ready at load time to ensure
+    // variables are already available in the runtime
+    TestConfig("""
+        |const envargs = {
+        |    "ARRAY": process.env.ARRAY,
+        |    "OBJECT": process.env.OBJECT,
+        |    "STRING": process.env.STRING,
+        |    "NUMBER": process.env.NUMBER,
+        |    "BOOL": process.env.BOOL,
+        |    "NULL": process.env.NULL
+        |}
+        |
+        |function main(args) {
+        |    return envargs
+        |}
+      """.stripMargin.trim)
+  }
+
   override val testInitCannotBeCalledMoreThanOnce = {
     TestConfig("""
         |function main(args) {
