@@ -150,7 +150,7 @@ npm install
 ✖ 3 problems (3 errors, 0 warnings)
 ```
 
-ESLint configuration file is located at (.eslintrc.json)[core/nodejsActionBase/.eslintrc.json] which can be updated if needed. 
+ESLint configuration file is located at (.eslintrc.json)[core/nodejsActionBase/.eslintrc.json] which can be updated if needed.
 
 # Disclaimer
 
