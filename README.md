@@ -133,6 +133,25 @@ Using IntelliJ:
 -Dhttp.proxyPort=3128
 ```
 
+### How to use ESLint?
+
+ESLint can fix syntactic errors automatically by running:
+
+```
+git clone https://github.com/apache/incubator-openwhisk-runtime-nodejs.git
+cd core/nodejsActionBase
+npm install
+./node_modules/.bin/eslint --fix --ignore-path .gitignore .
+```
+
+`eslint` might produce few errors/warnings along with auto fixing syntax errors:
+
+```
+✖ 3 problems (3 errors, 0 warnings)
+```
+
+ESLint configuration file is located at (.eslintrc.json)[core/nodejsActionBase/.eslintrc.json] which can be updated if needed.
+
 # Disclaimer
 
 Apache OpenWhisk Runtime Node.js is an effort undergoing incubation at The Apache Software Foundation (ASF), sponsored by the Apache Incubator. Incubation is required of all newly accepted projects until a further review indicates that the infrastructure, communications, and decision making process have stabilized in a manner consistent with other successful ASF projects. While incubation status is not necessarily a reflection of the completeness or stability of the code, it does indicate that the project has yet to be fully endorsed by the ASF.
