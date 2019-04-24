@@ -24,12 +24,18 @@ RUN apt-get update && apt-get install -y \
 WORKDIR /nodejsAction
 COPY . .
 
-COPY ../../nodejsActionBase/app.js ./
-COPY ../../nodejsActionBase/runner.js ./
-COPY ../../nodejsActionBase/src/service.js ./src
-COPY ../../nodejsActionBase/platform/platform.js ./platform
-COPY ../../nodejsActionBase/platform/openwhisk.js ./platform
-COPY ../../nodejsActionBase/platform/knative.js ./platform
+RUN pwd
+
+RUN ls -R
+
+RUN mkdir ./src ./platform
+
+COPY ./core/nodejsActionBase/app.js ./
+COPY ./core/nodejsActionBase/runner.js ./
+COPY ./core/nodejsActionBase/src/service.js ./src
+COPY ./core/nodejsActionBase/platform/platform.js ./platform
+COPY ./core/nodejsActionBase/platform/openwhisk.js ./platform
+COPY ./core/nodejsActionBase/platform/knative.js ./platform
 
 # COPY the package.json to root container, so we can install npm packages a level up from user's packages, so user's packages take precedence
 COPY ../package.json /
