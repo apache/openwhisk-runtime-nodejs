@@ -32,10 +32,10 @@ RUN mkdir ./src ./platform
 
 COPY ./core/nodejsActionBase/app.js ./
 COPY ./core/nodejsActionBase/runner.js ./
-COPY ./core/nodejsActionBase/src/service.js ./src
-COPY ./core/nodejsActionBase/platform/platform.js ./platform
-COPY ./core/nodejsActionBase/platform/openwhisk.js ./platform
-COPY ./core/nodejsActionBase/platform/knative.js ./platform
+COPY ./core/nodejsActionBase/src/service.js ./src/
+COPY ./core/nodejsActionBase/platform/platform.js ./platform/
+COPY ./core/nodejsActionBase/platform/openwhisk.js ./platform/
+COPY ./core/nodejsActionBase/platform/knative.js ./platform/
 
 # COPY the package.json to root container, so we can install npm packages a level up from user's packages, so user's packages take precedence
 COPY ../package.json /
