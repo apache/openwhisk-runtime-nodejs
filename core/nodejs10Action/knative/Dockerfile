@@ -39,7 +39,7 @@ COPY ./core/nodejsActionBase/platform/*.js ./platform/
 
 RUN ls -1
 
-RUN cd / && npm install --no-package-lock \
+RUN npm install --no-package-lock \
     && npm cache clean --force
 EXPOSE 8080
 # The flag --experimental-worker is to be use with care as it's an expirimental feature  more info here https://nodejs.org/docs/latest-v10.x/api/worker_threads.html
