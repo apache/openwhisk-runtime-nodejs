@@ -30,12 +30,12 @@ RUN pwd
 
 RUN ls -1
 
-COPY ./core/nodejs10Action/package.json /
+COPY ./core/nodejs10Action/package.json ./
 # COPY source code "*.js" from nodejsActionBase to current working dir
 RUN mkdir /src /platform
-COPY ./core/nodejsActionBase/*.js /
-COPY ./core/nodejsActionBase/src/*.js /src/
-COPY ./core/nodejsActionBase/platform/*.js /platform/
+COPY ./core/nodejsActionBase/*.js ./
+COPY ./core/nodejsActionBase/src/*.js ./src/
+COPY ./core/nodejsActionBase/platform/*.js ./platform/
 
 RUN ls -1
 
