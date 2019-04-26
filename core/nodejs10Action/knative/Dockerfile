@@ -27,7 +27,8 @@ COPY . .
 # so user's packages take precedence
 
 RUN pwd
-RUN ls -R
+
+RUN ls -1
 
 COPY ./core/nodejs10Action/package.json /
 # COPY source code "*.js" from nodejsActionBase to current working dir
@@ -36,7 +37,7 @@ COPY ./core/nodejsActionBase/*.js /
 COPY ./core/nodejsActionBase/src/*.js /src/
 COPY ./core/nodejsActionBase/platform/*.js /platform/
 
-RUN ls -R
+RUN ls -1
 
 RUN cd / && npm install --no-package-lock \
     && npm cache clean --force
