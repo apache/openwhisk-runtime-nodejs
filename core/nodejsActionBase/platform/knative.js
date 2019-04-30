@@ -447,8 +447,21 @@ function PlatformKnativeImpl(platformFactory) {
                         res.status(500).json({ error: "Internal error during function execution." });
                     }
                 });
+            } else {
+                preProcessRequest(req);
+                // Invoke the OW "run" entrypoint
+                service.runCode(req).then(function (result) {
+                    postProcessResponse(req, result, res)
+                }).catch(function (error) {
+                    console.error(error);
+                    if (typeof error.code === "number" && typeof error.response !== "undefined") {
+                        res.status(error.code).json(error.response);
+                    } else {
+                        console.error("[wrapEndpoint]", "invalid errored promise", JSON.stringify(error));
+                        res.status(500).json({ error: "Internal error during function execution." });
+                    }
+                });
             }
-
         } catch (e) {
             res.status(500).json({error: "internal error during request processing."})
         }
