@@ -38,7 +38,7 @@ COPY . .
 
 # COPY the package.json to root container, so we can install npm packages a level up from user's packages,
 # so user's packages take precedence
-COPY ./package.json /
+COPY ./core/nodejs10Action/package.json /
 
 RUN ls -1
 
