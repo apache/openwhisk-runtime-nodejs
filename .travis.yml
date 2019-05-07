@@ -41,7 +41,7 @@ deploy:
       all_branches: true
       repo: apache/incubator-openwhisk-runtime-nodejs
   - provider: script
-    script: "./tools/travis/publish.sh openwhisk 6 latest && ./tools/travis/publish.sh openwhisk 8 latest && ./tools/travis/publish.sh openwhisk 10 latest"
+    script: "./tools/travis/publish.sh openwhisk 6 latest && ./tools/travis/publish.sh openwhisk 8 latest && ./tools/travis/publish.sh openwhisk 10 latest && ./tools/travis/publish.sh openwhisk 12 latest"
     on:
       branch: master
       repo: apache/incubator-openwhisk-runtime-nodejs
