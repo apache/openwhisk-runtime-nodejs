@@ -1,5 +1,5 @@
 {
-  "name": "action-nodejs-v10",
+  "name": "action-nodejs-v12",
   "version": "1.0.0",
   "description": "Apache OpenWhisk NodeJS Runtime",
   "repository": {
