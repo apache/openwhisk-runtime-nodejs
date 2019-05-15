@@ -33,15 +33,6 @@ function NodeActionRunner() {
 
     this.userScriptMain = undefined;
 
-    // This structure is reset for every action invocation. It contains two fields:
-    //   - completed; indicating whether the action has already signaled completion
-    //   - next; a callback to be invoked with the result of the action.
-    // Note that { error: ... } results are still results.
-    var callback = {
-        completed : undefined,
-        next      : function (result) { return; }
-    };
-
     this.init = function(message) {
         function assertMainIsFunction() {
             if (typeof thisRunner.userScriptMain !== 'function') {
@@ -91,9 +82,6 @@ function NodeActionRunner() {
     this.run = function(args) {
         return new Promise(
             function (resolve, reject) {
-                callback.completed = undefined;
-                callback.next = resolve;
-
                 try {
                     var result = thisRunner.userScriptMain(args);
                 } catch (e) {
