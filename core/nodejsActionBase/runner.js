@@ -81,27 +81,31 @@ class NodeActionRunner {
                 reject(e);
             }
 
-            // Non-promises/undefined instantly resolve.
-            Promise.resolve(result).then(resolvedResult => {
-                // This happens, e.g. if you just have "return;"
-                if (typeof resolvedResult === "undefined") {
-                    resolvedResult = {};
-                }
-                resolve(resolvedResult);
-            }).catch(error => {
-                // A rejected Promise from the user code maps into a
-                // successful promise wrapping a whisk-encoded error.
-
-                // Special case if the user just called "reject()".
-                if (!error) {
-                    resolve({error: {}});
-                } else {
-                    const serializeError = require('serialize-error');
-                    resolve({error: serializeError(error)});
-                }
-            });
+            this.finalizeResult(result, resolve);
         });
     };
+
+    finalizeResult(result, resolve) {
+        // Non-promises/undefined instantly resolve.
+        Promise.resolve(result).then(resolvedResult => {
+            // This happens, e.g. if you just have "return;"
+            if (typeof resolvedResult === "undefined") {
+                resolvedResult = {};
+            }
+            resolve(resolvedResult);
+        }).catch(error => {
+            // A rejected Promise from the user code maps into a
+            // successful promise wrapping a whisk-encoded error.
+
+            // Special case if the user just called "reject()".
+            if (!error) {
+                resolve({error: {}});
+            } else {
+                const serializeError = require('serialize-error');
+                resolve({error: serializeError(error)});
+            }
+        });
+    }
 }
 
 /**
