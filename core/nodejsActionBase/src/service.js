@@ -15,23 +15,22 @@
  * limitations under the License.
  */
 
-
-var NodeActionRunner = require('../runner');
+const NodeActionRunner = require('../runner');
 
 function NodeActionService(config) {
 
-    var Status = {
+    const Status = {
         ready: 'ready',
         starting: 'starting',
         running: 'running',
         stopped: 'stopped',
     };
 
-    // TODO: save the entire configuration for use by any of the route handlers
-    var status = Status.ready;
-    var ignoreRunStatus = config.allowConcurrent === undefined ? false : config.allowConcurrent.toLowerCase() === 'true';
-    var server = undefined;
-    var userCodeRunner = undefined;
+    const ignoreRunStatus = config.allowConcurrent === undefined ? false : config.allowConcurrent.toLowerCase() === 'true';
+
+    let status = Status.ready;
+    let server = undefined;
+    let userCodeRunner = undefined;
 
     function setStatus(newStatus) {
         if (status !== Status.stopped) {
@@ -89,8 +88,8 @@ function NodeActionService(config) {
 
             setStatus(Status.starting);
 
-            var body = req.body || {};
-            var message = body.value || {};
+            let body = req.body || {};
+            let message = body.value || {};
 
             if (message.main && message.code && typeof message.main === 'string' && typeof message.code === 'string') {
                 return doInit(message).then(function(result) {
@@ -98,20 +97,20 @@ function NodeActionService(config) {
                     return responseMessage(200, { OK: true });
                 }).catch(function(error) {
                     setStatus(Status.stopped);
-                    var errStr = 'Initialization has failed due to: ' + error.stack ? String(error.stack) : error;
+                    let errStr = 'Initialization has failed due to: ' + error.stack ? String(error.stack) : error;
                     return Promise.reject(errorMessage(502, errStr));
                 });
             } else {
                 setStatus(Status.ready);
-                var msg = 'Missing main/no code to execute.';
+                let msg = 'Missing main/no code to execute.';
                 return Promise.reject(errorMessage(403, msg));
             }
         } else if (userCodeRunner !== undefined) {
-            var msg = 'Cannot initialize the action more than once.';
+            let msg = 'Cannot initialize the action more than once.';
             console.error('Internal system error:', msg);
             return Promise.reject(errorMessage(403, msg));
         } else {
-            var msg = 'System not ready, status is ' + status + '.';
+            let msg = 'System not ready, status is ' + status + '.';
             console.error('Internal system error:', msg);
             return Promise.reject(errorMessage(403, msg));
         }
@@ -141,12 +140,12 @@ function NodeActionService(config) {
                     return responseMessage(200, result);
                 }
             }).catch(function(error) {
-                var msg = 'An error has occurred: ' + error;
+                let msg = 'An error has occurred: ' + error;
                 setStatus(Status.stopped);
                 return Promise.reject(errorMessage(502, msg));
             });
         } else {
-            var msg = 'System not ready, status is ' + status + '.';
+            let msg = 'System not ready, status is ' + status + '.';
             console.error('Internal system error:', msg);
             return Promise.reject(errorMessage(403, msg));
         }
@@ -170,13 +169,13 @@ function NodeActionService(config) {
     }
 
     function doRun(req) {
-        var msg = req && req.body || {};
+        let msg = req && req.body || {};
         // Move per-activation keys to process env. vars with __OW_ (reserved) prefix
         Object.keys(msg).forEach(
-            function(k) {
-                if (typeof msg[k] === 'string' && k !== 'value'){
-                    var envVariable = '__OW_' + k.toUpperCase();
-                    process.env['__OW_' + k.toUpperCase()] = msg[k];
+            function (k) {
+                if (typeof msg[k] === 'string' && k !== 'value') {
+                    let envVariable = '__OW_' + k.toUpperCase();
+                    process.env[envVariable] = msg[k];
                 }
             }
         );
