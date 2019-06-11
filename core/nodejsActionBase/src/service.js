@@ -83,9 +83,7 @@ function NodeActionService(config) {
      *  req.body = { main: String, code: String, binary: Boolean }
      */
     this.initCode = function initCode(req) {
-
         if (status === Status.ready && userCodeRunner === undefined) {
-
             setStatus(Status.starting);
 
             let body = req.body || {};
@@ -125,12 +123,22 @@ function NodeActionService(config) {
      * req.body = { value: Object, meta { activationId : int } }
      */
     this.runCode = function runCode(req) {
-        if (status === Status.ready) {
+        if (status === Status.ready && userCodeRunner !== undefined) {
             if (!ignoreRunStatus) {
                 setStatus(Status.running);
             }
 
-            return doRun(req).then(function(result) {
+            // these are defensive checks against the expected interface invariants
+            let msg = req && req.body || {};
+            if (msg.value === null || msg.value === undefined) {
+                msg.value = {};
+            } else if (typeof msg.value !== 'object') {
+                let errStr = `Internal system error: the argument must be a dictionary but has type '${typeof msg.value}'.`;
+                console.error('Internal system error:', errStr);
+                return Promise.reject(errorMessage(403, errStr));
+            }
+
+            return doRun(msg).then(function(result) {
                 if (!ignoreRunStatus) {
                     setStatus(Status.ready);
                 }
@@ -145,7 +153,7 @@ function NodeActionService(config) {
                 return Promise.reject(errorMessage(502, msg));
             });
         } else {
-            let msg = 'System not ready, status is ' + status + '.';
+            let msg = userCodeRunner ? `System not ready, status is '${status}'.` : 'System not initialized.';
             console.error('Internal system error:', msg);
             return Promise.reject(errorMessage(403, msg));
         }
@@ -168,8 +176,7 @@ function NodeActionService(config) {
         });
     }
 
-    function doRun(req) {
-        let msg = req && req.body || {};
+    function doRun(msg) {
         // Move per-activation keys to process env. vars with __OW_ (reserved) prefix
         Object.keys(msg).forEach(
             function (k) {
