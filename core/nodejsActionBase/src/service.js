@@ -90,12 +90,12 @@ function NodeActionService(config) {
             let message = body.value || {};
 
             if (message.main && message.code && typeof message.main === 'string' && typeof message.code === 'string') {
-                return doInit(message).then(function(result) {
+                return doInit(message).then(_ => {
                     setStatus(Status.ready);
                     return responseMessage(200, { OK: true });
-                }).catch(function(error) {
+                }).catch(error => {
                     setStatus(Status.stopped);
-                    let errStr = 'Initialization has failed due to: ' + error.stack ? String(error.stack) : error;
+                    let errStr = `Initialization has failed due to: ${error.stack ? String(error.stack) : error}`;
                     return Promise.reject(errorMessage(502, errStr));
                 });
             } else {
@@ -108,7 +108,7 @@ function NodeActionService(config) {
             console.error('Internal system error:', msg);
             return Promise.reject(errorMessage(403, msg));
         } else {
-            let msg = 'System not ready, status is ' + status + '.';
+            let msg = `System not ready, status is ${status}.`;
             console.error('Internal system error:', msg);
             return Promise.reject(errorMessage(403, msg));
         }
@@ -138,7 +138,7 @@ function NodeActionService(config) {
                 return Promise.reject(errorMessage(403, errStr));
             }
 
-            return doRun(msg).then(function(result) {
+            return doRun(msg).then(result => {
                 if (!ignoreRunStatus) {
                     setStatus(Status.ready);
                 }
@@ -147,13 +147,13 @@ function NodeActionService(config) {
                 } else {
                     return responseMessage(200, result);
                 }
-            }).catch(function(error) {
-                let msg = 'An error has occurred: ' + error;
+            }).catch(error => {
+                let msg = `An error has occurred: ${error}`;
                 setStatus(Status.stopped);
                 return Promise.reject(errorMessage(502, msg));
             });
         } else {
-            let msg = userCodeRunner ? `System not ready, status is '${status}'.` : 'System not initialized.';
+            let msg = userCodeRunner ? `System not ready, status is ${status}.` : 'System not initialized.';
             console.error('Internal system error:', msg);
             return Promise.reject(errorMessage(403, msg));
         }
@@ -162,42 +162,41 @@ function NodeActionService(config) {
     function doInit(message) {
         userCodeRunner = new NodeActionRunner();
 
-        return userCodeRunner.init(message).then(function(result) {
-            // 'true' has no particular meaning here. The fact that the promise
-            // is resolved successfully in itself carries the intended message
-            // that initialization succeeded.
-            return true;
-        }).catch(function(error) {
-            // emit error to activation log then flush the logs as this
-            // is the end of the activation
-            console.error('Error during initialization:', error);
-            writeMarkers();
-            return Promise.reject(error);
-        });
+        return userCodeRunner
+            .init(message)
+            // returning 'true' has no particular meaning here. The fact that the promise resolved
+            // successfully in itself carries the intended message that initialization succeeded.
+            .then(_ => true)
+            // emit error to activation log then flush the logs as this is the end of the activation
+            .catch(error => {
+                console.error('Error during initialization:', error);
+                writeMarkers();
+                return Promise.reject(error);
+            });
     }
 
     function doRun(msg) {
         // Move per-activation keys to process env. vars with __OW_ (reserved) prefix
-        Object.keys(msg).forEach(
-            function (k) {
-                if (typeof msg[k] === 'string' && k !== 'value') {
-                    let envVariable = '__OW_' + k.toUpperCase();
-                    process.env[envVariable] = msg[k];
-                }
+        Object.keys(msg).forEach(k => {
+            if (typeof msg[k] === 'string' && k !== 'value') {
+                let envVariable = '__OW_' + k.toUpperCase();
+                process.env[envVariable] = msg[k];
             }
-        );
-
-        return userCodeRunner.run(msg.value).then(function(result) {
-            if (typeof result !== 'object') {
-                console.error('Result must be of type object but has type "' + typeof result + '":', result);
-            }
-            writeMarkers();
-            return result;
-        }).catch(function(error) {
-            console.error(error);
-            writeMarkers();
-            return Promise.reject(error);
         });
+
+        return userCodeRunner
+            .run(msg.value)
+            .then(result => {
+                if (typeof result !== 'object') {
+                    console.error(`Result must be of type object but has type "${typeof result}":`, result);
+                }
+                writeMarkers();
+                return result;
+            }).catch(error => {
+                console.error(error);
+                writeMarkers();
+                return Promise.reject(error);
+            });
     }
 
     function writeMarkers() {
@@ -206,8 +205,6 @@ function NodeActionService(config) {
     }
 }
 
-NodeActionService.getService = function(config) {
-    return new NodeActionService(config);
-};
+NodeActionService.getService = config => new NodeActionService(config);
 
 module.exports = NodeActionService;
