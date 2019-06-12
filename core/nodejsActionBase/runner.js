@@ -25,6 +25,7 @@ var util = require('util');
 var child_process = require('child_process');
 var fs = require('fs');
 var path = require('path');
+
 const serializeError = require('serialize-error');
 
 function NodeActionRunner() {
@@ -33,7 +34,7 @@ function NodeActionRunner() {
 
     this.userScriptMain = undefined;
 
-    this.init = function(message) {
+    this.init = function (message) {
         function assertMainIsFunction() {
             if (typeof thisRunner.userScriptMain !== 'function') {
                 throw "Action entrypoint '" + message.main + "' is not a function.";
@@ -44,19 +45,31 @@ function NodeActionRunner() {
         if (message.binary) {
             // The code is a base64-encoded zip file.
             return unzipInTmpDir(message.code).then(function (moduleDir) {
-                if(!fs.existsSync(path.join(moduleDir, 'package.json')) &&
-                    !fs.existsSync(path.join(moduleDir, 'index.js'))) {
-                    return Promise.reject('Zipped actions must contain either package.json or index.js at the root.')
+                let parts = splitMainHandler(message.main);
+                if (parts === undefined) {
+                    // message.main is guaranteed to not be empty but be defensive anyway
+                    return Promise.reject('Name of main function is not valid.');
                 }
+
+                // if there is only one property in the "main" handler, it is the function name
+                // and the module name is specified either from package.json or assumed to be index.js
+                let [index, main] = parts;
 
                 try {
                     // Set the executable directory to the project dir
                     process.chdir(moduleDir);
-                    thisRunner.userScriptMain = eval('require("' + moduleDir + '").' + message.main);
+
+                    if (index === undefined && !fs.existsSync('package.json') && !fs.existsSync('index.js')) {
+                        return Promise.reject('Zipped actions must contain either package.json or index.js at the root.');
+                    }
+
+                    //  The module to require
+                    let whatToRequire = index !== undefined ? path.join(moduleDir, index) : moduleDir;
+                    thisRunner.userScriptMain = eval('require("' + whatToRequire + '").' + main);
                     assertMainIsFunction();
-                    // The value 'true' has no special meaning here;
-                    // the successful state is fully reflected in the
-                    // successful resolution of the promise.
+
+                    // The value 'true' has no special meaning here; the successful state is
+                    // fully reflected in the successful resolution of the promise.
                     return true;
                 } catch (e) {
                     return Promise.reject(e);
@@ -79,7 +92,7 @@ function NodeActionRunner() {
 
     // Returns a Promise with the result of the user code invocation.
     // The Promise is rejected iff the user code throws.
-    this.run = function(args) {
+    this.run = function (args) {
         return new Promise(
             function (resolve, reject) {
                 try {
@@ -101,9 +114,9 @@ function NodeActionRunner() {
 
                     // Special case if the user just called `reject()`.
                     if (!error) {
-                        resolve({ error: {}});
+                        resolve({error: {}});
                     } else {
-                        resolve({ error: serializeError(error) });
+                        resolve({error: serializeError(error)});
                     }
                 });
             }
@@ -132,9 +145,9 @@ function NodeActionRunner() {
         }).then(function (zipFile) {
             return exec(mkTempCmd).then(function (tmpDir2) {
                 return exec("unzip -qq " + zipFile + " -d " + tmpDir2).then(function (res) {
-                   return path.resolve(tmpDir2);
+                    return path.resolve(tmpDir2);
                 }).catch(function (error) {
-                   return Promise.reject("There was an error uncompressing the action archive.");
+                    return Promise.reject("There was an error uncompressing the action archive.");
                 });
             });
         });
@@ -154,6 +167,21 @@ function NodeActionRunner() {
             }
         );
     }
+
+    /**
+     * Splits handler into module name and path to main.
+     * If the string contains no '.', return [ undefined, the string ].
+     * If the string contains one or more '.', return [ string up to first period, rest of the string after ].
+     */
+    function splitMainHandler(handler) {
+        let matches = handler.match(/^([^.]+)$|^([^.]+)\.(.+)$/);
+        if (matches && matches.length == 4) {
+            let index = matches[2];
+            let main = matches[3] || matches[1];
+            return [index, main]
+        } else return undefined
+    }
+
 }
 
 module.exports = NodeActionRunner;
