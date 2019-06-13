@@ -19,6 +19,7 @@ FROM node:10.15.3-stretch
 RUN apt-get update && apt-get install -y \
     imagemagick \
     graphicsmagick \
+    zip \
     unzip \
     && rm -rf /var/lib/apt/lists/*
 WORKDIR /nodejsAction
