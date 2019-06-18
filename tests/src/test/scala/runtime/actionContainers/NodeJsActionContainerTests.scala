@@ -266,6 +266,31 @@ abstract class NodeJsActionContainerTests extends BasicActionRunnerTests with Ws
     }, 2)
   }
 
+  it should "support variables with no var declaration" in {
+    val (out, err) = withNodeJsContainer { c =>
+      val code =
+        """
+          | function main(params) {
+          |    greeting = 'hello, ' + params.payload + '!'
+          |    console.log(greeting);
+          |    return {payload: greeting}
+          | }
+        """.stripMargin
+
+      c.init(initPayload(code))._1 should be(200)
+
+      val (runCode, result) = c.run(runPayload(JsObject("payload" -> JsString("test"))))
+      runCode should be(200)
+      result should be(Some(JsObject("payload" -> JsString("hello, test!"))))
+    }
+
+    checkStreams(out, err, {
+      case (o, e) =>
+        o shouldBe "hello, test!"
+        e shouldBe empty
+    })
+  }
+
   it should "error when requiring a non-existent package" in {
     // NPM package names cannot start with a dot, and so there is no danger
     // of the package below ever being valid.
