@@ -54,7 +54,7 @@ class NodeActionRunner {
 
                     //  The module to require.
                     let whatToRequire = index !== undefined ? path.join(moduleDir, index) : moduleDir;
-                    this.userScriptMain = eval('require("' + whatToRequire + '").' + main);
+                    this.userScriptMain = evalScript(main, whatToRequire)
                     assertMainIsFunction(this.userScriptMain, message.main);
 
                     // The value 'true' has no special meaning here; the successful state is
@@ -64,7 +64,7 @@ class NodeActionRunner {
                 .catch(error => Promise.reject(error));
         } else try {
             // The code is a plain old JS file.
-            this.userScriptMain = eval('(function(){' + message.code + '\nreturn ' + message.main + '})()');
+            this.userScriptMain = evalScript(message.main, false, message.code)
             assertMainIsFunction(this.userScriptMain, message.main);
 
             return Promise.resolve(true); // See comment above about 'true'; it has no specific meaning.
@@ -166,6 +166,18 @@ function splitMainHandler(handler) {
 function assertMainIsFunction(userScriptMain, main) {
     if (typeof userScriptMain !== 'function') {
         throw "Action entrypoint '" + main + "' is not a function.";
+    }
+}
+
+/**
+ * Evals the code to execute. This is a global function so that the eval is in the global context
+ * and hence functions which use variables without 'var' are permitted.
+ */
+function evalScript(main, whatToRequire, code) {
+    if (whatToRequire) {
+        return eval('require("' + whatToRequire + '").' + main);
+    } else {
+        return eval('(function(){' + code + '\nreturn ' + main + '})()');
     }
 }
 
