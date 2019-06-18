@@ -15,23 +15,22 @@
  * limitations under the License.
  */
 
-
-var NodeActionRunner = require('../runner');
+const NodeActionRunner = require('../runner');
 
 function NodeActionService(config) {
 
-    var Status = {
+    const Status = {
         ready: 'ready',
         starting: 'starting',
         running: 'running',
         stopped: 'stopped',
     };
 
-    // TODO: save the entire configuration for use by any of the route handlers
-    var status = Status.ready;
-    var ignoreRunStatus = config.allowConcurrent === undefined ? false : config.allowConcurrent.toLowerCase() === 'true';
-    var server = undefined;
-    var userCodeRunner = undefined;
+    const ignoreRunStatus = config.allowConcurrent === undefined ? false : config.allowConcurrent.toLowerCase() === 'true';
+
+    let status = Status.ready;
+    let server = undefined;
+    let userCodeRunner = undefined;
 
     function setStatus(newStatus) {
         if (status !== Status.stopped) {
@@ -84,34 +83,32 @@ function NodeActionService(config) {
      *  req.body = { main: String, code: String, binary: Boolean }
      */
     this.initCode = function initCode(req) {
-
         if (status === Status.ready && userCodeRunner === undefined) {
-
             setStatus(Status.starting);
 
-            var body = req.body || {};
-            var message = body.value || {};
+            let body = req.body || {};
+            let message = body.value || {};
 
             if (message.main && message.code && typeof message.main === 'string' && typeof message.code === 'string') {
-                return doInit(message).then(function(result) {
+                return doInit(message).then(_ => {
                     setStatus(Status.ready);
                     return responseMessage(200, { OK: true });
-                }).catch(function(error) {
+                }).catch(error => {
                     setStatus(Status.stopped);
-                    var errStr = 'Initialization has failed due to: ' + error.stack ? String(error.stack) : error;
+                    let errStr = `Initialization has failed due to: ${error.stack ? String(error.stack) : error}`;
                     return Promise.reject(errorMessage(502, errStr));
                 });
             } else {
                 setStatus(Status.ready);
-                var msg = 'Missing main/no code to execute.';
+                let msg = 'Missing main/no code to execute.';
                 return Promise.reject(errorMessage(403, msg));
             }
         } else if (userCodeRunner !== undefined) {
-            var msg = 'Cannot initialize the action more than once.';
+            let msg = 'Cannot initialize the action more than once.';
             console.error('Internal system error:', msg);
             return Promise.reject(errorMessage(403, msg));
         } else {
-            var msg = 'System not ready, status is ' + status + '.';
+            let msg = `System not ready, status is ${status}.`;
             console.error('Internal system error:', msg);
             return Promise.reject(errorMessage(403, msg));
         }
@@ -126,12 +123,22 @@ function NodeActionService(config) {
      * req.body = { value: Object, meta { activationId : int } }
      */
     this.runCode = function runCode(req) {
-        if (status === Status.ready) {
+        if (status === Status.ready && userCodeRunner !== undefined) {
             if (!ignoreRunStatus) {
                 setStatus(Status.running);
             }
 
-            return doRun(req).then(function(result) {
+            // these are defensive checks against the expected interface invariants
+            let msg = req && req.body || {};
+            if (msg.value === null || msg.value === undefined) {
+                msg.value = {};
+            } else if (typeof msg.value !== 'object') {
+                let errStr = `Internal system error: the argument must be a dictionary but has type '${typeof msg.value}'.`;
+                console.error('Internal system error:', errStr);
+                return Promise.reject(errorMessage(403, errStr));
+            }
+
+            return doRun(msg).then(result => {
                 if (!ignoreRunStatus) {
                     setStatus(Status.ready);
                 }
@@ -140,13 +147,13 @@ function NodeActionService(config) {
                 } else {
                     return responseMessage(200, result);
                 }
-            }).catch(function(error) {
-                var msg = 'An error has occurred: ' + error;
+            }).catch(error => {
+                let msg = `An error has occurred: ${error}`;
                 setStatus(Status.stopped);
                 return Promise.reject(errorMessage(502, msg));
             });
         } else {
-            var msg = 'System not ready, status is ' + status + '.';
+            let msg = userCodeRunner ? `System not ready, status is ${status}.` : 'System not initialized.';
             console.error('Internal system error:', msg);
             return Promise.reject(errorMessage(403, msg));
         }
@@ -155,43 +162,41 @@ function NodeActionService(config) {
     function doInit(message) {
         userCodeRunner = new NodeActionRunner();
 
-        return userCodeRunner.init(message).then(function(result) {
-            // 'true' has no particular meaning here. The fact that the promise
-            // is resolved successfully in itself carries the intended message
-            // that initialization succeeded.
-            return true;
-        }).catch(function(error) {
-            // emit error to activation log then flush the logs as this
-            // is the end of the activation
-            console.error('Error during initialization:', error);
-            writeMarkers();
-            return Promise.reject(error);
-        });
+        return userCodeRunner
+            .init(message)
+            // returning 'true' has no particular meaning here. The fact that the promise resolved
+            // successfully in itself carries the intended message that initialization succeeded.
+            .then(_ => true)
+            // emit error to activation log then flush the logs as this is the end of the activation
+            .catch(error => {
+                console.error('Error during initialization:', error);
+                writeMarkers();
+                return Promise.reject(error);
+            });
     }
 
-    function doRun(req) {
-        var msg = req && req.body || {};
+    function doRun(msg) {
         // Move per-activation keys to process env. vars with __OW_ (reserved) prefix
-        Object.keys(msg).forEach(
-            function(k) {
-                if (typeof msg[k] === 'string' && k !== 'value'){
-                    var envVariable = '__OW_' + k.toUpperCase();
-                    process.env['__OW_' + k.toUpperCase()] = msg[k];
-                }
+        Object.keys(msg).forEach(k => {
+            if (typeof msg[k] === 'string' && k !== 'value') {
+                let envVariable = '__OW_' + k.toUpperCase();
+                process.env[envVariable] = msg[k];
             }
-        );
-
-        return userCodeRunner.run(msg.value).then(function(result) {
-            if (typeof result !== 'object') {
-                console.error('Result must be of type object but has type "' + typeof result + '":', result);
-            }
-            writeMarkers();
-            return result;
-        }).catch(function(error) {
-            console.error(error);
-            writeMarkers();
-            return Promise.reject(error);
         });
+
+        return userCodeRunner
+            .run(msg.value)
+            .then(result => {
+                if (typeof result !== 'object') {
+                    console.error(`Result must be of type object but has type "${typeof result}":`, result);
+                }
+                writeMarkers();
+                return result;
+            }).catch(error => {
+                console.error(error);
+                writeMarkers();
+                return Promise.reject(error);
+            });
     }
 
     function writeMarkers() {
@@ -200,8 +205,6 @@ function NodeActionService(config) {
     }
 }
 
-NodeActionService.getService = function(config) {
-    return new NodeActionService(config);
-};
+NodeActionService.getService = config => new NodeActionService(config);
 
 module.exports = NodeActionService;
