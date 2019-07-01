@@ -15,7 +15,7 @@
  * limitations under the License.
  */
 
-const NodeActionRunner = require('../runner');
+const { initializeActionHandler, NodeActionRunner } = require('../runner');
 
 function NodeActionService(config) {
 
@@ -160,13 +160,10 @@ function NodeActionService(config) {
     };
 
     function doInit(message) {
-        userCodeRunner = new NodeActionRunner();
-
-        return userCodeRunner
-            .init(message)
-            // returning 'true' has no particular meaning here. The fact that the promise resolved
-            // successfully in itself carries the intended message that initialization succeeded.
-            .then(_ => true)
+        return initializeActionHandler(message)
+            .then(handler => {
+                userCodeRunner = new NodeActionRunner(handler);
+            })
             // emit error to activation log then flush the logs as this is the end of the activation
             .catch(error => {
                 console.error('Error during initialization:', error);

@@ -23,55 +23,49 @@
 const fs = require('fs');
 const path = require('path');
 
+/** Initializes the handler for the user function. */
+function initializeActionHandler(message) {
+    if (message.binary) {
+        // The code is a base64-encoded zip file.
+        return unzipInTmpDir(message.code)
+            .then(moduleDir => {
+                let parts = splitMainHandler(message.main);
+                if (parts === undefined) {
+                    // message.main is guaranteed to not be empty but be defensive anyway
+                    return Promise.reject('Name of main function is not valid.');
+                }
+
+                // If there is only one property in the "main" handler, it is the function name
+                // and the module name is specified either from package.json or assumed to be index.js.
+                let [index, main] = parts;
+
+                // Set the executable directory to the project dir.
+                process.chdir(moduleDir);
+
+                if (index === undefined && !fs.existsSync('package.json') && !fs.existsSync('index.js')) {
+                    return Promise.reject('Zipped actions must contain either package.json or index.js at the root.');
+                }
+
+                //  The module to require.
+                let whatToRequire = index !== undefined ? path.join(moduleDir, index) : moduleDir;
+                let handler = eval('require("' + whatToRequire + '").' + main);
+                return assertMainIsFunction(handler, message.main);
+            })
+            .catch(error => Promise.reject(error));
+    } else try {
+        // The code is a plain old JS file.
+        let handler = eval('(function(){' + message.code + '\nreturn ' + message.main + '})()');
+        return assertMainIsFunction(handler, message.main);
+    } catch (e) {
+        return Promise.reject(e);
+    }
+}
+
 class NodeActionRunner {
 
-    constructor() {
-        this.userScriptMain = undefined;
+    constructor(handler) {
+        this.userScriptMain = handler;
     }
-
-    /** Initializes the runner with the user function. */
-    init(message) {
-        if (message.binary) {
-            // The code is a base64-encoded zip file.
-            return unzipInTmpDir(message.code)
-                .then(moduleDir => {
-                    let parts = splitMainHandler(message.main);
-                    if (parts === undefined) {
-                        // message.main is guaranteed to not be empty but be defensive anyway
-                        return Promise.reject('Name of main function is not valid.');
-                    }
-
-                    // If there is only one property in the "main" handler, it is the function name
-                    // and the module name is specified either from package.json or assumed to be index.js.
-                    let [index, main] = parts;
-
-                    // Set the executable directory to the project dir.
-                    process.chdir(moduleDir);
-
-                    if (index === undefined && !fs.existsSync('package.json') && !fs.existsSync('index.js')) {
-                        return Promise.reject('Zipped actions must contain either package.json or index.js at the root.');
-                    }
-
-                    //  The module to require.
-                    let whatToRequire = index !== undefined ? path.join(moduleDir, index) : moduleDir;
-                    this.userScriptMain = evalScript(main, whatToRequire)
-                    assertMainIsFunction(this.userScriptMain, message.main);
-
-                    // The value 'true' has no special meaning here; the successful state is
-                    // fully reflected in the successful resolution of the promise.
-                    return true;
-                })
-                .catch(error => Promise.reject(error));
-        } else try {
-            // The code is a plain old JS file.
-            this.userScriptMain = evalScript(message.main, false, message.code)
-            assertMainIsFunction(this.userScriptMain, message.main);
-
-            return Promise.resolve(true); // See comment above about 'true'; it has no specific meaning.
-        } catch (e) {
-            return Promise.reject(e);
-        }
-    };
 
     run(args) {
         return new Promise((resolve, reject) => {
@@ -163,22 +157,15 @@ function splitMainHandler(handler) {
     } else return undefined
 }
 
-function assertMainIsFunction(userScriptMain, main) {
-    if (typeof userScriptMain !== 'function') {
-        throw "Action entrypoint '" + main + "' is not a function.";
-    }
-}
-
-/**
- * Evals the code to execute. This is a global function so that the eval is in the global context
- * and hence functions which use variables without 'var' are permitted.
- */
-function evalScript(main, whatToRequire, code) {
-    if (whatToRequire) {
-        return eval('require("' + whatToRequire + '").' + main);
+function assertMainIsFunction(handler, name) {
+    if (typeof handler === 'function') {
+        return Promise.resolve(handler);
     } else {
-        return eval('(function(){' + code + '\nreturn ' + main + '})()');
+        return Promise.reject("Action entrypoint '" + name + "' is not a function.");
     }
 }
 
-module.exports = NodeActionRunner;
+module.exports = {
+    NodeActionRunner,
+    initializeActionHandler
+};
