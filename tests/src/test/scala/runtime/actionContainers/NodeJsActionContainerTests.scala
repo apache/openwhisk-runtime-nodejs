@@ -291,6 +291,27 @@ abstract class NodeJsActionContainerTests extends BasicActionRunnerTests with Ws
     })
   }
 
+  it should "support webpacked function" in {
+    val (out, err) = withNodeJsContainer { c =>
+      val code =
+        """
+          |!function(e){var t={};function n(r){if(t[r])return t[r].exports;var o=t[r]={i:r,l:!1,exports:{}};return e[r].call(o.exports,o,o.exports,n),o.l=!0,o.exports}n.m=e,n.c=t,n.d=function(e,t,r){n.o(e,t)||Object.defineProperty(e,t,{enumerable:!0,get:r})},n.r=function(e){"undefined"!=typeof Symbol&&Symbol.toStringTag&&Object.defineProperty(e,Symbol.toStringTag,{value:"Module"}),Object.defineProperty(e,"__esModule",{value:!0})},n.t=function(e,t){if(1&t&&(e=n(e)),8&t)return e;if(4&t&&"object"==typeof e&&e&&e.__esModule)return e;var r=Object.create(null);if(n.r(r),Object.defineProperty(r,"default",{enumerable:!0,value:e}),2&t&&"string"!=typeof e)for(var o in e)n.d(r,o,function(t){return e[t]}.bind(null,o));return r},n.n=function(e){var t=e&&e.__esModule?function(){return e.default}:function(){return e};return n.d(t,"a",t),t},n.o=function(e,t){return Object.prototype.hasOwnProperty.call(e,t)},n.p="",n(n.s=407)}({407:function(e,t,n){"use strict";var r=this&&this.__awaiter||function(e,t,n,r){return new(n||(n=Promise))(function(o,u){function i(e){try{f(r.next(e))}catch(e){u(e)}}function c(e){try{f(r.throw(e))}catch(e){u(e)}}function f(e){e.done?o(e.value):new n(function(t){t(e.value)}).then(i,c)}f((r=r.apply(e,t||[])).next())})};function o(){return r(this,void 0,void 0,function*(){return{statusCode:200,body:{status:"ok"}}})}Object.defineProperty(t,"__esModule",{value:!0}),t.default=o,global.main=o}});
+        """.stripMargin
+
+      c.init(initPayload(code))._1 should be(200)
+
+      val (runCode, result) = c.run(JsObject.empty)
+      runCode should be(200)
+      result should be(Some("""{"statusCode":200,"body":{"status":"ok"}}""".parseJson))
+    }
+
+    checkStreams(out, err, {
+      case (o, e) =>
+        o shouldBe empty
+        e shouldBe empty
+    })
+  }
+
   it should "error when requiring a non-existent package" in {
     // NPM package names cannot start with a dot, and so there is no danger
     // of the package below ever being valid.
