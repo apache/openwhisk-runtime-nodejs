@@ -291,6 +291,30 @@ abstract class NodeJsActionContainerTests extends BasicActionRunnerTests with Ws
     })
   }
 
+  it should "support webpacked function" in {
+    val (out, err) = withNodeJsContainer { c =>
+      val code =
+        """
+          |function foo() {
+          |  return { bar: true }
+          |}
+          |global.main = foo
+        """.stripMargin
+
+      c.init(initPayload(code))._1 should be(200)
+
+      val (runCode, result) = c.run(JsObject.empty)
+      runCode should be(200)
+      result should be(Some(JsObject("bar" -> JsTrue)))
+    }
+
+    checkStreams(out, err, {
+      case (o, e) =>
+        o shouldBe empty
+        e shouldBe empty
+    })
+  }
+
   it should "error when requiring a non-existent package" in {
     // NPM package names cannot start with a dot, and so there is no danger
     // of the package below ever being valid.
