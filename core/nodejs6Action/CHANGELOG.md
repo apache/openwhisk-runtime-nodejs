@@ -41,17 +41,17 @@ Node.js version = [6.14.4](https://nodejs.org/en/blog/release/v6.14.4/)
 ## 1.11.2
 Change: Update runtime to allow more environment variables
 
-- Update run handler to accept more environment variables [#78](https://github.com/apache/incubator-openwhisk-runtime-nodejs/pull/78)
+- Update run handler to accept more environment variables [#78](https://github.com/apache/openwhisk-runtime-nodejs/pull/78)
 
 ## 1.11.1
 Change: Update runtime to put runtime npm modules at root level, user npm modules at container invocation level
 
-- Don't override runtime npm packages when user provides their own [#73](https://github.com/apache/incubator-openwhisk-runtime-nodejs/pull/73/files)
+- Don't override runtime npm packages when user provides their own [#73](https://github.com/apache/openwhisk-runtime-nodejs/pull/73/files)
 
 ## 1.11.0
 Change: Update runtime to work in concurrent mode
 
-- Update runtime to work in concurrent mode [#41](https://github.com/apache/incubator-openwhisk-runtime-nodejs/pull/41/files)
+- Update runtime to work in concurrent mode [#41](https://github.com/apache/openwhisk-runtime-nodejs/pull/41/files)
 
 ## 1.10.0
 Change: Update npm openwhisk package from `3.15.0` to `3.16.0`

@@ -20,7 +20,7 @@
 # Apache OpenWhisk runtimes for Node.js
 
 [![License](https://img.shields.io/badge/license-Apache--2.0-blue.svg)](http://www.apache.org/licenses/LICENSE-2.0)
-[![Build Status](https://travis-ci.org/apache/incubator-openwhisk-runtime-nodejs.svg?branch=master)](https://travis-ci.org/apache/incubator-openwhisk-runtime-nodejs)
+[![Build Status](https://travis-ci.org/apache/openwhisk-runtime-nodejs.svg?branch=master)](https://travis-ci.org/apache/openwhisk-runtime-nodejs)
 
 This repository contains sources files needed to build the Node.js runtimes for Apache OpenWhisk. The build system will produce a series of docker images for each runtime version. These images are used in the platform to execute Node.js actions.
 
@@ -33,7 +33,7 @@ The following Node.js runtime versions (with kind & image labels) are generated 
 
 This README documents the build, customisation and testing of these runtime images.
 
-**Do you want to learn more about using Node.js actions to build serverless applications?** Please see the main project documentation [here](https://github.com/apache/incubator-openwhisk/blob/master/docs/actions-nodejs.md) for that information.
+**Do you want to learn more about using Node.js actions to build serverless applications?** Please see the main project documentation [here](https://github.com/apache/openwhisk/blob/master/docs/actions-nodejs.md) for that information.
 
 ## Usage
 
@@ -82,7 +82,7 @@ If you build a custom version of the images, pushing those an external Docker Hu
 
 ### Runtimes Manifest
 
-Available runtimes in Apache OpenWhisk are defined using the runtimes manifest in this file: [runtimes.json](https://github.com/apache/incubator-openwhisk/blob/9dacce433cfdd64aa1e4f5c8eab6db31df8c4eae/ansible/files/runtimes.json#L3-L52)
+Available runtimes in Apache OpenWhisk are defined using the runtimes manifest in this file: [runtimes.json](https://github.com/apache/openwhisk/blob/9dacce433cfdd64aa1e4f5c8eab6db31df8c4eae/ansible/files/runtimes.json#L3-L52)
 
 Modify the manifest and re-deploy the platform to pick up local images changes.
 
@@ -90,7 +90,7 @@ Modify the manifest and re-deploy the platform to pick up local images changes.
 
 Dockerfiles for runtime images are defined in the `core` directory. Each runtime version folder has a custom `Dockerfile` and `package.json`. If you need to add extra dependencies to a runtime version - modify these files.
 
-The `core/nodejsActionBase` folder contains the Node.js app server used to implement the [action interface](https://github.com/apache/incubator-openwhisk/blob/master/docs/actions-new.md#action-interface), used by the platform to inject action code into the runtime and fire invocation requests. This common code is used in all runtime versions.
+The `core/nodejsActionBase` folder contains the Node.js app server used to implement the [action interface](https://github.com/apache/openwhisk/blob/master/docs/actions-new.md#action-interface), used by the platform to inject action code into the runtime and fire invocation requests. This common code is used in all runtime versions.
 
 ### Build
 
@@ -107,13 +107,13 @@ This will return the following runtime images with the following names: `nodejs6
 
 ### Testing
 
-- Install project dependencies from the top-level Apache OpenWhisk [project](https://github.com/apache/incubator-openwhisk), which ensures correct versions of dependent libraries are available in the Maven cache.
+- Install project dependencies from the top-level Apache OpenWhisk [project](https://github.com/apache/openwhisk), which ensures correct versions of dependent libraries are available in the Maven cache.
 
 ```
 ./gradlew install
 ```
 
-*This command **MUST BE** run from the directory containing the main Apache OpenWhisk [repository](https://github.com/apache/incubator-openwhisk), not this repository's directory.*
+*This command **MUST BE** run from the directory containing the main Apache OpenWhisk [repository](https://github.com/apache/openwhisk), not this repository's directory.*
 
 - Build the local Docker images for the runtime versions (see the instructions above).
 - Build the custom Docker images used in local testing.
