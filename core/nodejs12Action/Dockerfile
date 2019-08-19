@@ -14,6 +14,19 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 #
-FROM action-nodejs-v10
-COPY package.json .
-RUN npm install --production
+
+FROM node:12.1.0-stretch
+RUN apt-get update && apt-get install -y \
+    imagemagick \
+    graphicsmagick \
+    unzip \
+    && rm -rf /var/lib/apt/lists/*
+WORKDIR /nodejsAction
+COPY . .
+# COPY the package.json to root container, so we can install npm packages a level up from user's packages, so user's packages take precedence
+COPY ./package.json /
+RUN cd / && npm install --no-package-lock \
+    && npm cache clean --force
+EXPOSE 8080
+
+CMD node --expose-gc app.js

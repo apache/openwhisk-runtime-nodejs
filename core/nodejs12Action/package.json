@@ -1,5 +1,5 @@
 {
-  "name": "action-nodejs-v8",
+  "name": "action-nodejs-v12",
   "version": "1.0.0",
   "description": "Apache OpenWhisk NodeJS Runtime",
   "repository": {
@@ -9,8 +9,8 @@
   "license": "Apache-2.0",
   "dependencies": {
     "openwhisk": "3.18.0",
-    "body-parser": "1.18.2",
-    "express": "4.16.2",
+    "body-parser": "1.18.3",
+    "express": "4.16.4",
     "serialize-error": "3.0.0"
   }
 }

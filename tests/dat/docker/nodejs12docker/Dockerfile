@@ -14,6 +14,6 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 #
-FROM action-nodejs-v10
+FROM action-nodejs-v12
 COPY package.json .
 RUN npm install --production

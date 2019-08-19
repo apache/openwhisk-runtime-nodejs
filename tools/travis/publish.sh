@@ -36,6 +36,8 @@ elif [ ${RUNTIME_VERSION} == "8" ]; then
   RUNTIME="nodejs8Action"
 elif [ ${RUNTIME_VERSION} == "10" ]; then
   RUNTIME="nodejs10Action"
+elif [ ${RUNTIME_VERSION} == "12" ]; then
+  RUNTIME="nodejs12Action"
 fi
 
 if [[ ! -z ${DOCKER_USER} ]] && [[ ! -z ${DOCKER_PASSWORD} ]]; then
@@ -49,8 +51,8 @@ TERM=dumb ./gradlew \
 -PdockerImagePrefix=${IMAGE_PREFIX} \
 -PdockerImageTag=${IMAGE_TAG}
 
-  # if doing latest also push a tag with the hash commit
-  if [ ${IMAGE_TAG} == "latest" ]; then
+  # if doing nightly also push a tag with the hash commit
+  if [ ${IMAGE_TAG} == "nightly" ]; then
   SHORT_COMMIT=`git rev-parse --short HEAD`
   TERM=dumb ./gradlew \
   :core:${RUNTIME}:distDocker \

@@ -15,74 +15,81 @@
  * limitations under the License.
  */
 
+// __OW_ALLOW_CONCURRENT: see docs/concurrency.md
 var config = {
         'port': 8080,
         'apiHost': process.env.__OW_API_HOST,
-        'allowConcurrent': process.env.__OW_ALLOW_CONCURRENT
+        'allowConcurrent': process.env.__OW_ALLOW_CONCURRENT,
+        'requestBodyLimit': "48mb"
 };
 
 var bodyParser = require('body-parser');
 var express    = require('express');
 
+/**
+ * instantiate app as an instance of Express
+ * i.e. app starts the server
+ */
 var app = express();
-
 
 /**
  * instantiate an object which handles REST calls from the Invoker
  */
 var service = require('./src/service').getService(config);
 
-app.set('port', config.port);
-app.use(bodyParser.json({ limit: "48mb" }));
+/**
+ * setup a middleware layer to restrict the request body size
+ * this middleware is called every time a request is sent to the server
+ */
+app.use(bodyParser.json({ limit: config.requestBodyLimit }));
 
-app.post('/init', wrapEndpoint(service.initCode));
-app.post('/run',  wrapEndpoint(service.runCode));
+// identify the target Serverless platform
+const platformFactory = require('./platform/platform.js');
+const factory = new platformFactory(app, config, service);
+var targetPlatform = process.env.__OW_RUNTIME_PLATFORM;
 
-// short-circuit any requests to invalid routes (endpoints) that we have no handlers for.
-app.use(function (req, res, next) {
-    res.status(500).json({error: "Bad request."});
-});
+// default to "openwhisk" platform initialization if not defined
+// TODO export isvalid() from platform, if undefined this is OK to default, but if not valid value then error out
+if (typeof targetPlatform === "undefined") {
+    targetPlatform = platformFactory.PLATFORM_OPENWHISK;
+    // console.log("__OW_RUNTIME_PLATFORM is undefined; defaulting to 'openwhisk' ...");
+}
 
-// register a default error handler. This effectively only gets called when invalid JSON is received (JSON Parser)
-// and we do not wish the default handler to error with a 400 and send back HTML in the body of the response.
-app.use(function (err, req, res, next) {
-    console.log(err.stackTrace);
-    res.status(500).json({error: "Bad request."});
-});
-
-service.start(app);
+if (!platformFactory.isSupportedPlatform(targetPlatform)) {
+    console.error("__OW_RUNTIME_PLATFORM ("+targetPlatform+") is not supported by the runtime.");
+    process.exit(9);
+}
 
 /**
- * Wraps an endpoint written to return a Promise into an express endpoint,
- * producing the appropriate HTTP response and closing it for all controllable
- * failure modes.
- *
- * The expected signature for the promise value (both completed and failed)
- * is { code: int, response: object }.
- *
- * @param ep a request=>promise function
- * @returns an express endpoint handler
+ * Register different endpoint handlers depending on target PLATFORM and its expected behavior.
+ * In addition, register request pre-processors and/or response post-processors as needed
+ * to move data where the platform and function author expects it to be.
  */
-function wrapEndpoint(ep) {
-    return function (req, res) {
-        try {
-            ep(req).then(function (result) {
-                res.status(result.code).json(result.response);
-            }).catch(function (error) {
-                if (typeof error.code === "number" && typeof error.response !== "undefined") {
-                    res.status(error.code).json(error.response);
-                } else {
-                    console.error("[wrapEndpoint]", "invalid errored promise", JSON.stringify(error));
-                    res.status(500).json({ error: "Internal error." });
-                }
-            });
-        } catch (e) {
-            // This should not happen, as the contract for the endpoints is to
-            // never (externally) throw, and wrap failures in the promise instead,
-            // but, as they say, better safe than sorry.
-            console.error("[wrapEndpoint]", "exception caught", e.message);
 
-            res.status(500).json({ error: "Internal error (exception)." });
-        }
-    }
+const platformImpl = factory.createPlatformImpl(targetPlatform);
+
+if (typeof platformImpl !== "undefined") {
+
+    platformImpl.registerHandlers(app, platformImpl);
+
+    // short-circuit any requests to invalid routes (endpoints) that we have no handlers for.
+    app.use(function (req, res, next) {
+        res.status(500).json({error: "Bad request."});
+    });
+
+    /**
+     * Register a default error handler. This effectively only gets called when invalid JSON is received
+     * (JSON Parser) and we do not wish the default handler to error with a 400 and send back HTML in the
+     * body of the response.
+     */
+    app.use(function (err, req, res, next) {
+        console.log(err.stackTrace);
+        res.status(500).json({error: "Bad request."});
+    });
+
+    service.start(app);
+
+} else {
+    console.error("Failed to initialize __OW_RUNTIME_PLATFORM ("+targetPlatform+").");
+    process.exit(10);
 }

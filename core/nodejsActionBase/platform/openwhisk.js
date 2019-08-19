@@ -15,30 +15,15 @@
  * limitations under the License.
  */
 
-include 'tests'
 
-include 'core:nodejsActionBase'
-include 'core:nodejs6Action'
-include 'core:nodejs8Action'
-include 'core:nodejs10Action'
-include 'core:nodejs12Action'
-include 'tests:dat:docker:nodejs6docker'
-include 'tests:dat:docker:nodejs8docker'
-include 'tests:dat:docker:nodejs10docker'
-include 'tests:dat:docker:nodejs12docker'
+function PlatformOpenWhiskImpl(platformFactory) {
+    // Provide access to common runtime services
+    var service = platformFactory.service;
 
-rootProject.name = 'runtime-nodejs'
+    this.registerHandlers = function(app, platform) {
+        app.post('/init', platformFactory.wrapEndpoint(service.initCode));
+        app.post('/run', platformFactory.wrapEndpoint(service.runCode));
+    };
+}
 
-gradle.ext.openwhisk = [
-        version: '1.0.0-SNAPSHOT'
-]
-
-gradle.ext.scala = [
-    version: '2.12.7',
-    compileFlags: ['-feature', '-unchecked', '-deprecation', '-Xfatal-warnings', '-Ywarn-unused-import']
-]
-
-gradle.ext.scalafmt = [
-    version: '1.5.0',
-    config: new File(rootProject.projectDir, '.scalafmt.conf')
-]
+module.exports = PlatformOpenWhiskImpl;

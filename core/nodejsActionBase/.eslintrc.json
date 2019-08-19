@@ -1,0 +1,7 @@
+{
+  "extends": "standard",
+  "rules": {
+      "indent": ["error", 4],
+      "max-len": [2, 120, 8]
+  }
+}
