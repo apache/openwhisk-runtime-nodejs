@@ -22,9 +22,15 @@ RUN apt-get update && apt-get install -y \
     unzip \
     && rm -rf /var/lib/apt/lists/*
 WORKDIR /nodejsAction
+# COPY source code "*.js" from nodejsActionBase to current working dir
+RUN mkdir /src /platform
+COPY ./core/nodejsActionBase/*.js ./
+COPY ./core/nodejsActionBase/src/*.js ./src/
+COPY ./core/nodejsActionBase/platform/*.js ./platform/
 COPY . .
-# COPY the package.json to root container, so we can install npm packages a level up from user's packages, so user's packages take precedence
-COPY ./package.json /
+# COPY the package.json to root container, so we can install npm packages a level up from user's packages,
+# so user's packages take precedence
+COPY ./core/nodejs10Action/package.json /
 RUN cd / && npm install --no-package-lock \
     && npm cache clean --force
 EXPOSE 8080

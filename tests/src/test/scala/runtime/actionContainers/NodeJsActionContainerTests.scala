@@ -54,54 +54,54 @@ abstract class NodeJsActionContainerTests extends BasicActionRunnerTests with Ws
 
   override val testEcho = {
     TestConfig("""
-      |function main(args) {
-      |    console.log('hello stdout')
-      |    console.error('hello stderr')
-      |    return args
-      |}
-    """.stripMargin)
+        |function main(args) {
+        |    console.log('hello stdout')
+        |    console.error('hello stderr')
+        |    return args
+        |}
+      """.stripMargin)
   }
 
   override val testUnicode = {
     TestConfig("""
-      |function main(args) {
-      |    var str = args.delimiter + " ☃ " + args.delimiter;
-      |    console.log(str);
-      |    return { "winter": str };
-      |}
-    """.stripMargin.trim)
+        |function main(args) {
+        |    var str = args.delimiter + " ☃ " + args.delimiter;
+        |    console.log(str);
+        |    return { "winter": str };
+        |}
+      """.stripMargin.trim)
   }
 
   override val testEnv = {
     TestConfig("""
-      |function main(args) {
-      |    return {
-      |       "api_host": process.env['__OW_API_HOST'],
-      |       "api_key": process.env['__OW_API_KEY'],
-      |       "namespace": process.env['__OW_NAMESPACE'],
-      |       "action_name": process.env['__OW_ACTION_NAME'],
-      |       "activation_id": process.env['__OW_ACTIVATION_ID'],
-      |       "deadline": process.env['__OW_DEADLINE']
-      |    }
-      |}
-    """.stripMargin.trim)
+        |function main(args) {
+        |    return {
+        |       "api_host": process.env['__OW_API_HOST'],
+        |       "api_key": process.env['__OW_API_KEY'],
+        |       "namespace": process.env['__OW_NAMESPACE'],
+        |       "action_name": process.env['__OW_ACTION_NAME'],
+        |       "activation_id": process.env['__OW_ACTIVATION_ID'],
+        |       "deadline": process.env['__OW_DEADLINE']
+        |    }
+        |}
+      """.stripMargin.trim)
   }
 
   override val testInitCannotBeCalledMoreThanOnce = {
     TestConfig("""
-      |function main(args) {
-      |    return args
-      |}
-    """.stripMargin)
+        |function main(args) {
+        |    return args
+        |}
+      """.stripMargin)
   }
 
   override val testEntryPointOtherThanMain = {
     TestConfig(
       """
-      | function niam(args) {
-      |     return args;
-      | }
-    """.stripMargin,
+        | function niam(args) {
+        |     return args;
+        | }
+      """.stripMargin,
       main = "niam")
   }
 
@@ -115,10 +115,11 @@ abstract class NodeJsActionContainerTests extends BasicActionRunnerTests with Ws
 
   it should "fail to initialize with bad code" in {
     val (out, err) = withNodeJsContainer { c =>
-      val code = """
-                | 10 PRINT "Hello world!"
-                | 20 GOTO 10
-            """.stripMargin
+      val code =
+        """
+          | 10 PRINT "Hello world!"
+          | 20 GOTO 10
+        """.stripMargin
 
       val (initCode, _) = c.init(initPayload(code))
 
@@ -148,11 +149,12 @@ abstract class NodeJsActionContainerTests extends BasicActionRunnerTests with Ws
 
   it should "return some error on action error" in {
     withNodeJsContainer { c =>
-      val code = """
-                | function main(args) {
-                |     throw "nooooo";
-                | }
-            """.stripMargin
+      val code =
+        """
+          | function main(args) {
+          |     throw "nooooo";
+          | }
+        """.stripMargin
 
       val (initCode, _) = c.init(initPayload(code))
       initCode should be(200)
@@ -168,11 +170,12 @@ abstract class NodeJsActionContainerTests extends BasicActionRunnerTests with Ws
 
   it should "support application errors" in {
     withNodeJsContainer { c =>
-      val code = """
-                | function main(args) {
-                |     return { "error" : "sorry" };
-                | }
-            """.stripMargin;
+      val code =
+        """
+          | function main(args) {
+          |     return { "error" : "sorry" };
+          | }
+        """.stripMargin;
 
       val (initCode, _) = c.init(initPayload(code))
       initCode should be(200)
@@ -187,18 +190,19 @@ abstract class NodeJsActionContainerTests extends BasicActionRunnerTests with Ws
 
   it should "support the documentation examples (1)" in {
     val (out, err) = withNodeJsContainer { c =>
-      val code = """
-                | // an action in which each path results in a synchronous activation
-                | function main(params) {
-                |     if (params.payload == 0) {
-                |         return;
-                |     } else if (params.payload == 1) {
-                |         return {payload: 'Hello, World!'}         // indicates normal completion
-                |     } else if (params.payload == 2) {
-                |         return {error: 'payload must be 0 or 1'}  // indicates abnormal completion
-                |     }
-                | }
-            """.stripMargin
+      val code =
+        """
+          | // an action in which each path results in a synchronous activation
+          | function main(params) {
+          |     if (params.payload == 0) {
+          |         return;
+          |     } else if (params.payload == 1) {
+          |         return {payload: 'Hello, World!'}         // indicates normal completion
+          |     } else if (params.payload == 2) {
+          |         return {error: 'payload must be 0 or 1'}  // indicates abnormal completion
+          |     }
+          | }
+        """.stripMargin
 
       c.init(initPayload(code))._1 should be(200)
 
@@ -226,21 +230,22 @@ abstract class NodeJsActionContainerTests extends BasicActionRunnerTests with Ws
 
   it should "support the documentation examples (2)" in {
     val (out, err) = withNodeJsContainer { c =>
-      val code = """
-                | function main(params) {
-                |     if (params.payload) {
-                |         // asynchronous activation
-                |         return new Promise(function(resolve, reject) {
-                |                setTimeout(function() {
-                |                  resolve({ done: true });
-                |                }, 100);
-                |             })
-                |     } else {
-                |         // synchronous activation
-                |         return {done: true};
-                |     }
-                | }
-            """.stripMargin
+      val code =
+        """
+          | function main(params) {
+          |     if (params.payload) {
+          |         // asynchronous activation
+          |         return new Promise(function(resolve, reject) {
+          |                setTimeout(function() {
+          |                  resolve({ done: true });
+          |                }, 100);
+          |             })
+          |     } else {
+          |         // synchronous activation
+          |         return {done: true};
+          |     }
+          | }
+        """.stripMargin
 
       c.init(initPayload(code))._1 should be(200)
 
@@ -261,16 +266,66 @@ abstract class NodeJsActionContainerTests extends BasicActionRunnerTests with Ws
     }, 2)
   }
 
+  it should "support variables with no var declaration" in {
+    val (out, err) = withNodeJsContainer { c =>
+      val code =
+        """
+          | function main(params) {
+          |    greeting = 'hello, ' + params.payload + '!'
+          |    console.log(greeting);
+          |    return {payload: greeting}
+          | }
+        """.stripMargin
+
+      c.init(initPayload(code))._1 should be(200)
+
+      val (runCode, result) = c.run(runPayload(JsObject("payload" -> JsString("test"))))
+      runCode should be(200)
+      result should be(Some(JsObject("payload" -> JsString("hello, test!"))))
+    }
+
+    checkStreams(out, err, {
+      case (o, e) =>
+        o shouldBe "hello, test!"
+        e shouldBe empty
+    })
+  }
+
+  it should "support webpacked function" in {
+    val (out, err) = withNodeJsContainer { c =>
+      val code =
+        """
+          |function foo() {
+          |  return { bar: true }
+          |}
+          |global.main = foo
+        """.stripMargin
+
+      c.init(initPayload(code))._1 should be(200)
+
+      val (runCode, result) = c.run(JsObject.empty)
+      runCode should be(200)
+      result should be(Some(JsObject("bar" -> JsTrue)))
+    }
+
+    checkStreams(out, err, {
+      case (o, e) =>
+        o shouldBe empty
+        e shouldBe empty
+    })
+  }
+
   it should "error when requiring a non-existent package" in {
     // NPM package names cannot start with a dot, and so there is no danger
     // of the package below ever being valid.
     // https://docs.npmjs.com/files/package.json
     val (out, err) = withNodeJsContainer { c =>
-      val code = """
-                | function main(args) {
-                |     require('.mildlyinvalidnameofanonexistentpackage');
-                | }
-            """.stripMargin
+      val code =
+        """
+          | function main(args) {
+          |     require('.mildlyinvalidnameofanonexistentpackage');
+          | }
+        """.stripMargin
 
       val (initCode, _) = c.init(initPayload(code))
 
@@ -290,11 +345,12 @@ abstract class NodeJsActionContainerTests extends BasicActionRunnerTests with Ws
   it should "have openwhisk package available" in {
     // GIVEN that it should "error when requiring a non-existent package" (see test above for this)
     val (out, err) = withNodeJsContainer { c =>
-      val code = """
-                | function main(args) {
-                |     require('openwhisk');
-                | }
-            """.stripMargin
+      val code =
+        """
+          | function main(args) {
+          |     require('openwhisk');
+          | }
+        """.stripMargin
 
       val (initCode, _) = c.init(initPayload(code))
 
@@ -316,15 +372,16 @@ abstract class NodeJsActionContainerTests extends BasicActionRunnerTests with Ws
 
   it should "support resolved promises" in {
     val (out, err) = withNodeJsContainer { c =>
-      val code = """
-            | function main(args) {
-            |     return new Promise(function(resolve, reject) {
-            |       setTimeout(function() {
-            |         resolve({ done: true });
-            |       }, 100);
-            |    })
-            | }
-            """.stripMargin
+      val code =
+        """
+          | function main(args) {
+          |     return new Promise(function(resolve, reject) {
+          |       setTimeout(function() {
+          |         resolve({ done: true });
+          |       }, 100);
+          |    })
+          | }
+        """.stripMargin
 
       c.init(initPayload(code))._1 should be(200)
 
@@ -342,15 +399,16 @@ abstract class NodeJsActionContainerTests extends BasicActionRunnerTests with Ws
 
   it should "support rejected promises" in {
     val (out, err) = withNodeJsContainer { c =>
-      val code = """
-            | function main(args) {
-            |     return new Promise(function(resolve, reject) {
-            |       setTimeout(function() {
-            |         reject({ done: true });
-            |       }, 100);
-            |    })
-            | }
-            """.stripMargin
+      val code =
+        """
+          | function main(args) {
+          |     return new Promise(function(resolve, reject) {
+          |       setTimeout(function() {
+          |         reject({ done: true });
+          |       }, 100);
+          |    })
+          | }
+        """.stripMargin
 
       c.init(initPayload(code))._1 should be(200)
 
@@ -369,12 +427,13 @@ abstract class NodeJsActionContainerTests extends BasicActionRunnerTests with Ws
 
   it should "support rejected promises with no message" in {
     val (out, err) = withNodeJsContainer { c =>
-      val code = """
-                | function main(args) {
-                |     return new Promise(function (resolve, reject) {
-                |         reject();
-                |     });
-                | }""".stripMargin
+      val code =
+        """
+          | function main(args) {
+          |     return new Promise(function (resolve, reject) {
+          |         reject();
+          |     });
+          | }""".stripMargin
 
       c.init(initPayload(code))._1 should be(200)
       val (runCode, runRes) = c.run(runPayload(JsObject()))
@@ -386,14 +445,16 @@ abstract class NodeJsActionContainerTests extends BasicActionRunnerTests with Ws
     val thought = " I took the one less traveled by, and that has made all the difference."
     val assignment = "    x = \"" + thought + "\";\n"
 
-    val code = """
-            | function main(args) {
-            |     var x = "hello";
-            """.stripMargin + (assignment * 7000) + """
-            |     x = "world";
-            |     return { "message" : x };
-            | }
-            """.stripMargin
+    val code =
+      """
+        | function main(args) {
+        |     var x = "hello";
+      """.stripMargin + (assignment * 7000) +
+        """
+          |     x = "world";
+          |     return { "message" : x };
+          | }
+        """.stripMargin
 
     // Lest someone should make it too easy.
     code.length should be >= 500000
@@ -414,29 +475,31 @@ abstract class NodeJsActionContainerTests extends BasicActionRunnerTests with Ws
     })
   }
 
-  val examplePackageDotJson: String = """
-        | {
-        |   "name": "wskaction",
-        |   "version": "1.0.0",
-        |   "description": "An OpenWhisk action as an npm package.",
-        |   "main": "index.js",
-        |   "author": "info@openwhisk.org",
-        |   "license": "Apache-2.0"
-        | }
+  val examplePackageDotJson: String =
+    """
+      | {
+      |   "name": "wskaction",
+      |   "version": "1.0.0",
+      |   "description": "An OpenWhisk action as an npm package.",
+      |   "main": "index.js",
+      |   "author": "info@openwhisk.org",
+      |   "license": "Apache-2.0"
+      | }
     """.stripMargin
 
   it should "support zip-encoded npm package actions" in {
     val srcs = Seq(
       Seq("package.json") -> examplePackageDotJson,
-      Seq("index.js") -> """
-                | exports.main = function (args) {
-                |     var name = typeof args["name"] === "string" ? args["name"] : "stranger";
-                |
-                |     return {
-                |         greeting: "Hello " + name + ", from an npm package action."
-                |     };
-                | }
-            """.stripMargin)
+      Seq("index.js") ->
+        """
+          | exports.main = function (args) {
+          |     var name = typeof args["name"] === "string" ? args["name"] : "stranger";
+          |
+          |     return {
+          |         greeting: "Hello " + name + ", from an npm package action."
+          |     };
+          | }
+        """.stripMargin)
 
     val code = ZipBuilder.mkBase64Zip(srcs)
 
@@ -458,15 +521,16 @@ abstract class NodeJsActionContainerTests extends BasicActionRunnerTests with Ws
 
   it should "support zip-encoded npm package actions without a package.json file" in {
     val srcs = Seq(
-      Seq("index.js") -> """
-                | exports.main = function (args) {
-                |     var name = typeof args["name"] === "string" ? args["name"] : "stranger";
-                |
-                |     return {
-                |         greeting: "Hello " + name + ", from an npm package action without a package.json."
-                |     };
-                | }
-            """.stripMargin)
+      Seq("index.js") ->
+        """
+          | exports.main = function (args) {
+          |     var name = typeof args["name"] === "string" ? args["name"] : "stranger";
+          |
+          |     return {
+          |         greeting: "Hello " + name + ", from an npm package action without a package.json."
+          |     };
+          | }
+        """.stripMargin)
 
     val code = ZipBuilder.mkBase64Zip(srcs)
 
@@ -478,6 +542,99 @@ abstract class NodeJsActionContainerTests extends BasicActionRunnerTests with Ws
       runCode should be(200)
       runRes.get.fields.get("greeting") shouldBe Some(
         JsString("Hello stranger, from an npm package action without a package.json."))
+    }
+
+    checkStreams(out, err, {
+      case (o, e) =>
+        o shouldBe empty
+        e shouldBe empty
+    })
+  }
+
+  it should "support zip-encoded npm package with main from file other than index.js" in {
+    val srcs = Seq(
+      Seq("other.js") ->
+        """
+          | exports.niam = function (args) {
+          |     var name = typeof args["name"] === "string" ? args["name"] : "stranger";
+          |
+          |     return {
+          |         greeting: "Hello " + name + ", from other.niam."
+          |     };
+          | }
+        """.stripMargin)
+
+    val code = ZipBuilder.mkBase64Zip(srcs)
+
+    val (out, err) = withNodeJsContainer { c =>
+      c.init(initPayload(code, "other.niam"))._1 should be(200)
+
+      val (runCode, runRes) = c.run(runPayload(JsObject()))
+      runCode should be(200)
+      runRes.get.fields.get("greeting") shouldBe Some(JsString("Hello stranger, from other.niam."))
+    }
+
+    checkStreams(out, err, {
+      case (o, e) =>
+        o shouldBe empty
+        e shouldBe empty
+    })
+  }
+
+  it should "support nested main" in {
+    val srcs = Seq(
+      Seq("other.js") ->
+        """
+          | exports.niam = { xyz: function (args) {
+          |     var name = typeof args["name"] === "string" ? args["name"] : "stranger";
+          |
+          |     return {
+          |         greeting: "Hello " + name + ", from nested main."
+          |     };
+          | } }
+        """.stripMargin)
+
+    val code = ZipBuilder.mkBase64Zip(srcs)
+
+    val (out, err) = withNodeJsContainer { c =>
+      c.init(initPayload(code, "other.niam.xyz"))._1 should be(200)
+
+      val (runCode, runRes) = c.run(runPayload(JsObject()))
+      runCode should be(200)
+      runRes.get.fields.get("greeting") shouldBe Some(JsString("Hello stranger, from nested main."))
+    }
+
+    checkStreams(out, err, {
+      case (o, e) =>
+        o shouldBe empty
+        e shouldBe empty
+    })
+  }
+
+  it should "allow zip-encoded npm package containing package.json and overriding entry point" in {
+    val srcs = Seq(
+      Seq("package.json") -> examplePackageDotJson,
+      Seq("index.js") ->
+        """
+          | exports.main = function (args) {
+          |     return { result: "it works" };
+          | }
+        """,
+      Seq("other.js") ->
+        """
+          | exports.niam = function (args) {
+          |     return { result: "it should also work" };
+          | }
+        """.stripMargin)
+
+    val code = ZipBuilder.mkBase64Zip(srcs)
+
+    val (out, err) = withNodeJsContainer { c =>
+      c.init(initPayload(code, "other.niam"))._1 should be(200)
+
+      val (runCode, runRes) = c.run(runPayload(JsObject()))
+      runCode should be(200)
+      runRes.get.fields.get("result") shouldBe Some(JsString("it should also work"))
     }
 
     checkStreams(out, err, {
@@ -504,9 +661,11 @@ abstract class NodeJsActionContainerTests extends BasicActionRunnerTests with Ws
   }
 
   it should "fail gracefully on valid zip files that are not actions" in {
-    val srcs = Seq(Seq("hello") -> """
-                | Hello world!
-            """.stripMargin)
+    val srcs = Seq(
+      Seq("hello") ->
+        """
+        | Hello world!
+      """.stripMargin)
 
     val code = ZipBuilder.mkBase64Zip(srcs)
 
@@ -524,11 +683,12 @@ abstract class NodeJsActionContainerTests extends BasicActionRunnerTests with Ws
   it should "support zipped actions using non-default entry point" in {
     val srcs = Seq(
       Seq("package.json") -> examplePackageDotJson,
-      Seq("index.js") -> """
-                | exports.niam = function (args) {
-                |     return { result: "it works" };
-                | }
-            """.stripMargin)
+      Seq("index.js") ->
+        """
+          | exports.niam = function (args) {
+          |     return { result: "it works" };
+          | }
+        """.stripMargin)
 
     val code = ZipBuilder.mkBase64Zip(srcs)
 
@@ -544,13 +704,14 @@ abstract class NodeJsActionContainerTests extends BasicActionRunnerTests with Ws
     val srcs = Seq(
       Seq("package.json") -> examplePackageDotJson,
       Seq("test.txt") -> "test text",
-      Seq("index.js") -> s"""
-                           | const fs = require('fs');
-                           | exports.main = function (args) {
-                           |     const fileData = fs.readFileSync('./test.txt').toString();
-                           |     return { result1: fileData,
-                           |              result2: __dirname === process.cwd() };
-                           | }
+      Seq("index.js") ->
+        s"""
+           | const fs = require('fs');
+           | exports.main = function (args) {
+           |     const fileData = fs.readFileSync('./test.txt').toString();
+           |     return { result1: fileData,
+           |              result2: __dirname === process.cwd() };
+           | }
                          """.stripMargin)
 
     val code = ZipBuilder.mkBase64Zip(srcs)
@@ -566,12 +727,13 @@ abstract class NodeJsActionContainerTests extends BasicActionRunnerTests with Ws
 
   it should "support default function parameters" in {
     val (out, err) = withNodeJsContainer { c =>
-      val code = """
-                         | function main(args) {
-                         |     let foo = 3;
-                         |     return {isValid: (function (a, b = 2) {return a === 3 && b === 2;}(foo))};
-                         | }
-                       """.stripMargin
+      val code =
+        """
+          | function main(args) {
+          |     let foo = 3;
+          |     return {isValid: (function (a, b = 2) {return a === 3 && b === 2;}(foo))};
+          | }
+        """.stripMargin
 
       val (initCode, _) = c.init(initPayload(code))
       initCode should be(200)
@@ -596,7 +758,7 @@ abstract class NodeJsActionContainerTests extends BasicActionRunnerTests with Ws
       c.init(initPayload(code))._1 should be(200)
 
       val (runCode, runRes) = c.run(runPayload(JsObject()))
-      runRes.get.fields.get("message") shouldBe Some(JsString("success"))
+      runRes.get.fields.get("message") shouldBe Some(JsString("hello local library"))
     }
   }
 
@@ -604,14 +766,14 @@ abstract class NodeJsActionContainerTests extends BasicActionRunnerTests with Ws
     withContainer(nodejsTestDockerImageName) { c =>
       val code =
         """
-                   | function main(args) {
-                   |  var ow = require('openwhisk');
-                   |  // actions only exists on 2.* versions of openwhisk, not 3.*, so if this was 3.* it would throw an error,
-                   |  var actions = ow().actions;
-                   |
-                   |  return { "message": "success" };
-                   |}
-                 """.stripMargin
+          | function main(args) {
+          |  var ow = require('openwhisk');
+          |  // actions only exists on 2.* versions of openwhisk, not 3.*, so if this was 3.* it would throw an error,
+          |  var actions = ow().actions;
+          |
+          |  return { "message": "success" };
+          |}
+        """.stripMargin
       // Initialization of the code should be successful
       val (initCode, err) = c.init(initPayload(code))
       initCode should be(200)

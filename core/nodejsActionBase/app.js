@@ -17,10 +17,10 @@
 
 // __OW_ALLOW_CONCURRENT: see docs/concurrency.md
 var config = {
-    'port': 8080,
-    'apiHost': process.env.__OW_API_HOST,
-    'allowConcurrent': process.env.__OW_ALLOW_CONCURRENT,
-    'requestBodyLimit': "48mb"
+        'port': 8080,
+        'apiHost': process.env.__OW_API_HOST,
+        'allowConcurrent': process.env.__OW_ALLOW_CONCURRENT,
+        'requestBodyLimit': "48mb"
 };
 
 var bodyParser = require('body-parser');
@@ -50,12 +50,12 @@ var targetPlatform = process.env.__OW_RUNTIME_PLATFORM;
 
 // default to "openwhisk" platform initialization if not defined
 // TODO export isvalid() from platform, if undefined this is OK to default, but if not valid value then error out
-if(typeof targetPlatform === "undefined") {
+if (typeof targetPlatform === "undefined") {
     targetPlatform = platformFactory.PLATFORM_OPENWHISK;
     // console.log("__OW_RUNTIME_PLATFORM is undefined; defaulting to 'openwhisk' ...");
 }
 
-if(!platformFactory.isSupportedPlatform(targetPlatform)){
+if (!platformFactory.isSupportedPlatform(targetPlatform)) {
     console.error("__OW_RUNTIME_PLATFORM ("+targetPlatform+") is not supported by the runtime.");
     process.exit(9);
 }
@@ -66,29 +66,30 @@ if(!platformFactory.isSupportedPlatform(targetPlatform)){
  * to move data where the platform and function author expects it to be.
  */
 
-var platformImpl = factory.createPlatformImpl(targetPlatform);
+const platformImpl = factory.createPlatformImpl(targetPlatform);
 
-if(typeof platformImpl == "undefined") {
+if (typeof platformImpl !== "undefined") {
+
+    platformImpl.registerHandlers(app, platformImpl);
+
+    // short-circuit any requests to invalid routes (endpoints) that we have no handlers for.
+    app.use(function (req, res, next) {
+        res.status(500).json({error: "Bad request."});
+    });
+
+    /**
+     * Register a default error handler. This effectively only gets called when invalid JSON is received
+     * (JSON Parser) and we do not wish the default handler to error with a 400 and send back HTML in the
+     * body of the response.
+     */
+    app.use(function (err, req, res, next) {
+        console.log(err.stackTrace);
+        res.status(500).json({error: "Bad request."});
+    });
+
+    service.start(app);
+
+} else {
     console.error("Failed to initialize __OW_RUNTIME_PLATFORM ("+targetPlatform+").");
     process.exit(10);
 }
-
-// Call platform impl. to register platform-specific endpoints (routes)
-platformImpl.registerHandlers(app, platformImpl);
-
-// short-circuit any requests to invalid routes (endpoints) that we have no handlers for.
-app.use(function (req, res, next) {
-    res.status(500).json({error: "Bad request."});
-});
-
-/**
- * Register a default error handler. This effectively only gets called when invalid JSON is received
- * (JSON Parser) and we do not wish the default handler to error with a 400 and send back HTML in the
- * body of the response.
- */
-app.use(function (err, req, res, next) {
-    console.log(err.stackTrace);
-    res.status(500).json({error: "Bad request."});
-});
-
-service.start(app);

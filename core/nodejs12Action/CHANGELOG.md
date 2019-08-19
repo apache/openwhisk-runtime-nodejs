@@ -1,3 +1,4 @@
+<!--
 #
 # Licensed to the Apache Software Foundation (ASF) under one or more
 # contributor license agreements.  See the NOTICE file distributed with
@@ -14,6 +15,13 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 #
-FROM action-nodejs-v10
-COPY package.json .
-RUN npm install --production
+-->
+
+# NodeJS 12 OpenWhisk Runtime Container
+
+## Apache 1.14 (next release)
+Changes:
+- Adding Nodejs version 12
+- [openwhisk v3.18.0](https://www.npmjs.com/package/openwhisk) - JavaScript client library for the OpenWhisk platform. Provides a wrapper around the OpenWhisk APIs.
+
+Node.js version = [12.1.0](https://nodejs.org/en/blog/release/v12.1.0/)
