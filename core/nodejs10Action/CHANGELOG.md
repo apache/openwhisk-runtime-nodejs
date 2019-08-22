@@ -22,6 +22,7 @@
 ## Apache 1.13 (next release)
 Changes:
 - Initial version with NodejS10 LTS
+- Node.js version = [10.16.3](https://nodejs.org/en/blog/release/v10.16.3/)
 
 - [openwhisk v3.18.0](https://www.npmjs.com/package/openwhisk) - JavaScript client library for the OpenWhisk platform. Provides a wrapper around the OpenWhisk APIs.
 
