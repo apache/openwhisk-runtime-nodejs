@@ -22,6 +22,8 @@
 ## Apache 1.14 (next release)
 Changes:
 - Adding Nodejs version 12
+- Node.js version = [12.8.1](https://nodejs.org/en/blog/release/v12.8.1/)
+
 - [openwhisk v3.18.0](https://www.npmjs.com/package/openwhisk) - JavaScript client library for the OpenWhisk platform. Provides a wrapper around the OpenWhisk APIs.
 
 Node.js version = [12.1.0](https://nodejs.org/en/blog/release/v12.1.0/)
