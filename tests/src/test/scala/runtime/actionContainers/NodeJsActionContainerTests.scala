@@ -92,12 +92,8 @@ abstract class NodeJsActionContainerTests extends BasicActionRunnerTests with Ws
     // variables are already available in the runtime
     TestConfig("""
         |const envargs = {
-        |    "ARRAY": process.env.ARRAY,
-        |    "OBJECT": process.env.OBJECT,
-        |    "STRING": process.env.STRING,
-        |    "NUMBER": process.env.NUMBER,
-        |    "BOOL": process.env.BOOL,
-        |    "NULL": process.env.NULL
+        |    "SOME_VAR": process.env.SOME_VAR,
+        |    "ANOTHER_VAR": process.env.ANOTHER_VAR
         |}
         |
         |function main(args) {
