@@ -87,7 +87,7 @@ abstract class NodeJsActionContainerTests extends BasicActionRunnerTests with Ws
       """.stripMargin.trim)
   }
 
-  override val testEnvPartition = {
+  override val testEnvParameters = {
     // the environment variables are ready at load time to ensure
     // variables are already available in the runtime
     TestConfig("""
