@@ -17,10 +17,10 @@
 
 // __OW_ALLOW_CONCURRENT: see docs/concurrency.md
 var config = {
-        'port': 8080,
-        'apiHost': process.env.__OW_API_HOST,
-        'allowConcurrent': process.env.__OW_ALLOW_CONCURRENT,
-        'requestBodyLimit': "48mb"
+    'port': 8080,
+    'apiHost': process.env.__OW_API_HOST,
+    'allowConcurrent': process.env.__OW_ALLOW_CONCURRENT,
+    'requestBodyLimit': "48mb"
 };
 
 var bodyParser = require('body-parser');

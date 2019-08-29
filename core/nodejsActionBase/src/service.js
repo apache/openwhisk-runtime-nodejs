@@ -160,6 +160,17 @@ function NodeActionService(config) {
     };
 
     function doInit(message) {
+        if (message.env && typeof message.env == 'object') {
+            Object.keys(message.env).forEach(k => {
+                let val = message.env[k];
+                if (typeof val !== 'object' || val == null) {
+                    process.env[k] = val ? val.toString() : "";
+                } else {
+                    process.env[k] = JSON.stringify(val);
+                }
+            });
+        }
+
         return initializeActionHandler(message)
             .then(handler => {
                 userCodeRunner = new NodeActionRunner(handler);
