@@ -50,6 +50,7 @@ RUN cd /app ;\
   tmp@0.0.31 \
   twilio@3.28.0 \
   uuid@3.0.0 \
+  openwhisk@3.18.0 \
   && npm cache clean --force
 WORKDIR /app
 

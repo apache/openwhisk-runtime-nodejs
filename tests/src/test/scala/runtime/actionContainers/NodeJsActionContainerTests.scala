@@ -300,9 +300,10 @@ abstract class NodeJsActionContainerTests extends BasicActionRunnerTests with Ws
           | }
         """.stripMargin
 
-      if(isTypeScript) {
+      if (isTypeScript)
         c.init(initPayload(code))._1 should be(502)
-      } else {
+      else {
+        c.init(initPayload(code))._1 should be(200)
         val (runCode, result) = c.run(runPayload(JsObject("payload" -> JsString("test"))))
         runCode should be(200)
         result should be(Some(JsObject("payload" -> JsString("hello, test!"))))
@@ -384,6 +385,7 @@ abstract class NodeJsActionContainerTests extends BasicActionRunnerTests with Ws
         """
           | function main(args) {
           |     require('openwhisk');
+          |     return { "result": true }
           | }
         """.stripMargin
 
@@ -657,8 +659,8 @@ abstract class NodeJsActionContainerTests extends BasicActionRunnerTests with Ws
         """,
       Seq("other.js") ->
         """
-          |exports.main = function (args) {
-          |     return { result: "it works" };
+          |exports.niam = function (args) {
+          |     return { result: "it should also work" };
           | }
         """.stripMargin)
 
