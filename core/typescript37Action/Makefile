@@ -14,6 +14,10 @@ build:
 	docker tag $(IMG) whisk/$(IMG)
 	docker images | grep $(IMG)
 
+push:
+	docker tag $(IMG) actionloop/$(IMG)
+	docker push actionloop/$(IMG)
+
 ## You need to execute make start in another terminal 
 test:
 	$(INVOKE) init main test/$(IN).js

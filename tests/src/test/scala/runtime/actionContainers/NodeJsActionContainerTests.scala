@@ -229,13 +229,9 @@ abstract class NodeJsActionContainerTests extends BasicActionRunnerTests with Ws
       val (c2, r2) = c.run(runPayload(JsObject("payload" -> JsNumber(1))))
       val (c3, r3) = c.run(runPayload(JsObject("payload" -> JsNumber(2))))
 
-      if(isTypeScript) {
-        c1 should be(502)
-        r1 should be(Some(JsObject("error" -> JsString("The action did not return a dictionary."))))
-      } else {
-        c1 should be(200)
-        r1 should be(Some(JsObject()))
-      }
+      c1 should be(200)
+      r1 should be(Some(JsObject()))
+
       c2 should be(200)
       r2 should be(Some(JsObject("payload" -> JsString("Hello, World!"))))
 
@@ -693,7 +689,7 @@ abstract class NodeJsActionContainerTests extends BasicActionRunnerTests with Ws
     checkStreams(out, err, {
       case (o, e) =>
         (o + e).toLowerCase should include("error")
-        (o + e).toLowerCase should include("uncompressing")
+        (o + e).toLowerCase should include regex("syntax|uncompressing")
     })
   }
 
@@ -712,7 +708,7 @@ abstract class NodeJsActionContainerTests extends BasicActionRunnerTests with Ws
 
     checkStreams(out, err, {
       case (o, e) =>
-        (o + e).toLowerCase should include("error")
+        (o + e).toLowerCase should include regex("error|exited")
         (o + e).toLowerCase should include("zipped actions must contain either package.json or index.js at the root.")
     })
   }

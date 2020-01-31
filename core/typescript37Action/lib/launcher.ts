@@ -68,7 +68,19 @@ async function actionLoop() {
         else
           result = {"error": "requested unknown debugger"}
       } else {
-        result = await Promise.resolve(main(value))
+        result = main(value)
+        if(typeof result === 'undefined') {
+          result = {}
+        }
+        if(Promise.resolve(result) == result) 
+          try {
+            result = await result
+          } catch(error) {
+            if(typeof error === 'undefined') {
+              error = {}
+            }
+            result = {"error": error }
+          }
       }
       out.write(JSON.stringify(result)+"\n");
     } catch(err) {
@@ -83,8 +95,7 @@ actionLoop()
 } catch(e) {
     if(e.code == "MODULE_NOT_FOUND") {
         console.log("zipped actions must contain either package.json or index.js at the root.")
-    } else {
-        console.log(e)
-    }
+    } 
+    console.log(e)
     process.exit(1)
 }
