@@ -15,7 +15,7 @@
 # limitations under the License.
 #
 
-FROM node:8.16.1
+FROM node:8.17.0
 RUN apt-get update && apt-get install -y \
     imagemagick \
     graphicsmagick \
