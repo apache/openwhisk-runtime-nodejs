@@ -42,3 +42,14 @@ dependencies {
 tasks.withType(ScalaCompile) {
     scalaCompileOptions.additionalParameters = gradle.scala.compileFlags
 }
+
+task buildArtifacts(type:Exec) {
+    workingDir 'tests/dat/actions'
+    commandLine './build.sh'
+}
+
+tasks.withType(Test) {
+    dependsOn buildArtifacts
+}
+
+testClasses.dependsOn(buildArtifacts)

@@ -1,0 +1,14 @@
+{
+  "name": "nodejs-zip",
+  "version": "1.0.0",
+  "description": "Zip to test NodeJS runtime against",
+  "main": "main.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "openwhisk": "^2.0.0"
+  }
+}
