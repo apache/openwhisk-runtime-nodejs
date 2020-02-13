@@ -19,7 +19,7 @@
 
 # NodeJS 6 OpenWhisk Runtime Container
 
-## Apache 1.13 (next release)
+## Apache 1.13
 Changes:
 - Update Node.js
 - Update openwhisk npm package

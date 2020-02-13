@@ -19,7 +19,16 @@
 
 # NodeJS 10 OpenWhisk Runtime Container
 
-## Apache 1.13 (next release)
+## Apache 1.15
+Changes:
+  - Update Node.js
+  - Update openwhisk npm package
+  - Support for __OW_ACTION_VERSION (openwhisk/4761)
+
+Node.js version = [10.19.0](https://nodejs.org/en/blog/release/v10.19.0/)
+openwhisk version = [openwhisk v3.21.1](https://www.npmjs.com/package/openwhisk)
+
+## Apache 1.13
 Changes:
 - Initial version with NodejS10 LTS
 - Node.js version = [10.16.3](https://nodejs.org/en/blog/release/v10.16.3/)
