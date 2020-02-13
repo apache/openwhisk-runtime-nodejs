@@ -20,7 +20,7 @@ FROM golang:1.12 as builder
 RUN git clone --branch ack-and-versioning \
    https://github.com/nimbella-corp/openwhisk-runtime-go /src ;\
    cd /src ; env GO111MODULE=on CGO_ENABLED=0 go build main/proxy.go && \
-   mv proxy /bin/proxy    
+   mv proxy /bin/proxy
 FROM node:12.1.0-stretch
 ENV TYPESCRIPT_VERSION=3.7.4
 COPY --from=builder /bin/proxy /bin/proxy

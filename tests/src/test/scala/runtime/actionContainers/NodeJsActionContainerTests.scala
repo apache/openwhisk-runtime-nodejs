@@ -89,7 +89,7 @@ abstract class NodeJsActionContainerTests extends BasicActionRunnerTests with Ws
       """.stripMargin.trim)
   }
 
- /* TODO:
+  /* TODO:
   override val testEnvParameters = {
     // the environment variables are ready at load time to ensure
     // variables are already available in the runtime
@@ -146,9 +146,9 @@ abstract class NodeJsActionContainerTests extends BasicActionRunnerTests with Ws
 
     // Somewhere, the logs should mention an error occurred.
     checkStreams(out, err, {
-        case (o, e) =>
-          (o + e).toLowerCase should include("error")
-          (o + e).toLowerCase should include("syntax")
+      case (o, e) =>
+        (o + e).toLowerCase should include("error")
+        (o + e).toLowerCase should include("syntax")
     })
   }
 
@@ -178,7 +178,7 @@ abstract class NodeJsActionContainerTests extends BasicActionRunnerTests with Ws
       initCode should be(200)
 
       val (runCode, runRes) = c.run(runPayload(JsObject()))
-      if(!isTypeScript)
+      if (!isTypeScript)
         runCode should not be (200)
 
       runRes shouldBe defined
@@ -305,7 +305,7 @@ abstract class NodeJsActionContainerTests extends BasicActionRunnerTests with Ws
         result should be(Some(JsObject("payload" -> JsString("hello, test!"))))
       }
     }
-    if(!isTypeScript)
+    if (!isTypeScript)
       checkStreams(out, err, {
         case (o, e) =>
           o shouldBe "hello, test!"
@@ -323,7 +323,7 @@ abstract class NodeJsActionContainerTests extends BasicActionRunnerTests with Ws
           |global.main = foo
         """.stripMargin
 
-      if(isTypeScript) {
+      if (isTypeScript) {
         c.init(initPayload(code))._1 should be(502)
       } else {
         c.init(initPayload(code))._1 should be(200)
@@ -334,7 +334,7 @@ abstract class NodeJsActionContainerTests extends BasicActionRunnerTests with Ws
       }
     }
 
-    if(!isTypeScript) {
+    if (!isTypeScript) {
       checkStreams(out, err, {
         case (o, e) =>
           o shouldBe empty
@@ -361,8 +361,8 @@ abstract class NodeJsActionContainerTests extends BasicActionRunnerTests with Ws
 
       val (runCode, out) = c.run(runPayload(JsObject()))
 
-      if(isTypeScript)
-        out.get.fields should contain key("error")
+      if (isTypeScript)
+        out.get.fields should contain key ("error")
       else
         runCode should not be (200)
 
@@ -370,7 +370,7 @@ abstract class NodeJsActionContainerTests extends BasicActionRunnerTests with Ws
 
     // Somewhere, the logs should mention an error occurred.
     checkStreams(out, err, {
-      case (o, e) => (o + e) should include regex("Error|error")
+      case (o, e) => (o + e) should include regex ("Error|error")
     })
   }
 
@@ -689,7 +689,7 @@ abstract class NodeJsActionContainerTests extends BasicActionRunnerTests with Ws
     checkStreams(out, err, {
       case (o, e) =>
         (o + e).toLowerCase should include("error")
-        (o + e).toLowerCase should include regex("syntax|uncompressing")
+        (o + e).toLowerCase should include regex ("syntax|uncompressing")
     })
   }
 
@@ -708,7 +708,7 @@ abstract class NodeJsActionContainerTests extends BasicActionRunnerTests with Ws
 
     checkStreams(out, err, {
       case (o, e) =>
-        (o + e).toLowerCase should include regex("error|exited")
+        (o + e).toLowerCase should include regex ("error|exited")
         (o + e).toLowerCase should include("zipped actions must contain either package.json or index.js at the root.")
     })
   }
