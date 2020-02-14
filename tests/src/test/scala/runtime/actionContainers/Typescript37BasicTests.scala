@@ -68,7 +68,8 @@ class Typescript37BasicTests extends BasicActionRunnerTests with WskActorSystem 
        |    "namespace":     env["__OW_NAMESPACE"],
        |    "activation_id": env["__OW_ACTIVATION_ID"],
        |    "action_name":   env["__OW_ACTION_NAME"],
-       |    "deadline":      env["__OW_DEADLINE"]
+       |    "deadline":      env["__OW_DEADLINE"],
+       |    "action_version": env["__OW_ACTION_VERSION"]
        |  }
        |}
     """.stripMargin)
