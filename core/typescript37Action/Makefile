@@ -1,27 +1,32 @@
+#
+# Licensed to the Apache Software Foundation (ASF) under one or more
+# contributor license agreements.  See the NOTICE file distributed with
+# this work for additional information regarding copyright ownership.
+# The ASF licenses this file to You under the Apache License, Version 2.0
+# (the "License"); you may not use this file except in compliance with
+# the License.  You may obtain a copy of the License at
+#
+#     http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
+#
 PREFIX=whisk
 IMG=action-typescript-v3.7
-INVOKE=python3 invoke.py
 
 start:
 	docker run -p 8080:8080 -ti -v $(PWD):/mnt $(IMG)
 
 debug:
 	docker run -p 8080:8080 -p 8081:8081 -ti --entrypoint=/bin/bash \
-	-v $(PWD):/mnt -e OW_COMPILER=/mnt/bin/compile $(IMG) 
+	-v $(PWD):/mnt -e OW_COMPILER=/mnt/bin/compile $(IMG)
 
 build:
 	docker build . -t $(IMG)
 	docker tag $(IMG) whisk/$(IMG)
 	docker images | grep $(IMG)
-
-push:
-	docker tag $(IMG) actionloop/$(IMG)
-	docker push actionloop/$(IMG)
-
-## You need to execute make start in another terminal 
-test:
-	$(INVOKE) init main test/$(IN).js
-	#$(INVOKE) run '{}'
-	#$(INVOKE) run '{"name":"Mike"}'
 
 .PHONY: start debug test
