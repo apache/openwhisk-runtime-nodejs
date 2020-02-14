@@ -68,8 +68,8 @@ pkgcloud@1.4.0 \
 process@0.11.9 \
 pug@">=2.0.0-beta6 <2.0.1" \
 redis@2.6.3 \
-request@2.79.0 \
-request-promise@4.1.1 \
+request@2.88.2 \
+request-promise@4.2.5 \
 rimraf@2.5.4 \
 semver@5.3.0 \
 sendgrid@4.7.1 \
