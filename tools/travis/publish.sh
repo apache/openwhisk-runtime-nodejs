@@ -30,9 +30,7 @@ IMAGE_PREFIX=$1
 RUNTIME_VERSION=$2
 IMAGE_TAG=$3
 
-if [ ${RUNTIME_VERSION} == "6" ]; then
-  RUNTIME="nodejs6Action"
-elif [ ${RUNTIME_VERSION} == "8" ]; then
+if [ ${RUNTIME_VERSION} == "8" ]; then
   RUNTIME="nodejs8Action"
 elif [ ${RUNTIME_VERSION} == "10" ]; then
   RUNTIME="nodejs10Action"
