@@ -118,10 +118,9 @@ function build(src_dir, bin_dir) {
          '     exit 1\n'+
          'fi\n'+
          'cd "$(dirname $0)"\n'+
-         'HOST=$(hostname -I | tr -d " ")\n'+
          'if [ -z "$__OW_DEBUG_PORT" ]\n' +
          'then node exec__.js\n'+
-         'else node --inspect="$HOST:$__OW_DEBUG_PORT" exec__.js\n'+
+         'else node --inspect=":$__OW_DEBUG_PORT" exec__.js\n'+
          'fi\n', true)
          write_file(bin_dir+"/exec.env", process.env["__OW_EXECUTION_ENV"])
     } catch(err) {

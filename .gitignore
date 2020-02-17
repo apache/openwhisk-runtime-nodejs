@@ -17,6 +17,9 @@ results
 !/ansible/environments/local
 !/ansible/environments/mac
 
+# actionloop action compiler script
+!core/typescript37Action/bin/compile
+
 # Eclipse
 bin/
 **/.project
