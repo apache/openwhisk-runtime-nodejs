@@ -29,4 +29,5 @@ build:
 	docker tag $(IMG) whisk/$(IMG)
 	docker images | grep $(IMG)
 
-.PHONY: start debug test
+.PHONY: start debug build
+π

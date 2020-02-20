@@ -15,12 +15,8 @@
 # limitations under the License.
 #
 FROM golang:1.12 as builder
-#RUN env CGO_ENABLED=0 go get github.com/apache/openwhisk-runtime-go/main \
-#    && mv /go/bin/main /bin/proxy
-RUN git clone --branch ack-and-versioning \
-   https://github.com/nimbella-corp/openwhisk-runtime-go /src ;\
-   cd /src ; env GO111MODULE=on CGO_ENABLED=0 go build main/proxy.go && \
-   mv proxy /bin/proxy
+RUN env CGO_ENABLED=0 go get github.com/apache/openwhisk-runtime-go/main \
+    && mv /go/bin/main /bin/proxy
 FROM node:12.1.0-stretch
 ENV TYPESCRIPT_VERSION=3.7.4
 COPY --from=builder /bin/proxy /bin/proxy
@@ -53,12 +49,7 @@ RUN cd /app ;\
   openwhisk@3.18.0 \
   && npm cache clean --force
 WORKDIR /app
-
 EXPOSE 8080
-
-ARG __LAMBDA_COMPAT
-ENV __LAMBDA_COMPAT=$__LAMBDA_COMPAT
-
 COPY bin/compile /bin/compile
 COPY lib/launcher.ts /lib/launcher.ts
 ENV OW_COMPILER=/bin/compile

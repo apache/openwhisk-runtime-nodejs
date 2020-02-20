@@ -89,7 +89,6 @@ abstract class NodeJsActionContainerTests extends BasicActionRunnerTests with Ws
       """.stripMargin.trim)
   }
 
-  /* TODO:
   override val testEnvParameters = {
     // the environment variables are ready at load time to ensure
     // variables are already available in the runtime
@@ -103,7 +102,7 @@ abstract class NodeJsActionContainerTests extends BasicActionRunnerTests with Ws
         |    return envargs
         |}
       """.stripMargin.trim)
-  }*/
+  }
 
   override val testInitCannotBeCalledMoreThanOnce = {
     TestConfig("""
@@ -178,6 +177,8 @@ abstract class NodeJsActionContainerTests extends BasicActionRunnerTests with Ws
       initCode should be(200)
 
       val (runCode, runRes) = c.run(runPayload(JsObject()))
+      // actionloop proxy does not return a different error code when there is an error,
+      // because it communicates only through json
       if (!isTypeScript)
         runCode should not be (200)
 
