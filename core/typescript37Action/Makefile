@@ -30,4 +30,3 @@ build:
 	docker images | grep $(IMG)
 
 .PHONY: start debug build
-π
