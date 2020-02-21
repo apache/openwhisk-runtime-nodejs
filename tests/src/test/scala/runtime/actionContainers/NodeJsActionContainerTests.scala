@@ -656,7 +656,7 @@ abstract class NodeJsActionContainerTests extends BasicActionRunnerTests with Ws
         """,
       Seq("other.js") ->
         """
-          |exports.niam = function (args) {
+          | exports.niam = function (args) {
           |     return { result: "it should also work" };
           | }
         """.stripMargin)
