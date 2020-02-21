@@ -28,18 +28,19 @@ abstract class NodeJsConcurrentTests extends NodeJsActionContainerTests {
   override def withNodeJsContainer(code: ActionContainer => Unit) =
     withActionContainer(Map("__OW_ALLOW_CONCURRENT" -> "true"))(code)
 
-  it should "allow running activations concurrently" in {
+  if (!isTypeScript) {
+    it should "allow running activations concurrently" in {
 
-    val requestCount = actorSystem.settings.config.getInt("akka.http.host-connection-pool.max-connections")
-    require(requestCount > 100, "test requires that max-connections be set > 100")
-    println(s"running $requestCount requests")
+      val requestCount = actorSystem.settings.config.getInt("akka.http.host-connection-pool.max-connections")
+      require(requestCount > 100, "test requires that max-connections be set > 100")
+      println(s"running $requestCount requests")
 
-    val (out, err) = withNodeJsContainer { c =>
-      //this action will create a log entry, and only complete once all activations have arrived and emitted logg
-      //this forces all of the in-action logs to appear in a single portion of the stdout, and all of the sentinels to appear following that
+      val (out, err) = withNodeJsContainer { c =>
+        //this action will create a log entry, and only complete once all activations have arrived and emitted logg
+        //this forces all of the in-action logs to appear in a single portion of the stdout, and all of the sentinels to appear following that
 
-      val code =
-        s"""
+        val code =
+          s"""
            |
            | global.count = 0;
            | let requestCount = $requestCount;
@@ -69,29 +70,29 @@ abstract class NodeJsConcurrentTests extends NodeJsActionContainerTests {
            | }
         """.stripMargin
 
-      c.init(initPayload(code))._1 should be(200)
+        c.init(initPayload(code))._1 should be(200)
 
-      val payloads = (1 to requestCount).map({ i =>
-        JsObject(s"arg$i" -> JsString(s"value$i"))
-      })
+        val payloads = (1 to requestCount).map({ i =>
+          JsObject(s"arg$i" -> JsString(s"value$i"))
+        })
 
-      val responses = c.runMultiple(payloads.map {
-        runPayload(_)
-      })
-      payloads.foreach { a =>
-        responses should contain(200, Some(JsObject("args" -> a)))
+        val responses = c.runMultiple(payloads.map {
+          runPayload(_)
+        })
+        payloads.foreach { a =>
+          responses should contain(200, Some(JsObject("args" -> a)))
+        }
+      }
+
+      checkStreams(out, err, {
+        case (o, e) =>
+          o.replaceAll("\n", "") shouldBe "interleave me" * requestCount
+          e shouldBe empty
+      }, requestCount)
+
+      withClue("expected grouping of stdout sentinels") {
+        out should include((ActionContainer.sentinel + "\n") * requestCount)
       }
     }
-
-    checkStreams(out, err, {
-      case (o, e) =>
-        o.replaceAll("\n", "") shouldBe "interleave me" * requestCount
-        e shouldBe empty
-    }, requestCount)
-
-    withClue("expected grouping of stdout sentinels") {
-      out should include((ActionContainer.sentinel + "\n") * requestCount)
-    }
   }
-
 }
