@@ -26,8 +26,8 @@ abstract class NodeJsNonConcurrentTests extends NodeJsActionContainerTests {
   override def withNodeJsContainer(code: ActionContainer => Unit) =
     withActionContainer()(code)
 
-  if (!isTypeScript) {
-    it should "NOT allow running activations concurrently (without proper env setup)" in {
+  it should "NOT allow running activations concurrently (without proper env setup)" in {
+    if (!isTypeScript) {
       val (out, err) = withNodeJsContainer { c =>
         //this action will create a log entry, and only complete after 1s, to guarantee previous is still running
         val code = """
