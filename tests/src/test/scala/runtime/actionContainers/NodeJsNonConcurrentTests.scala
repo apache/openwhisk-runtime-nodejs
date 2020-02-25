@@ -27,9 +27,10 @@ abstract class NodeJsNonConcurrentTests extends NodeJsActionContainerTests {
     withActionContainer()(code)
 
   it should "NOT allow running activations concurrently (without proper env setup)" in {
-    val (out, err) = withNodeJsContainer { c =>
-      //this action will create a log entry, and only complete after 1s, to guarantee previous is still running
-      val code = """
+    if (!isTypeScript) {
+      val (out, err) = withNodeJsContainer { c =>
+        //this action will create a log entry, and only complete after 1s, to guarantee previous is still running
+        val code = """
                    | function main(args) {
                    |     console.log("no concurrency");
                    |     return new Promise(function(resolve, reject) {
@@ -40,38 +41,39 @@ abstract class NodeJsNonConcurrentTests extends NodeJsActionContainerTests {
                    | }
                  """.stripMargin
 
-      c.init(initPayload(code))._1 should be(200)
-      val requestCount = 2
+        c.init(initPayload(code))._1 should be(200)
+        val requestCount = 2
 
-      val payloads = (1 to requestCount).map({ i =>
-        JsObject(s"arg$i" -> JsString(s"value$i"))
-      })
+        val payloads = (1 to requestCount).map({ i =>
+          JsObject(s"arg$i" -> JsString(s"value$i"))
+        })
 
-      //run payloads concurrently
-      val responses = c.runMultiple(payloads.map {
-        runPayload(_)
-      })
+        //run payloads concurrently
+        val responses = c.runMultiple(payloads.map {
+          runPayload(_)
+        })
 
-      //one will fail, one will succeed - currently there is no way to guarantee which one succeeds, since both arrive "at the same time"
-      responses.count {
-        case (200, Some(JsObject(a))) if a.get("args").isDefined => true
-        case _                                                   => false
-      } shouldBe 1
+        //one will fail, one will succeed - currently there is no way to guarantee which one succeeds, since both arrive "at the same time"
+        responses.count {
+          case (200, Some(JsObject(a))) if a.get("args").isDefined => true
+          case _                                                   => false
+        } shouldBe 1
 
-      responses.count {
-        case (403, Some(JsObject(e)))
-            if e.getOrElse("error", JsString("")) == JsString("System not ready, status is running.") =>
-          true
-        case _ => false
-      } shouldBe 1
+        responses.count {
+          case (403, Some(JsObject(e)))
+              if e.getOrElse("error", JsString("")) == JsString("System not ready, status is running.") =>
+            true
+          case _ => false
+        } shouldBe 1
 
+      }
+
+      checkStreams(out, err, {
+        case (o, e) =>
+          o.replaceAll("\n", "") shouldBe "no concurrency"
+          e shouldBe "Internal system error: System not ready, status is running."
+      }, 1)
     }
-
-    checkStreams(out, err, {
-      case (o, e) =>
-        o.replaceAll("\n", "") shouldBe "no concurrency"
-        e shouldBe "Internal system error: System not ready, status is running."
-    }, 1)
   }
 
 }
