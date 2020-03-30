@@ -344,6 +344,51 @@ abstract class NodeJsActionContainerTests extends BasicActionRunnerTests with Ws
     }
   }
 
+  it should "support exports.main for single files" in {
+    val (out, err) = withNodeJsContainer { c =>
+      val code =
+        """
+          | exports.main = function (params) {
+          |     return params
+          | }
+        """.stripMargin
+
+      c.init(initPayload(code))._1 should be(200)
+      val (runCode, out) = c.run(runPayload(JsObject("payload" -> JsString("Hello exports!"))))
+
+      runCode should be(200)
+      out should be(Some(JsObject("payload" -> JsString("Hello exports!"))))
+    }
+
+    checkStreams(out, err, {
+      case (o, e) =>
+        o shouldBe empty
+        e shouldBe empty
+    })
+  }
+
+  it should "support module.exports.main for single files" in {
+    val (out, err) = withNodeJsContainer { c =>
+      val code =
+        """
+          | module.exports.main = function (params) {
+          |     return params
+          | }
+        """.stripMargin
+
+      c.init(initPayload(code))._1 should be(200)
+      val (runCode, out) = c.run(runPayload(JsObject("payload" -> JsString("Hello exports!"))))
+
+      runCode should be(200)
+      out should be(Some(JsObject("payload" -> JsString("Hello exports!"))))
+    }
+
+    checkStreams(out, err, {
+      case (o, e) =>
+        o shouldBe empty
+        e shouldBe empty
+    })
+  }
   it should "error when requiring a non-existent package" in {
     // NPM package names cannot start with a dot, and so there is no danger
     // of the package below ever being valid.
