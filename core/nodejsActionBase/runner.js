@@ -53,8 +53,17 @@ function initializeActionHandler(message) {
             })
             .catch(error => Promise.reject(error));
     } else try {
-        // The code is a plain old JS file.
-        let handler = eval('(function(){' + message.code + '\nreturn ' + message.main + '})()');
+        let handler = eval(
+          `(function(){
+               ${message.code}
+               try {
+                 return ${message.main}
+               } catch (e) {
+                 if (e.name === 'ReferenceError') {
+                    return module.exports.${message.main} || exports.${message.main}
+                 } else throw e
+               }
+           })()`);
         return assertMainIsFunction(handler, message.main);
     } catch (e) {
         return Promise.reject(e);
