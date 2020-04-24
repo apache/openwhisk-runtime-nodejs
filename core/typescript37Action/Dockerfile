@@ -17,6 +17,7 @@
 FROM golang:1.12 as builder
 RUN env CGO_ENABLED=0 go get github.com/apache/openwhisk-runtime-go/main \
     && mv /go/bin/main /bin/proxy
+
 FROM node:12.1.0-stretch
 ENV TYPESCRIPT_VERSION=3.7.4
 COPY --from=builder /bin/proxy /bin/proxy
@@ -26,21 +27,26 @@ RUN apt-get update && apt-get install -y \
     unzip \
     && rm -rf /var/lib/apt/lists/* \
     && mkdir -p /app/action
+
 RUN cd /app ;\
   npm install -g yarn ;\
   npm install -g typescript@${TYPESCRIPT_VERSION} ;\
   echo '{"private":true}' >package.json ;\
   npm install --save --no-package-lock --production \
-  openwhisk@3.21.1 \
+  openwhisk@3.21.2 \
   redis@2.8.0 \
   uuid@3.3.0 \
   && npm cache clean --force
+
 WORKDIR /app
-EXPOSE 8080
+
 COPY bin/compile /bin/compile
 COPY lib/launcher.ts /lib/launcher.ts
+
 ENV OW_COMPILER=/bin/compile
 ENV OW_LOG_INIT_ERROR=1
 ENV OW_WAIT_FOR_ACK=1
 ENV OW_EXECUTION_ENV=openwhisk/typescript3.7
+
+EXPOSE 8080
 ENTRYPOINT ["/bin/proxy"]

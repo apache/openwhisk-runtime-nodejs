@@ -69,14 +69,14 @@ async function actionLoop() {
           result = {"error": "requested unknown debugger"}
       } else {
         result = main(value)
-        if(typeof result === 'undefined') {
+        if(typeof result === undefined) {
           result = {}
         }
         if(Promise.resolve(result) == result) 
           try {
             result = await result
           } catch(error) {
-            if(typeof error === 'undefined') {
+            if(typeof error === undefined) {
               error = {}
             }
             result = {"error": error }
