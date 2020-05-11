@@ -36,6 +36,8 @@ elif [ ${RUNTIME_VERSION} == "10" ]; then
   RUNTIME="nodejs10Action"
 elif [ ${RUNTIME_VERSION} == "12" ]; then
   RUNTIME="nodejs12Action"
+elif [ ${RUNTIME_VERSION} == "14" ]; then
+  RUNTIME="nodejs14Action"
 fi
 
 if [[ ! -z ${DOCKER_USER} ]] && [[ ! -z ${DOCKER_PASSWORD} ]]; then
