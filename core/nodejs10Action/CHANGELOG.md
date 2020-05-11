@@ -19,20 +19,26 @@
 
 # NodeJS 10 OpenWhisk Runtime Container
 
+## Next release
+Changes:
+  - Update OpenWhisk npm package
+
+Node.js version = [10.20.1](https://nodejs.org/en/blog/release/v10.20.1/)
+OpenWhisk version = [OpenWhisk v3.21.2](https://www.npmjs.com/package/openwhisk)
+
 ## Apache 1.15
 Changes:
   - Update Node.js
-  - Update openwhisk npm package
+  - Update OpenWhisk npm package
   - Support for __OW_ACTION_VERSION (openwhisk/4761)
 
 Node.js version = [10.19.0](https://nodejs.org/en/blog/release/v10.19.0/)
-openwhisk version = [openwhisk v3.21.1](https://www.npmjs.com/package/openwhisk)
+OpenWhisk version = [OpenWhisk v3.21.1](https://www.npmjs.com/package/openwhisk)
 
 ## Apache 1.13
 Changes:
 - Initial version with NodejS10 LTS
 - Node.js version = [10.16.3](https://nodejs.org/en/blog/release/v10.16.3/)
-
-- [openwhisk v3.18.0](https://www.npmjs.com/package/openwhisk) - JavaScript client library for the OpenWhisk platform. Provides a wrapper around the OpenWhisk APIs.
+- [OpenWhisk v3.18.0](https://www.npmjs.com/package/openwhisk) - JavaScript client library for the OpenWhisk platform. Provides a wrapper around the OpenWhisk APIs.
 
 Node.js version = [10.15.3](https://nodejs.org/en/blog/release/v10.15.3/)
