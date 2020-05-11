@@ -19,28 +19,35 @@
 
 # NodeJS 8 OpenWhisk Runtime Container
 
+## Next release
+Changes:
+  - Update OpenWhisk npm package
+
+Node.js version = [8.17.0](https://nodejs.org/en/blog/release/v8.17.0/)
+OpenWhisk version = [OpenWhisk v3.21.2](https://www.npmjs.com/package/openwhisk)
+
 ## Apache 1.15
 Changes:
   - Update Node.js
-  - Update openwhisk npm package
+  - Update OpenWhisk npm package
   - Support for __OW_ACTION_VERSION (openwhisk/4761)
 
 Node.js version = [8.17.0](https://nodejs.org/en/blog/release/v8.17.0/)
-openwhisk version = [openwhisk v3.21.1](https://www.npmjs.com/package/openwhisk)
+OpenWhisk version = [OpenWhisk v3.21.1](https://www.npmjs.com/package/openwhisk)
 
 ## Apache 1.13
 Changes:
 - Update Node.js
-- Update openwhisk npm package
+- Update OpenWhisk npm package
 
-- [openwhisk v3.18.0](https://www.npmjs.com/package/openwhisk) - JavaScript client library for the OpenWhisk platform. Provides a wrapper around the OpenWhisk APIs.
+- [OpenWhisk v3.18.0](https://www.npmjs.com/package/openwhisk) - JavaScript client library for the OpenWhisk platform. Provides a wrapper around the OpenWhisk APIs.
 
 Node.js version = [8.16.1](https://nodejs.org/en/blog/release/v8.16.1/)
 
 ## 1.9.0 (Apache 1.12)
-Change: Update openwhisk npm package from `3.16.0` to `3.17.0`
+Change: Update OpenWhisk npm package from `3.16.0` to `3.17.0`
 
-- [openwhisk v3.17.0](https://www.npmjs.com/package/openwhisk) - JavaScript client library for the OpenWhisk platform. Provides a wrapper around the OpenWhisk APIs.
+- [OpenWhisk v3.17.0](https://www.npmjs.com/package/openwhisk) - JavaScript client library for the OpenWhisk platform. Provides a wrapper around the OpenWhisk APIs.
 
 ## 1.8.3
 Change: Update Node.js
@@ -63,9 +70,9 @@ Change: Update runtime to work in concurrent mode
 - Update runtime to work in concurrent mode [#41](https://github.com/apache/openwhisk-runtime-nodejs/pull/41/files)
 
 ## 1.7.0
-Change: Update openwhisk npm package from `3.15.0` to `3.16.0`
+Change: Update OpenWhisk npm package from `3.15.0` to `3.16.0`
 
-- [openwhisk v3.16.0](https://www.npmjs.com/package/openwhisk) - JavaScript client library for the OpenWhisk platform. Provides a wrapper around the OpenWhisk APIs.
+- [OpenWhisk v3.16.0](https://www.npmjs.com/package/openwhisk) - JavaScript client library for the OpenWhisk platform. Provides a wrapper around the OpenWhisk APIs.
 
 ## 1.6.3
 Changes:
@@ -83,9 +90,9 @@ Change: Update Node.js
 Node.js version = 8.11.2
 
 ## 1.6.0
-Change: Update openwhisk npm package from `3.14.0` to `3.15.0`
+Change: Update OpenWhisk npm package from `3.14.0` to `3.15.0`
 
-- [openwhisk v3.15.0](https://www.npmjs.com/package/openwhisk) - JavaScript client library for the OpenWhisk platform. Provides a wrapper around the OpenWhisk APIs.
+- [OpenWhisk v3.15.0](https://www.npmjs.com/package/openwhisk) - JavaScript client library for the OpenWhisk platform. Provides a wrapper around the OpenWhisk APIs.
 
 ## 1.5.1
 Change: Update Node.js
@@ -98,32 +105,32 @@ Change: Update Node.js
 Node.js version = 8.11.0
 
 ## 1.4.0
-Change: Update nodejs and openwhisk npm package
+Change: Update nodejs and OpenWhisk npm package
 
 Node version = 8.10.0
 
-- [openwhisk v3.14.0](https://www.npmjs.com/package/openwhisk) - JavaScript client library for the OpenWhisk platform. Provides a wrapper around the OpenWhisk APIs.
+- [OpenWhisk v3.14.0](https://www.npmjs.com/package/openwhisk) - JavaScript client library for the OpenWhisk platform. Provides a wrapper around the OpenWhisk APIs.
 
 ## 1.3.0
-Change: Update npm openwhisk package
+Change: Update npm OpenWhisk package
 
-- [openwhisk v3.13.1](https://www.npmjs.com/package/openwhisk) - JavaScript client library for the OpenWhisk platform. Provides a wrapper around the OpenWhisk APIs.
+- [OpenWhisk v3.13.1](https://www.npmjs.com/package/openwhisk) - JavaScript client library for the OpenWhisk platform. Provides a wrapper around the OpenWhisk APIs.
 
 ## 1.2.0
-Change: Update npm openwhisk package
+Change: Update npm OpenWhisk package
 
-- [openwhisk v3.12.0](https://www.npmjs.com/package/openwhisk) - JavaScript client library for the OpenWhisk platform. Provides a wrapper around the OpenWhisk APIs.
+- [OpenWhisk v3.12.0](https://www.npmjs.com/package/openwhisk) - JavaScript client library for the OpenWhisk platform. Provides a wrapper around the OpenWhisk APIs.
 
 ## 1.1.0
-Change: Update nodejs and openwhisk npm package
+Change: Update nodejs and OpenWhisk npm package
 
 Node version = 8.9.3
 
-- [openwhisk v3.11.0](https://www.npmjs.com/package/openwhisk) - JavaScript client library for the OpenWhisk platform. Provides a wrapper around the OpenWhisk APIs.
+- [OpenWhisk v3.11.0](https://www.npmjs.com/package/openwhisk) - JavaScript client library for the OpenWhisk platform. Provides a wrapper around the OpenWhisk APIs.
 
 ## 1.0.0
 Change: Initial release
 
 Node version = 8.9.1
 
-- [openwhisk v3.10.0](https://www.npmjs.com/package/openwhisk) - JavaScript client library for the OpenWhisk platform. Provides a wrapper around the OpenWhisk APIs.
+- [OpenWhisk v3.10.0](https://www.npmjs.com/package/openwhisk) - JavaScript client library for the OpenWhisk platform. Provides a wrapper around the OpenWhisk APIs.
