@@ -1,0 +1,8 @@
+node_modules
+package-lock.json
+Dockerfile
+build.gradle
+.project
+.settings
+build.xml
+logs
