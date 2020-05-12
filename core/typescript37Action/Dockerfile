@@ -32,21 +32,10 @@ RUN cd /app ;\
   npm install -g typescript@${TYPESCRIPT_VERSION} ;\
   echo '{"private":true}' >package.json ;\
   npm install --save --no-package-lock --production \
-  axios@0.19.0 \
-  async@2.6.1 \
-  aws-sdk@2.401.0 \
-  bluebird@3.5.3 \
-  body-parser@1.18.3 \
-  btoa@1.2.1 \
-  gm@1.23.1 \
-  @google-cloud/datastore@4.4.1 \
-  @google-cloud/storage@4.0.1 \
-  nano@8.0.0 \
+  @types/node@13.13.5 \
+  openwhisk@3.21.2 \
   redis@2.8.0 \
-  tmp@0.0.31 \
-  twilio@3.28.0 \
   uuid@3.0.0 \
-  openwhisk@3.18.0 \
   && npm cache clean --force
 WORKDIR /app
 EXPOSE 8080
