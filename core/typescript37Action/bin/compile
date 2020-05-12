@@ -1,153 +1,162 @@
 #!/usr/bin/env node
 /*
-#
-# Licensed to the Apache Software Foundation (ASF) under one or more
-# contributor license agreements.  See the NOTICE file distributed with
-# this work for additional information regarding copyright ownership.
-# The ASF licenses this file to You under the Apache License, Version 2.0
-# (the "License"); you may not use this file except in compliance with
-# the License.  You may obtain a copy of the License at
-#
-#     http://www.apache.org/licenses/LICENSE-2.0
-#
-# Unless required by applicable law or agreed to in writing, software
-# distributed under the License is distributed on an "AS IS" BASIS,
-# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-# See the License for the specific language governing permissions and
-# limitations under the License.
-#
-*/
+ * Licensed to the Apache Software Foundation (ASF) under one or more
+ * contributor license agreements.  See the NOTICE file distributed with
+ * this work for additional information regarding copyright ownership.
+ * The ASF licenses this file to You under the Apache License, Version 2.0
+ * (the "License"); you may not use this file except in compliance with
+ * the License.  You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
 const path = require("path")
 const fs = require("fs")
 const execFileSync = require('child_process').execFileSync;
 
 // write a file creating intermediate directories
 function write_file(file, body, executable) {
-    fs.mkdirSync(path.dirname(file), {recursive: true})
-    fs.writeFileSync(file, body)
-    if(executable)
-        fs.chmodSync(file, 0755)
+  fs.mkdirSync(path.dirname(file), { recursive: true })
+  fs.writeFileSync(file, body)
+  if (executable) {
+    fs.chmodSync(file, 0755)
+  }
 }
 
 // copy a file eventually replacing a substring
 function copy_replace(src, dst, match, replacement) {
-    var body = fs.readFileSync(src, "utf-8")
-    if(match)
-        body = body.replace(match, replacement)
-    write_file(dst, body)
+  let body = fs.readFileSync(src, "utf-8")
+  if (match) {
+    body = body.replace(match, replacement)
+  }
+  write_file(dst, body)
 }
 
 function deext(filename) {
-    var pos = filename.lastIndexOf(".")
-    filename = pos > -1 ? filename.substring(0, pos) : filename
-    return filename
+  const pos = filename.lastIndexOf(".")
+  filename = pos > -1 ? filename.substring(0, pos) : filename
+  return filename
 }
 
 // resolve dependencies from package.json - return the main file
 function dependencies(src_dir) {
-  var pkg_config = src_dir+"/package.json"
-  var node_modules = src_dir+"/node_modules"
-  if(fs.existsSync(pkg_config)) {
-    if(!fs.existsSync(node_modules))
-        execFileSync("yarn", [], {
-            "cwd": src_dir
-        })
-     var config = JSON.parse(fs.readFileSync(pkg_config, "utf-8"))
-     //console.log(config)
-     if("main" in config) {
-         return deext(config["main"])
-     }
+  const pkg_config = src_dir + "/package.json"
+  const node_modules = src_dir + "/node_modules"
+  if (fs.existsSync(pkg_config)) {
+    if (!fs.existsSync(node_modules)) {
+      execFileSync("yarn", [], {
+        "cwd": src_dir
+      })
+    }
+    const config = JSON.parse(fs.readFileSync(pkg_config, "utf-8"))
+    if ("main" in config) {
+      return deext(config["main"])
+    }
   }
   return "index"
 }
 
 // assemble sources
 function sources(launcher, main_file, main_func, src_dir) {
-    // init config
-    src_config = src_dir+"/tsconfig.json"
-    var config = {}
-    if(fs.existsSync(src_config)) {
-        config = JSON.parse(fs.readFileSync(src_config, "utf-8"))
-    }
+  // init config
+  const src_config = src_dir + "/tsconfig.json"
+  const config = {}
+  if (fs.existsSync(src_config)) {
+    config = JSON.parse(fs.readFileSync(src_config, "utf-8"))
+  }
 
-    if(!("files" in config))
-        config["files"] = []
-    if(!("compilerOptions" in config))
-        config["compilerOptions"] = {}
-    config["compilerOptions"]["inlineSourceMap"] = true
-    if("sourceMap" in config["compilerOptions"]) {
-        delete config["compilerOptions"]["sourceMap"]
-    }
-    if(!("outDir" in config["compilerOptions"]))
-        config["compilerOptions"]["outDir"] = "."
+  if (!("files" in config)) {
+    config["files"] = []
+  }
 
-    // copy main src file if any (and use it as main)
-    var src_file = src_dir+"/exec"
-    var tgt_file = src_dir+"/"+main_file+".ts"
-    if(fs.existsSync(src_file) && !fs.existsSync(tgt_file)){
-        var re = RegExp('(?<!export\\s+)function\\s+'+main_func)
-        copy_replace(src_file, tgt_file, re, "export function "+main_func)
-        config["files"].push(main_file+".ts")
-    }
+  if (!("compilerOptions" in config)) {
+    config["compilerOptions"] = {}
+  }
 
-    // copy launcher and replace main
-    copy_replace(launcher,
-       src_dir+"/exec__.ts",
-      'require("./main__").main',
-      'require("./'+main_file+'").'+main_func)
+  config["compilerOptions"]["inlineSourceMap"] = true
 
-    // complete tsconfig.json
-    config["files"].push("exec__.ts")
-    write_file(src_config, JSON.stringify(config))
+  if ("sourceMap" in config["compilerOptions"]) {
+    delete config["compilerOptions"]["sourceMap"]
+  }
+
+  if (!("outDir" in config["compilerOptions"])) {
+    config["compilerOptions"]["outDir"] = "."
+  }
+
+  // copy main src file if any (and use it as main)
+  const src_file = src_dir + "/exec"
+  const tgt_file = src_dir + "/" + main_file + ".ts"
+  if (fs.existsSync(src_file) && !fs.existsSync(tgt_file)) {
+    const re = RegExp('(?<!export\\s+)function\\s+' + main_func)
+    copy_replace(src_file, tgt_file, re, "export function " + main_func)
+    config["files"].push(main_file + ".ts")
+  }
+
+  // copy launcher and replace main
+  copy_replace(launcher,
+    src_dir + "/exec__.ts",
+    'require("./main__").main',
+    'require("./' + main_file + '").' + main_func)
+
+  // complete tsconfig.json
+  config["files"].push("exec__.ts")
+  write_file(src_config, JSON.stringify(config))
 }
 
 function build(src_dir, bin_dir) {
-    try {
-        fs.rmdirSync(bin_dir)
-        fs.renameSync(src_dir, bin_dir)
-        execFileSync("tsc", [], {
-            "cwd": bin_dir
-        })
-        write_file(bin_dir+"/exec",
-         '#!/bin/bash\n'+
-         'if [ "$(cat $0.env)" != "$__OW_EXECUTION_ENV" ]\n'+
-         'then cd "$(dirname $0)"\n'+
-         '     echo "Execution Environment Mismatch"\n'+
-         '     echo "Expected: $(cat $0.env)"\n'+
-         '     echo "Actual: $__OW_EXECUTION_ENV"\n'+
-         '     exit 1\n'+
-         'fi\n'+
-         'cd "$(dirname $0)"\n'+
-         'if [ -z "$__OW_DEBUG_PORT" ]\n' +
-         'then node exec__.js\n'+
-         'else node --inspect=":$__OW_DEBUG_PORT" exec__.js\n'+
-         'fi\n', true)
-         write_file(bin_dir+"/exec.env", process.env["__OW_EXECUTION_ENV"])
-    } catch(err) {
-        console.log("syntax error:", err.message)
-    }
+  try {
+    fs.rmdirSync(bin_dir)
+    fs.renameSync(src_dir, bin_dir)
+    execFileSync("tsc", [], {
+      cwd: bin_dir,
+      stdio: 'inherit',
+      stderr: 'inherit'
+    })
+    write_file(bin_dir + "/exec",
+      '#!/bin/bash\n' +
+      'if [ "$(cat $0.env)" != "$__OW_EXECUTION_ENV" ]\n' +
+      'then cd "$(dirname $0)"\n' +
+      '   echo "Execution Environment Mismatch"\n' +
+      '   echo "Expected: $(cat $0.env)"\n' +
+      '   echo "Actual: $__OW_EXECUTION_ENV"\n' +
+      '   exit 1\n' +
+      'fi\n' +
+      'cd "$(dirname $0)"\n' +
+      'if [ -z "$__OW_DEBUG_PORT" ]\n' +
+      'then node exec__.js\n' +
+      'else node --inspect=":$__OW_DEBUG_PORT" exec__.js\n' +
+      'fi\n', true)
+    write_file(bin_dir + "/exec.env", process.env["__OW_EXECUTION_ENV"])
+  } catch (err) {
+    console.log("syntax error:", err.message)
+  }
 }
 
 function compile() {
-    if(process.argv.length<4) {
-        console.log("usage: <main-function> <source-dir> <target-dir>")
-        process.exit(1)
-    }
-    var launcher =  path.dirname(path.dirname(process.argv[1]))+"/lib/launcher.ts"
-    var src_dir = path.resolve(process.argv[3])
-    var bin_dir = path.resolve(process.argv[4])
-    var main_func = process.argv[2]
-    var main_file = dependencies(src_dir)
-    var pieces =  main_func.split(".")
-    if(pieces.length >1) {
-        main_file = pieces.shift()
-        main_func = pieces.join(".")
-    }
-    //console.log(main_file, main_func)
-    sources(launcher, main_file, main_func, src_dir)
-    build(src_dir, bin_dir)
+  if (process.argv.length < 4) {
+    console.log("usage: <main-function> <source-dir> <target-dir>")
+    process.exit(1)
+  }
+  const launcher = path.dirname(path.dirname(process.argv[1])) + "/lib/launcher.ts"
+  const src_dir = path.resolve(process.argv[3])
+  const bin_dir = path.resolve(process.argv[4])
+  let main_func = process.argv[2]
+  let main_file = dependencies(src_dir)
+  const pieces = main_func.split(".")
+  if (pieces.length > 1) {
+    main_file = pieces.shift()
+    main_func = pieces.join(".")
+  }
+  sources(launcher, main_file, main_func, src_dir)
+  build(src_dir, bin_dir)
 }
 
-if(require.main === module) {
-    compile()
+if (require.main === module) {
+  compile()
 }
