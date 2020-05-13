@@ -16,16 +16,28 @@
 #
 
 FROM node:8.17.0
+
+# Initial update and some basics.
+#
 RUN apt-get update && apt-get install -y \
     imagemagick \
     graphicsmagick \
     unzip \
     && rm -rf /var/lib/apt/lists/*
+
+# Add sources and copy the package.json to root container,
+# so npm packages from user functions take precendence.
+#
 WORKDIR /nodejsAction
-COPY . .
-# COPY the package.json to root container, so we can install npm packages a level up from user's packages, so user's packages take precedence
-COPY ./package.json /
-RUN cd / && npm install --no-package-lock \
+ADD  . /nodejsAction/
+COPY package.json /
+
+# Customize runtime with additional packages.
+# Install package globally so user packages can override.
+#
+RUN cd / && npm install --no-package-lock --production \
     && npm cache clean --force
+
 EXPOSE 8080
+
 CMD node --expose-gc app.js

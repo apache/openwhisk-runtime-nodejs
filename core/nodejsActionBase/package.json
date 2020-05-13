@@ -1,20 +1,26 @@
 {
-  "name": "nodejsAction",
-  "version": "0.0.1",
+  "name": "action-nodejs-base",
+  "version": "1.0.0",
+  "description": "Apache OpenWhisk NodeJS Runtime",
+  "repository": {
+    "type": "git",
+    "url": "git@github.com:apache/openwhisk-runtime-nodejs.git"
+  },
+  "license": "Apache-2.0",
   "devDependencies": {
+    "btoa": "1.1.2",
     "eslint": "^5.16.0",
     "eslint-config-standard": "^12.0.0",
     "eslint-plugin-import": "^2.17.2",
     "eslint-plugin-node": "^8.0.1",
     "eslint-plugin-promise": "^4.1.1",
-    "eslint-plugin-standard": "^4.0.0"
+    "eslint-plugin-standard": "^4.0.0",
+    "request": "2.79.0"
   },
   "dependencies": {
-    "body-parser": "1.15.2",
-    "btoa": "1.1.2",
-    "express": "4.14.0",
-    "log4js": "0.6.38",
-    "request": "2.79.0",
+    "openwhisk": "3.21.2",
+    "body-parser": "1.18.3",
+    "express": "4.16.4",
     "serialize-error": "3.0.0",
     "redis": "2.8.0",
     "uuid": "3.3.0"

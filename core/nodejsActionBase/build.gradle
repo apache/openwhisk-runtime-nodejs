@@ -23,5 +23,5 @@ eclipse {
     }
 }
 
-ext.dockerImageName = 'nodejsactionbase'
+ext.dockerImageName = 'action-nodejs-base'
 apply from: '../../gradle/docker.gradle'
