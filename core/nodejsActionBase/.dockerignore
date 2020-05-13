@@ -1,0 +1,15 @@
+*.*~
+.dockerignore
+node_modules
+package-lock.json
+.project
+.settings
+build.xml
+logs
+Dockerfile
+test.js
+*.json
+*.yaml
+*.tmpl
+*.gradle
+!package.json
