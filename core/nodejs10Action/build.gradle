@@ -26,6 +26,7 @@ eclipse {
 ext.dockerImageName = 'action-nodejs-v10'
 apply from: '../../gradle/docker.gradle'
 
+distDocker.dependsOn 'copyPackageJson'
 distDocker.dependsOn 'copyProxy'
 distDocker.dependsOn 'copyRunner'
 distDocker.dependsOn 'copyService'
@@ -34,6 +35,11 @@ distDocker.dependsOn 'copyOpenWhisk'
 distDocker.dependsOn 'copyKnative'
 distDocker.dependsOn 'copyBuildTemplate'
 distDocker.finalizedBy('cleanup')
+
+task copyPackageJson(type: Copy) {
+    from '../nodejsActionBase/package.json'
+    into '.'
+}
 
 task copyProxy(type: Copy) {
     from '../nodejsActionBase/app.js'
@@ -71,6 +77,7 @@ task copyBuildTemplate(type: Copy) {
 }
 
 task cleanup(type: Delete) {
+    delete 'package.json'
     delete 'app.js'
     delete 'runner.js'
     delete 'src'
