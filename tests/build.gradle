@@ -44,7 +44,7 @@ tasks.withType(ScalaCompile) {
 }
 
 task buildArtifacts(type:Exec) {
-    workingDir 'tests/dat/actions'
+    workingDir 'dat/actions'
     commandLine './build.sh'
 }
 
