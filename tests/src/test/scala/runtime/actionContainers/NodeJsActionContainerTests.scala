@@ -831,7 +831,7 @@ abstract class NodeJsActionContainerTests extends BasicActionRunnerTests with Ws
   }
 
   it should "use user provided npm packages in a zip file" in {
-    val zipPath = new File("tests/dat/actions/nodejs-test.zip").toPath
+    val zipPath = new File("dat/actions/nodejs-test.zip").toPath
     val code = ResourceHelpers.readAsBase64(zipPath)
     withNodeJsContainer { c =>
       c.init(initPayload(code))._1 should be(200)
