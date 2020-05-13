@@ -14,34 +14,46 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 #
+
 FROM golang:1.12 as builder
 RUN env CGO_ENABLED=0 go get github.com/apache/openwhisk-runtime-go/main \
     && mv /go/bin/main /bin/proxy
+
 FROM node:12.1.0-stretch
-ENV TYPESCRIPT_VERSION=3.7.4
 COPY --from=builder /bin/proxy /bin/proxy
+
+ENV TYPESCRIPT_VERSION=3.7.4
+ENV OW_COMPILER=/bin/compile
+ENV OW_LOG_INIT_ERROR=1
+ENV OW_WAIT_FOR_ACK=1
+ENV OW_EXECUTION_ENV=openwhisk/typescript3.7
+
+# Initial update and some basics.
+#
 RUN apt-get update && apt-get install -y \
     imagemagick \
     graphicsmagick \
     unzip \
     && rm -rf /var/lib/apt/lists/* &&\
     mkdir -p /app/action
-RUN cd /app ;\
-  npm install -g yarn ;\
-  npm install -g typescript@${TYPESCRIPT_VERSION} ;\
-  echo '{"private":true}' > package.json ;\
-  npm install --save --no-package-lock --production \
-  @types/node@13.13.5 \
-  openwhisk@3.21.2 \
-  redis@2.8.0 \
-  uuid@3.0.0 \
-  && npm cache clean --force
+
+# Add sources and copy the package.json to root container,
+# so npm packages from user functions take precendence.
+#
 WORKDIR /app
-EXPOSE 8080
 COPY bin/compile /bin/compile
 COPY lib/launcher.ts /lib/launcher.ts
-ENV OW_COMPILER=/bin/compile
-ENV OW_LOG_INIT_ERROR=1
-ENV OW_WAIT_FOR_ACK=1
-ENV OW_EXECUTION_ENV=openwhisk/typescript3.7
+COPY package.json /
+
+# Customize runtime with additional packages.
+#
+RUN cd / && npm install -g \
+  yarn \
+  typescript@${TYPESCRIPT_VERSION} \
+  && npm install --no-package-lock --production @types/node@13.13.5 \
+  && npm install --no-package-lock --production \
+  && npm cache clean --force
+
+EXPOSE 8080
+
 ENTRYPOINT ["/bin/proxy"]

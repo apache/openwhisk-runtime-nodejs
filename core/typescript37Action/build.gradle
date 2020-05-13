@@ -17,3 +17,14 @@
 
 ext.dockerImageName = 'action-typescript-v3.7'
 apply from: '../../gradle/docker.gradle'
+
+distDocker.dependsOn 'copyPackageJson'
+
+task copyPackageJson(type: Copy) {
+    from '../nodejsActionBase/package.json'
+    into '.'
+}
+
+task cleanup(type: Delete) {
+    delete 'package.json'
+}
