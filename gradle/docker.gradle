@@ -30,10 +30,11 @@ import groovy.time.*
  * - dockerImageTag (optional, default 'latest'): The tag for the image
  * - dockerImagePrefix (optional, default 'whisk'): The prefix for the image,
  *       'controller' becomes 'whisk/controller' per default
+ * - dockerImageSuffix (optional, default ''): a suffix appended to the image name
  * - dockerTimeout (optional, default 840): Timeout for docker operations in seconds
  * - dockerRetries (optional, default 3): How many times to retry docker operations
  * - dockerBinary (optional, default 'docker'): The binary to execute docker commands
- * - dockerBuildArgs (options, default ''): Project specific custom docker build arguments
+ * - dockerBuildArgs (options, default ''): Project specific custom docker build arguments (use comma to separate multiple args)
  * - dockerHost (optional): The docker host to run commands on, default behaviour is
  *       docker's own DOCKER_HOST environment variable
  */
@@ -42,19 +43,20 @@ ext {
     dockerRegistry = project.hasProperty('dockerRegistry') ? dockerRegistry + '/' : ''
     dockerImageTag = project.hasProperty('dockerImageTag') ? dockerImageTag : 'latest'
     dockerImagePrefix = project.hasProperty('dockerImagePrefix') ? dockerImagePrefix : 'whisk'
+    dockerImageSuffix = project.hasProperty('dockerImageSuffix') ? dockerImageSuffix : ''
     dockerTimeout = project.hasProperty('dockerTimeout') ? dockerTimeout.toInteger() : 840
     dockerRetries = project.hasProperty('dockerRetries') ? dockerRetries.toInteger() : 3
     dockerBinary = project.hasProperty('dockerBinary') ? [dockerBinary] : ['docker']
     dockerBuildArg = ['build']
 }
-ext.dockerTaggedImageName = dockerRegistry + dockerImagePrefix + '/' + dockerImageName + ':' + dockerImageTag
+ext.dockerTaggedImageName = dockerRegistry + dockerImagePrefix + '/' + dockerImageName + dockerImageSuffix + ':' + dockerImageTag
 
 if(project.hasProperty('dockerHost')) {
     dockerBinary += ['--host', project.dockerHost]
 }
 
 if(project.hasProperty('dockerBuildArgs')) {
-    dockerBuildArgs.each { arg  ->
+    dockerBuildArgs.split(',').each { arg ->
         dockerBuildArg += ['--build-arg', arg]
     }
 }
@@ -62,9 +64,9 @@ if(project.hasProperty('dockerBuildArgs')) {
 task distDocker {
     doLast {
         def start = new Date()
-        def cmd = dockerBinary + dockerBuildArg + ['-t', dockerImageName, project.buildscript.sourceFile.getParentFile().getAbsolutePath()]
+        def cmd = dockerBinary + dockerBuildArg + ['-t', dockerImageName + dockerImageSuffix, project.buildscript.sourceFile.getParentFile().getAbsolutePath()]
         retry(cmd, dockerRetries, dockerTimeout)
-        println("Building '${dockerImageName}' took ${TimeCategory.minus(new Date(), start)}")
+        println("Building '${dockerImageName + dockerImageSuffix}' took ${TimeCategory.minus(new Date(), start)}")
     }
 }
 task tagImage {
@@ -79,7 +81,7 @@ task tagImage {
         if(major == 1 && minor < 12) {
             dockerCmd += ['-f']
         }
-        retry(dockerBinary + dockerCmd + [dockerImageName, dockerTaggedImageName], dockerRetries, dockerTimeout)
+        retry(dockerBinary + dockerCmd + [dockerImageName + dockerImageSuffix, dockerTaggedImageName], dockerRetries, dockerTimeout)
     }
 }
 
