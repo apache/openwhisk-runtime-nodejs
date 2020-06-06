@@ -15,7 +15,7 @@
 # limitations under the License.
 #
 
-FROM node:12.16.2-stretch
+FROM node:12.18.0-stretch
 
 # Initial update and some basics.
 #
