@@ -23,5 +23,5 @@
 Changes:
   - Initial release
 
-Node.js version = [14.2.0](https://nodejs.org/en/blog/release/v14.2.0/)
+Node.js version = [14.4.0](https://nodejs.org/en/blog/release/v14.4.0/)
 OpenWhisk version = [OpenWhisk v3.21.2](https://www.npmjs.com/package/openwhisk)
