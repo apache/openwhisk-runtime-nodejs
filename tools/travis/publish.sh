@@ -24,29 +24,27 @@ SCRIPTDIR=$(cd $(dirname "$0") && pwd)
 ROOTDIR="$SCRIPTDIR/../.."
 
 IMAGE_PREFIX=$1
-RUNTIME_VERSION=$2
+RUNTIME=$2
 IMAGE_TAG=$3
 
 if [[ ! -z ${DOCKER_USER} ]] && [[ ! -z ${DOCKER_PASSWORD} ]]; then
-docker login -u "${DOCKER_USER}" -p "${DOCKER_PASSWORD}"
+  docker login -u "${DOCKER_USER}" -p "${DOCKER_PASSWORD}"
 fi
 
 if [[ ! -z ${RUNTIME} ]]; then
-TERM=dumb ./gradlew \
-:core:${RUNTIME}:distDocker \
--PdockerRegistry=docker.io \
--PdockerImagePrefix=${IMAGE_PREFIX} \
--PdockerImageTag=${IMAGE_TAG}
+  TERM=dumb ./gradlew \
+    :core:${RUNTIME}:distDocker \
+    -PdockerRegistry=docker.io \
+    -PdockerImagePrefix=${IMAGE_PREFIX} \
+    -PdockerImageTag=${IMAGE_TAG}
 
   # if doing nightly also push a tag with the hash commit
   if [ ${IMAGE_TAG} == "nightly" ]; then
-  SHORT_COMMIT=`git rev-parse --short HEAD`
-  TERM=dumb ./gradlew \
-  :core:${RUNTIME}:distDocker \
-  -PdockerRegistry=docker.io \
-  -PdockerImagePrefix=${IMAGE_PREFIX} \
-  -PdockerImageTag=${SHORT_COMMIT}
+    SHORT_COMMIT=`git rev-parse --short HEAD`
+    TERM=dumb ./gradlew \
+      :core:${RUNTIME}:distDocker \
+      -PdockerRegistry=docker.io \
+      -PdockerImagePrefix=${IMAGE_PREFIX} \
+      -PdockerImageTag=${SHORT_COMMIT}
   fi
-
-
 fi
