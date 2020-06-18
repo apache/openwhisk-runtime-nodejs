@@ -30,7 +30,7 @@ COPY ./core/nodejsActionBase/platform/*.js ./platform/
 COPY . .
 # COPY the package.json to root container, so we can install npm packages a level up from user's packages,
 # so user's packages take precedence
-COPY ./core/nodejs10Action/package.json /
+COPY ./core/nodejsActionBase/package.json /
 RUN cd / && npm install --no-package-lock \
     && npm cache clean --force
 EXPOSE 8080
