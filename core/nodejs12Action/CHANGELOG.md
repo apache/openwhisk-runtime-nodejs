@@ -23,7 +23,7 @@
 Changes:
   - Update OpenWhisk npm package
 
-Node.js version = [12.18.0](https://nodejs.org/en/blog/release/v12.18.0/)
+Node.js version = [12.18.2](https://nodejs.org/en/blog/release/v12.18.2/)
 OpenWhisk version = [OpenWhisk v3.21.2](https://www.npmjs.com/package/openwhisk)
 
 ## Apache 1.15
