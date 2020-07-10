@@ -865,4 +865,72 @@ abstract class NodeJsActionContainerTests extends BasicActionRunnerTests with Ws
       runRes.get.fields.get("message") shouldBe Some(JsString("success"))
     }
   }
+
+  it should "support async and await" in {
+    assume(!isTypeScript)
+    withNodeJsContainer { c =>
+      val code = """
+                   | const util = require('util');
+                   | const fs = require('fs');
+                   |
+                   | const stat = util.promisify(fs.stat);
+                   |
+                   | async function main() {
+                   |   const stats = await stat('.');
+                   |   return stats
+                   | }
+                 """.stripMargin;
+
+      val (initCode, _) = c.init(initPayload(code))
+      initCode should be(200)
+
+      val (runCode, runRes) = c.run(runPayload(JsObject()))
+      runCode should be(200) // action writer returning an error is OK
+
+      runRes shouldBe defined
+      runRes.get.fields.get("uid") shouldBe defined
+    }
+  }
+
+  it should "support errors thrown from async functions" in {
+    assume(!isTypeScript)
+    withNodeJsContainer { c =>
+      val code = """
+                   | async function main() {
+                   |   return a.b.c
+                   | }
+                 """.stripMargin;
+
+      val (initCode, _) = c.init(initPayload(code))
+      initCode should be(200)
+
+      val (runCode, runRes) = c.run(runPayload(JsObject()))
+      runCode should be(200) // action writer returning an error is OK
+
+      runRes shouldBe defined
+      runRes.get.fields.get("error") shouldBe defined
+      runRes.get.fields("error").toString.toLowerCase should include("referenceerror: a is not defined")
+    }
+  }
+
+  it should "support user thrown errors from async functions" in {
+    assume(!isTypeScript)
+    withNodeJsContainer { c =>
+      val code = """
+                   | async function main() {
+                   |   throw new Error('app error')
+                   | }
+                 """.stripMargin;
+
+      val (initCode, _) = c.init(initPayload(code))
+      initCode should be(200)
+
+      val (runCode, runRes) = c.run(runPayload(JsObject()))
+      runCode should be(200) // action writer returning an error is OK
+
+      runRes shouldBe defined
+      runRes.get.fields.get("error") shouldBe defined
+      runRes.get.fields("error").toString.toLowerCase should include("error: app error")
+    }
+  }
 }

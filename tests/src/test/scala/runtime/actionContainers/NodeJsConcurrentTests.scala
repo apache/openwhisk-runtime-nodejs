@@ -23,8 +23,6 @@ import spray.json.JsString
 
 abstract class NodeJsConcurrentTests extends NodeJsActionContainerTests {
 
-  override lazy val nodejsContainerImageName = "action-nodejs-v8"
-
   override def withNodeJsContainer(code: ActionContainer => Unit) =
     withActionContainer(Map("__OW_ALLOW_CONCURRENT" -> "true"))(code)
 

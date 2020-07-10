@@ -21,7 +21,7 @@ import org.junit.runner.RunWith
 import org.scalatest.junit.JUnitRunner
 
 @RunWith(classOf[JUnitRunner])
-class NodeJs10ActionContainerTests extends NodeJs8ActionContainerTests {
+class NodeJs10ActionContainerTests extends NodeJsActionContainerTests {
   override lazy val nodejsContainerImageName = "action-nodejs-v10"
   override lazy val nodejsTestDockerImageName = "nodejs10docker"
 }
