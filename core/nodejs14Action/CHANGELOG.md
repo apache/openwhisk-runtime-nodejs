@@ -19,9 +19,9 @@
 
 # NodeJS 14 OpenWhisk Runtime Container
 
-## Next release
+## Apache 1.16
 Changes:
-  - Initial release
+  - Initial release with support for Node.js v1.14
 
 Node.js version = [14.4.0](https://nodejs.org/en/blog/release/v14.4.0/)
 OpenWhisk version = [OpenWhisk v3.21.2](https://www.npmjs.com/package/openwhisk)

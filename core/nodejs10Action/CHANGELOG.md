@@ -19,9 +19,9 @@
 
 # NodeJS 10 OpenWhisk Runtime Container
 
-## Next release
+## Apache 1.16
 Changes:
-  - Update OpenWhisk npm package
+  - Update Node.js and OpenWhisk versions.
 
 Node.js version = [10.21.0](https://nodejs.org/en/blog/release/v10.21.0/)
 OpenWhisk version = [OpenWhisk v3.21.2](https://www.npmjs.com/package/openwhisk)
