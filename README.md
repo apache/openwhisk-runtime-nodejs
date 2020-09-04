@@ -74,7 +74,7 @@ If you build a custom version of the images, pushing those an external Docker Hu
 
 ### Runtimes Manifest
 
-Available runtimes in Apache OpenWhisk are defined using the runtimes manifest in this file: [runtimes.json](https://github.com/apache/openwhisk/blob/9dacce433cfdd64aa1e4f5c8eab6db31df8c4eae/ansible/files/runtimes.json#L3-L52)
+Available runtimes in Apache OpenWhisk are defined using the runtimes manifest in this file: [runtimes.json](https://github.com/apache/openwhisk/blob/master/ansible/files/runtimes.json#L16-L72)
 
 Modify the manifest and re-deploy the platform to pick up local images changes.
 
