@@ -23,7 +23,7 @@ RUN apt-get update && apt-get install -y \
     && rm -rf /var/lib/apt/lists/*
 WORKDIR /nodejsAction
 # COPY source code "*.js" from nodejsActionBase to current working dir
-RUN mkdir /src /platform
+RUN mkdir ./src ./platform
 COPY ./core/nodejsActionBase/*.js ./
 COPY ./core/nodejsActionBase/src/*.js ./src/
 COPY ./core/nodejsActionBase/platform/*.js ./platform/
