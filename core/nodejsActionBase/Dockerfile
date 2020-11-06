@@ -15,7 +15,7 @@
 # limitations under the License.
 #
 
-FROM node:stretch
+FROM node:lts-stretch
 
 # Initial update and some basics.
 #
