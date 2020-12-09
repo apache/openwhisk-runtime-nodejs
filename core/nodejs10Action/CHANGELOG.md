@@ -19,7 +19,7 @@
 
 # NodeJS 10 OpenWhisk Runtime Container
 ## Next release
-Node.js version = [10.22.1](https://nodejs.org/en/blog/release/v10.22.1/)
+Node.js version = [10.23.0](https://nodejs.org/en/blog/release/v10.23.0/)
 
 ## Apache 1.16
 Changes:
