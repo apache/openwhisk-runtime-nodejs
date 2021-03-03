@@ -20,7 +20,7 @@
 # NodeJS 14 OpenWhisk Runtime Container
 
 # Next Release
-Node.js version = [14.15.4](https://nodejs.org/en/blog/release/v14.15.4/)
+Node.js version = [14.16.0](https://nodejs.org/en/blog/release/v14.16.0/)
 
 ## Apache 1.17
   - Update Node.js and OpenWhisk versions.
