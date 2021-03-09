@@ -59,7 +59,7 @@ COPY --from=builder_release /bin/proxy /bin/proxy_release
 RUN mv /bin/proxy_${GO_PROXY_BUILD_FROM} /bin/proxy
 
 # Add sources and copy the package.json to root container,
-# so npm packages from user functions take precendence.
+# so npm packages from user functions take precedence.
 #
 WORKDIR /app
 COPY bin/compile /bin/compile

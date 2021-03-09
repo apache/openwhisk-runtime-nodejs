@@ -26,7 +26,7 @@ RUN apt-get update && apt-get install -y \
     && rm -rf /var/lib/apt/lists/*
 
 # Add sources and copy the package.json to root container,
-# so npm packages from user functions take precendence.
+# so npm packages from user functions take precedence.
 #
 ADD  . /nodejsAction/
 COPY package.json /
