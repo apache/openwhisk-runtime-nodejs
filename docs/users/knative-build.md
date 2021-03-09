@@ -157,7 +157,7 @@ status:
 
 # Building and Serving OpenWhisk Runtime Build Templates
 
-All OpenWhisk Runtime Build Templates require a valid Kubernetes **Service Account** with access to a Kubernetes **Secret** that containst base64 encoded versions of your Docker Hub username and password.  This credential will be used as part of the Knative Build process to "push" your Knative application image containing your OpenWhisk Action to Docker Hub.
+All OpenWhisk Runtime Build Templates require a valid Kubernetes **Service Account** with access to a Kubernetes **Secret** that contains base64 encoded versions of your Docker Hub username and password.  This credential will be used as part of the Knative Build process to "push" your Knative application image containing your OpenWhisk Action to Docker Hub.
 
 ## Clone this repository
 
@@ -472,7 +472,7 @@ curl -H "Host: nodejs-helloworld.default.example.com" -X POST http://${IP_ADDRES
 
 #### PROBLEM: Kubernetes default namespace does not have "istio-injection: enabled" key-value
 
-If the `default` namespace does not have this value under the `metadata` section, you may have forgotton to issue the following command as part of the Knative setup:
+If the `default` namespace does not have this value under the `metadata` section, you may have forgotten to issue the following command as part of the Knative setup:
 
 ```bash
 $ kubectl label namespace default istio-injection=enabled

@@ -212,10 +212,10 @@ be provided by a control-plane which would manage pools of the runtimes and trac
 
 ## Running with OW_RUNTIME_PLATFORM set to "openwhisk"
 
-The standard OW methods used to run functions is done through calls to 2 separte endpoints.
+The standard OW methods used to run functions is done through calls to 2 separate endpoints.
 In short, The control plane would:
 
-1. first, invoke the */init* route with strictly the OW "init. data" (JSON format) including the funtional
+1. first, invoke the */init* route with strictly the OW "init. data" (JSON format) including the functional
 code itself.
 2. then, invoke */run* route which executes the function (i.e., Activates the function) with caller-provided
 parameters via OW "value data" (JSON format) along with per-activation information which would normally be
