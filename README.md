@@ -34,7 +34,312 @@ This README documents the build, customisation and testing of these runtime imag
 
 **Do you want to learn more about using Node.js actions to build serverless applications?** Please see the main project documentation [here](https://github.com/apache/openwhisk/blob/master/docs/actions-nodejs.md) for that information.
 
-## Usage
+## Build Runtimes
+
+### You have 2 options to build the NodeJS runtime:
+- Building locally
+- Using OpenWhisk Actions.
+### This README walks you through how to do both
+
+# Building NodeJS Runtime Locally
+
+### Pre-requisites
+- [Docker](https://www.docker.com/)
+- [curl](https://curl.se/), [wget](https://www.gnu.org/software/wget/), or [Postman](https://www.postman.com/)
+
+
+0. Choose/create a folder of your liking and make sure docker daemon is running
+
+1. Clone this repo:
+```
+git clone https://github.com/apache/openwhisk-runtime-nodejs
+cd openwhisk-runtime-nodejs
+```
+
+1.1 Choose a NodeJS version. All build files reside inside `core/nodejsActionBase`. If you take a look into `core/nodejsActionBase/Dockerfile` you’ll see a line that looks like:
+```
+FROM node:lts-stretch
+```
+This will use the latest NodeJS version. But we want to be more specific. Now if you look into each of the Dockerfile’s of `core/nodejs14Action`, `core/nodejs12Action`, `core/nodejs10Action`, you’ll notice different nodeJS versions. Let’s go ahead with the 14 version. All you have to do is substitute the line above from `core/nodejsActionBase/Dockerfile` with the equivalent line from `core/nodejs14Action/Dockerfile` that looks like:
+```
+FROM node:14.16.0-stretch
+```
+
+Or in the command line you can simply type:
+```
+cp core/nodejs14Action/Dockerfile core/nodejsActionBase/
+```
+
+If you follow the instructions at end of this tutorial [here](#build_dradle) that uses Gradle, you'll notice that Gradle takes care of this copying for us internally. Here since we just want to use docker and not worry about anything else we copy manually.
+
+**NOTE**: If you think that you messed up some file you can restore all files to its original state by typing the following. Then you can repeat the above command (careful with this command as it will remove all modifications you made to any file locally):
+```
+git reset --hard origin/master
+```
+
+2. Build docker
+```
+docker build -t nodejs-action-v14:1.0-SNAPSHOT $(pwd)/core/nodejsActionBase
+```
+
+2.1. Check docker `IMAGE ID` (1st column) for repository `nodejs-action-v14` (assuming you built with the first option above)
+```
+docker images
+```
+
+2.2. Tag image (Optional step). Required if you’re pushing your docker image to a registry e.g. dockerHub
+```
+docker tag <docker_image_ID> <dockerHub_username>/nodejs-action-v14:1.0-SNAPSHOT
+```
+
+3. Run docker on localhost with either the following commands:
+```
+docker run -p 127.0.0.1:80:8080/tcp --name=bloom_whisker --rm -it nodejs-action-v14:1.0-SNAPSHOT
+```
+Or run the container in the background (Add `-d` (detached) to the command above)
+```
+docker run -d -p 127.0.0.1:80:8080/tcp --name=bloom_whisker --rm -it nodejs-action-v14:1.0-SNAPSHOT
+```
+
+Lists all running containers
+```
+docker ps
+```
+or
+```
+docker ps -a
+```
+You should see a container named `bloom_whisker` being run
+
+4. Create your function (note that each container can only hold one function). In this first example we'll be creating a very simple function. Create a json file called `js-data-init-run.json` which will contain the function that looks something like the following:
+
+NOTE: value of code is the actual payload and must match the syntax of the target runtime language, in this case `javascript`
+```javascript
+{
+   "value": {
+      "name" : "js-helloworld",
+      "main" : "main",
+      "binary" : false,
+      "code" : "function main() {return {payload: 'Hello World!'};}"
+   }
+}
+```
+
+To issue the action against the running runtime, we must first make a request against the `init` API
+We need to issue `POST` requests to init our function
+Using curl (the option `-d` signifies we're issuing a POST request)
+```
+curl -d "@js-data-init-run.json" -H "Content-Type: application/json" http://localhost/init
+```
+Using wget (the option `--post-file` signifies we're issuing a POST request. The option `--output` redirects `wget` output to a file since its response is quite verbose and we're only interested in the Server response; additionally, `wget` will store the Server response in a file called `init.#` where `#` is a number)
+```
+wget -O- --post-file=js-data-init-run.json --header="Content-Type: application/json" --output-file=logfile http://localhost/init
+```
+The above can also be achieved with [Postman](https://www.postman.com/) by setting the headers and body accordingly
+
+Client expected response:
+```
+{"ok":true}
+```
+
+Server will remain silent in this case
+
+Now we can invoke/run our function against the `run` API with:
+Using curl `POST` request
+
+curl -d "@js-data-init-run.json" -H "Content-Type: application/json" http://localhost/run
+Or using `GET` request
+```
+curl --data-binary "@js-data-init-run.json" -H "Content-Type: application/json" http://localhost/run
+```
+
+Or
+Using wget `POST` request. The `-O-` is to redirect `wget` response to `stdout`.
+```
+wget -O- --post-file=js-data-init-run.json --header="Content-Type: application/json" --output-file=logfile http://localhost/run
+```
+
+The above can also be achieved with [Postman](https://www.postman.com/) by setting the headers and body accordingly.
+
+You noticed that we’re passing the same file `js-data-init-run.json` from function initialization request to trigger the function. That’s not necessary and not recommended since to trigger a function all we need is to pass the parameters of the function. So in the above example, it's preferred if we create a file called `js-data-params.json` that looks like the following:
+```javascript
+{
+   "value": {}
+}
+```
+
+And trigger the function with the following (it also works with wget and postman equivalents):
+```
+curl --data-binary "@js-data-params.json" -H "Content-Type: application/json" http://localhost/run
+```
+
+#### You can perform the same steps as above using [Postman](https://www.postman.com/) application. Make sure you have the correct request type set and the respective body. Also set the correct headers key value pairs, which for us is "Content-Type: application/json"
+
+After you trigger the function with one of the above commands you should expect the following client response:
+```
+{"payload": "Hello World!"}
+```
+And Server expected response:
+
+```
+XXX_THE_END_OF_A_WHISK_ACTIVATION_XXX
+XXX_THE_END_OF_A_WHISK_ACTIVATION_XXX
+```
+
+
+## Creating functions with arguments
+If your container still running from the previous example you must stop it and re-run it before proceeding. Remember that each NodeJS runtime can only hold one function (which cannot be overrided due to security reasons)
+Create a json file called `js-data-init-params.json` which will contain the function to be initialized that looks like the following:
+```javascript
+{
+   "value": {
+      "name": "js-helloworld-with-params",
+      "main" : "main",
+      "binary" : false,
+      "code" : "function main(params) { return {payload: 'Hello ' + params.name + ' from ' + params.place + '!!!'} }"
+   }
+}
+```
+
+Also create a json file `js-data-run-params.json` which will contain the parameters to the function used to trigger it. Notice here we're creating 2 separate file from the beginning since this is good practice to make the distinction between what needs to be send via the `init` API and what needs to be sent via the `run` API:
+```javascript
+{
+   "value": {
+      "name": "UFO",
+      "place": "Mars"
+   }
+}
+```
+
+Now, all we have to do is initialize and trigger our function.
+First, to initialize our function make sure your NodeJS runtime container is running if not, spin the container by following step 3.
+Issue a `POST` request against the `init` API with the following command:
+Using curl:
+
+```
+curl -d "@js-data-init-params.json" -H "Content-Type: application/json" http://localhost/init
+```
+Using wget:
+```
+wget --post-file=js-data-init-params.json --header="Content-Type: application/json" --output-file=logfile http://localhost/init
+```
+
+Second, to run/trigger the function issue requests against the run API with the following command:
+Using curl with `POST`:
+```
+curl -d "@js-data-run-params.json" -H "Content-Type: application/json" http://localhost/run
+```
+Or
+Using wget with `POST`:
+```
+wget -O- --post-file=js-data-run-params.json --header="Content-Type: application/json" --output-file=logfile http://localhost/run
+```
+
+After you trigger the function with one of the above commands you should expect the following client response:
+```
+{"payload": "Hello UFO from Mars!!!"}
+```
+
+And Server expected response:
+```
+XXX_THE_END_OF_A_WHISK_ACTIVATION_XXX
+XXX_THE_END_OF_A_WHISK_ACTIVATION_XXX
+```
+
+## Now let's create a more interesting function
+### This function will calculate the nth Fibonacci number
+This is the function we’re trying to create. It calculates the nth number of the Fibonacci sequence recursively in `O(n)` time
+```javascript
+function fibonacci(n, mem) {
+   if (n == 0 || n == 1) {
+      return 1;
+   }
+   if (mem[n] == -1) {
+      mem[n] = fibonacci(n-1, mem) + fibonacci(n-2, mem);
+   }
+   return mem[n];
+}
+
+function main(args) {
+   let n = parseInt(args.fib_n);
+   var mem = Array(n+1);
+   mem.fill(-1,0);
+   var result = fibonacci(n, mem);
+   var key = 'Fib: ';
+   key = key.concat(n.toString());
+   return {key: key, result: result};
+}
+```
+
+Create a json file called `js-fib-init.json` to initialize our fibonacci function and insert the following. (It’s the same code as above but since we can’t have a string span multiple lines in Json we need to put all this code in one line and this is how we do it. It’s ugly but not much we can do here)
+```javascript
+{
+   "value": {
+      "name": "js-recursive-fibonacci",
+      "main" : "main",
+      "binary" : false,
+      "code" : "function fibonacci(n, mem) {\nif (n == 0 || n == 1) {\nreturn 1;\n}\nif (mem[n] == -1) {\nmem[n] = fibonacci(n-1, mem) + fibonacci(n-2, mem);\n}\nreturn mem[n];\n}\nfunction main(args) {\nvar n = parseInt(args.fib_n);\nvar mem = Array(n+1);\nmem.fill(-1,0);\nvar result = fibonacci(n, mem);\nvar key = 'Fib: ';\nkey = key.concat(n.toString());\nreturn {key: key, result: result};\n}"
+   }
+}
+```
+
+Create a json file called `js-fib-run.json` which will be used to run/trigger our function with the appropriate argument:
+```javascript
+{
+   "value": {
+      "fib_n": "40"
+   }
+}
+```
+
+Now we’re all set.
+Make sure your NodeJS runtime container is running if not, spin the container by following step 3.
+Initialize our fibonacci function by issuing a POST request against the init API with the following command:
+Using curl:
+```
+curl -d "@js-fib-init.json" -H "Content-Type: application/json" http://localhost/init
+```
+Using wget:
+```
+wget --post-file=js-fib-init.json --header="Content-Type: application/json" --output-file=logfile http://localhost/init
+```
+
+Client expected response:
+```
+{"ok":true}
+```
+You've noticed by now that `init` API always returns `{"ok":true}` for a successful initialized function. And the server, again, will remain silent
+
+Trigger the function by running/triggering the function with a request against the `run` API with the following command:
+Using curl with `POST`:
+```
+curl -d "@js-fib-run.json" -H "Content-Type: application/json" http://localhost/run
+```
+Using wget with `POST`:
+```
+wget -O- --post-file=js-fib-run.json --header="Content-Type: application/json" --output-file=logfile http://localhost/run
+```
+
+After you trigger the function with one of the above commands you should expect the following client response:
+```
+{"key":"Fib: 40","result":165580141}
+```
+
+And Server expected response:
+```
+XXX_THE_END_OF_A_WHISK_ACTIVATION_XXX
+XXX_THE_END_OF_A_WHISK_ACTIVATION_XXX
+```
+
+#### At this point you can edit js-fib-run.json an try other `fib_n` values. All you have to do is save `js-fib-run.json` and trigger the function again. Notice that here we're just modifying the parameters of our function; therefore, there's no need to re-run/re-initialize our container that contains our NodeJS runtime.
+
+
+# Building NodeJS Runtime using OpenWhisk Actions
+
+### Pre-requisites
+- [Gradle](https://gradle.org/)
+- [Docker](https://www.docker.com/)
+- [OpenWhisk CLI wsk](https://github.com/apache/openwhisk-cli/releases)
 
 If the deployment of Apache OpenWhisk includes these images in the runtime manifest, use the `--kind` parameter to select the Node.js runtime version.
 
@@ -84,9 +389,9 @@ Dockerfiles for runtime images are defined in the `core` directory. Each runtime
 
 The `core/nodejsActionBase` folder contains the Node.js app server used to implement the [action interface](https://github.com/apache/openwhisk/blob/master/docs/actions-new.md#action-interface), used by the platform to inject action code into the runtime and fire invocation requests. This common code is used in all runtime versions.
 
-### Build
+### Build <a name="build_dradle"></a>
 
-- Run the `distDocker` command to generate local Docker images for the different runtime versions.
+- Run the `distDocker` command to generate local Docker images for the different runtime versions. (Make sure docker daemon is running)
 
 ```
 ./gradlew core:nodejs10Action:distDocker
