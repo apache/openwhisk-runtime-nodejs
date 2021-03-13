@@ -6,6 +6,7 @@ default.props
 .ant-targets-build.xml
 /results/
 /logs/
+/build/
 /config/custom-config.xml
 results
 *.retry

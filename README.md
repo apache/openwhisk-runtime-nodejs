@@ -36,12 +36,109 @@ This README documents the build, customisation and testing of these runtime imag
 
 ## Build Runtimes
 
-### You have 2 options to build the NodeJS runtime:
-- Building locally
-- Using OpenWhisk Actions.
-### This README walks you through how to do both
+You have 2 options to build the NodeJS runtime:
+- [Using Gradle](#using_gradle)
+- [Using Docker](#using_docker)
 
-# Building NodeJS Runtime Locally
+This README walks you through how to do both
+
+---
+
+## Using Gradle <a name="using_gradle"></a>
+
+### Pre-requisites
+- [Gradle](https://gradle.org/)
+- [Docker](https://www.docker.com/)
+- [OpenWhisk CLI wsk](https://github.com/apache/openwhisk-cli/releases)
+
+If the deployment of Apache OpenWhisk includes these images in the runtime manifest, use the `--kind` parameter to select the Node.js runtime version.
+
+### Node.js v10
+
+```
+wsk action update myAction myAction.js --kind nodejs:10
+```
+
+### Node.js v12
+
+```
+wsk action update myAction myAction.js --kind nodejs:12
+```
+
+### Node.js v14
+
+```
+wsk action update myAction myAction.js --kind nodejs:14
+```
+
+## Images
+
+All the runtime images are published by the project to Docker Hub @ [https://hub.docker.com/u/openwhisk](https://hub.docker.com/u/openwhisk)
+
+- [https://hub.docker.com/r/openwhisk/action-nodejs-v10](https://hub.docker.com/r/openwhisk/action-nodejs-v10)
+- [https://hub.docker.com/r/openwhisk/action-nodejs-v12](https://hub.docker.com/r/openwhisk/action-nodejs-v12)
+- [https://hub.docker.com/r/openwhisk/action-nodejs-v14](https://hub.docker.com/r/openwhisk/action-nodejs-v14)
+
+These images can be used to execute Node.js actions on any deployment of Apache OpenWhisk, even those without those images defined the in runtime manifest, using the `--docker` action parameter.
+
+```
+wsk action update myAction myAction.js --docker openwhisk/action-nodejs-v12
+```
+
+If you build a custom version of the images, pushing those an external Docker Hub repository will allow you to use those on the Apache OpenWhisk deployment.
+
+### Runtimes Manifest
+
+Available runtimes in Apache OpenWhisk are defined using the runtimes manifest in this file: [runtimes.json](https://github.com/apache/openwhisk/blob/master/ansible/files/runtimes.json#L16-L72)
+
+Modify the manifest and re-deploy the platform to pick up local images changes.
+
+## Development
+
+Dockerfiles for runtime images are defined in the `core` directory. Each runtime version folder has a custom `Dockerfile` and `package.json`. If you need to add extra dependencies to a runtime version - modify these files.
+
+The `core/nodejsActionBase` folder contains the Node.js app server used to implement the [action interface](https://github.com/apache/openwhisk/blob/master/docs/actions-new.md#action-interface), used by the platform to inject action code into the runtime and fire invocation requests. This common code is used in all runtime versions.
+
+### Build <a name="build_gradle"></a>
+
+- Run the `distDocker` command to generate local Docker images for the different runtime versions. (Make sure docker daemon is running)
+
+```
+./gradlew core:nodejs10Action:distDocker
+./gradlew core:nodejs12Action:distDocker
+./gradlew core:nodejs14Action:distDocker
+```
+
+This will return the following runtime images with the following names: `action-nodejs-v10`, `action-nodejs-v12` and `action-nodejs-v14`.
+
+### Testing
+
+- Install project dependencies from the top-level Apache OpenWhisk [project](https://github.com/apache/openwhisk), which ensures correct versions of dependent libraries are available in the Maven cache.
+
+```
+./gradlew install
+```
+
+*This command **MUST BE** run from the directory containing the main Apache OpenWhisk [repository](https://github.com/apache/openwhisk), not this repository's directory.*
+
+- Build the local Docker images for the runtime versions (see the instructions above).
+- Build the custom Docker images used in local testing.
+
+```
+./gradlew tests:dat:docker:nodejs10docker:distDocker
+./gradlew tests:dat:docker:nodejs12docker:distDocker
+./gradlew tests:dat:docker:nodejs14docker:distDocker
+```
+
+- Run the project tests.
+
+```
+./gradlew :tests:test
+```
+
+---
+
+## Using Docker <a name="using_docker"></a>
 
 ### Pre-requisites
 - [Docker](https://www.docker.com/)
@@ -60,29 +157,27 @@ cd openwhisk-runtime-nodejs
 ```
 FROM node:lts-stretch
 ```
-This will use the latest NodeJS version. But we want to be more specific. Now if you look into each of the Dockerfile’s of `core/nodejs14Action`, `core/nodejs12Action`, `core/nodejs10Action`, you’ll notice different nodeJS versions. Let’s go ahead with the 14 version. All you have to do is substitute the line above from `core/nodejsActionBase/Dockerfile` with the equivalent line from `core/nodejs14Action/Dockerfile` that looks like:
+This will use the latest NodeJS version. But we want to be more specific. Now if you look into each of the Dockerfile’s of `core/nodejs14Action`, `core/nodejs12Action`, `core/nodejs10Action`, you’ll notice different nodeJS versions. Let’s go ahead with the 14 version. We'll be creating a `build` folder that will contain all the necessary files for us to build our NodeJS container. All you have to do is copy paste the commands below. This will copy the NodeJS application as well as our target Dockerfile with the NodeJS version 14.
+
 ```
-FROM node:14.16.0-stretch
+mkdir build
+cp -r core/nodejsActionBase/* build
+cp core/nodejs14Action/Dockerfile build
 ```
 
-Or in the command line you can simply type:
-```
-cp core/nodejs14Action/Dockerfile core/nodejsActionBase/
-```
-
-If you follow the instructions at end of this tutorial [here](#build_dradle) that uses Gradle, you'll notice that Gradle takes care of this copying for us internally. Here since we just want to use docker and not worry about anything else we copy manually.
+If you follow the instructions at beginning of this tutorial [here](#build_gradle) that uses Gradle, you'll notice that Gradle takes care of this copying for us internally. Here since we just want to use docker and not worry about anything else we make create our own little build folder.
 
 **NOTE**: If you think that you messed up some file you can restore all files to its original state by typing the following. Then you can repeat the above command (careful with this command as it will remove all modifications you made to any file locally):
 ```
-git reset --hard origin/master
+rm -rf build/*
 ```
 
 2. Build docker
 ```
-docker build -t nodejs-action-v14:1.0-SNAPSHOT $(pwd)/core/nodejsActionBase
+docker build -t nodejs-action-v14:1.0-SNAPSHOT $(pwd)/build
 ```
 
-2.1. Check docker `IMAGE ID` (1st column) for repository `nodejs-action-v14` (assuming you built with the first option above)
+2.1. Check docker `IMAGE ID` (1st column) for repository `nodejs-action-v14`
 ```
 docker images
 ```
@@ -100,7 +195,7 @@ Or run the container in the background (Add `-d` (detached) to the command above
 ```
 docker run -d -p 127.0.0.1:80:8080/tcp --name=bloom_whisker --rm -it nodejs-action-v14:1.0-SNAPSHOT
 ```
-
+**NOTE**: The instructions above that [uses gradle](#using_gradle) will also create a docker image. You can also use that image to start your NodeJS container locally and issue the below commands against localhost and things should still work <br/><br/>
 Lists all running containers
 ```
 docker ps
@@ -332,96 +427,3 @@ XXX_THE_END_OF_A_WHISK_ACTIVATION_XXX
 ```
 
 #### At this point you can edit js-fib-run.json an try other `fib_n` values. All you have to do is save `js-fib-run.json` and trigger the function again. Notice that here we're just modifying the parameters of our function; therefore, there's no need to re-run/re-initialize our container that contains our NodeJS runtime.
-
-
-# Building NodeJS Runtime using OpenWhisk Actions
-
-### Pre-requisites
-- [Gradle](https://gradle.org/)
-- [Docker](https://www.docker.com/)
-- [OpenWhisk CLI wsk](https://github.com/apache/openwhisk-cli/releases)
-
-If the deployment of Apache OpenWhisk includes these images in the runtime manifest, use the `--kind` parameter to select the Node.js runtime version.
-
-### Node.js v10
-
-```
-wsk action update myAction myAction.js --kind nodejs:10
-```
-
-### Node.js v12
-
-```
-wsk action update myAction myAction.js --kind nodejs:12
-```
-
-### Node.js v14
-
-```
-wsk action update myAction myAction.js --kind nodejs:14
-```
-
-## Images
-
-All the runtime images are published by the project to Docker Hub @ [https://hub.docker.com/u/openwhisk](https://hub.docker.com/u/openwhisk)
-
-- [https://hub.docker.com/r/openwhisk/action-nodejs-v10](https://hub.docker.com/r/openwhisk/action-nodejs-v10)
-- [https://hub.docker.com/r/openwhisk/action-nodejs-v12](https://hub.docker.com/r/openwhisk/action-nodejs-v12)
-- [https://hub.docker.com/r/openwhisk/action-nodejs-v14](https://hub.docker.com/r/openwhisk/action-nodejs-v14)
-
-These images can be used to execute Node.js actions on any deployment of Apache OpenWhisk, even those without those images defined the in runtime manifest, using the `--docker` action parameter.
-
-```
-wsk action update myAction myAction.js --docker openwhisk/action-nodejs-v12
-```
-
-If you build a custom version of the images, pushing those an external Docker Hub repository will allow you to use those on the Apache OpenWhisk deployment.
-
-### Runtimes Manifest
-
-Available runtimes in Apache OpenWhisk are defined using the runtimes manifest in this file: [runtimes.json](https://github.com/apache/openwhisk/blob/master/ansible/files/runtimes.json#L16-L72)
-
-Modify the manifest and re-deploy the platform to pick up local images changes.
-
-## Development
-
-Dockerfiles for runtime images are defined in the `core` directory. Each runtime version folder has a custom `Dockerfile` and `package.json`. If you need to add extra dependencies to a runtime version - modify these files.
-
-The `core/nodejsActionBase` folder contains the Node.js app server used to implement the [action interface](https://github.com/apache/openwhisk/blob/master/docs/actions-new.md#action-interface), used by the platform to inject action code into the runtime and fire invocation requests. This common code is used in all runtime versions.
-
-### Build <a name="build_dradle"></a>
-
-- Run the `distDocker` command to generate local Docker images for the different runtime versions. (Make sure docker daemon is running)
-
-```
-./gradlew core:nodejs10Action:distDocker
-./gradlew core:nodejs12Action:distDocker
-./gradlew core:nodejs14Action:distDocker
-```
-
-This will return the following runtime images with the following names: `action-nodejs-v10`, `action-nodejs-v12` and `action-nodejs-v14`.
-
-### Testing
-
-- Install project dependencies from the top-level Apache OpenWhisk [project](https://github.com/apache/openwhisk), which ensures correct versions of dependent libraries are available in the Maven cache.
-
-```
-./gradlew install
-```
-
-*This command **MUST BE** run from the directory containing the main Apache OpenWhisk [repository](https://github.com/apache/openwhisk), not this repository's directory.*
-
-- Build the local Docker images for the runtime versions (see the instructions above).
-- Build the custom Docker images used in local testing.
-
-```
-./gradlew tests:dat:docker:nodejs10docker:distDocker
-./gradlew tests:dat:docker:nodejs12docker:distDocker
-./gradlew tests:dat:docker:nodejs14docker:distDocker
-```
-
-- Run the project tests.
-
-```
-./gradlew :tests:test
-```
