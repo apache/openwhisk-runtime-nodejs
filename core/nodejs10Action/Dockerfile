@@ -15,7 +15,7 @@
 # limitations under the License.
 #
 
-FROM node:10.24.0-stretch
+FROM node:10.24.1-stretch
 
 # Initial update and some basics.
 #
