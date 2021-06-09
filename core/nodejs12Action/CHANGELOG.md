@@ -21,6 +21,7 @@
 
 # Next Release
 Node.js version = [12.22.1](https://nodejs.org/en/blog/release/v12.22.1/)
+OpenWhisk version = [OpenWhisk v3.21.4](https://www.npmjs.com/package/openwhisk)
 
 ## Apache 1.17
   - Update Node.js and OpenWhisk versions.
