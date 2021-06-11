@@ -24,25 +24,6 @@ repositories {
     mavenLocal()
 }
 
-pluginManager.withPlugin('scala') {
-    // Constraint all transitive akka-* dependencies to the one we want to use to avoid issues.
-    // List generated via
-    // ./gradlew :test:dependencies | grep -o 'akka-.*_' | cut -c 6- | rev | cut -c 2- | rev | sort -u
-    def cons = project.getDependencies().getConstraints()
-    def akka = ['akka-actor', 'akka-cluster', 'akka-cluster-metrics', 'akka-cluster-tools', 'akka-coordination',
-                'akka-discovery', 'akka-distributed-data', 'akka-protobuf', 'akka-remote', 'akka-slf4j',
-                'akka-stream', 'akka-stream-testkit', 'akka-testkit']
-    def akkaHttp = ['akka-http', 'akka-http-core', 'akka-http-spray-json', 'akka-http-testkit', 'akka-http-xml',
-                    'akka-parsing', 'akka-http2-support']
-
-    akka.forEach {
-        cons.add('compile', "com.typesafe.akka:${it}_${gradle.scala.depVersion}:${gradle.akka.version}")
-    }
-    akkaHttp.forEach {
-        cons.add('compile', "com.typesafe.akka:${it}_${gradle.scala.depVersion}:${gradle.akka_http.version}")
-    }
-}
-
 tasks.withType(Test) {
     testLogging {
         events "passed", "skipped", "failed"
@@ -56,6 +37,15 @@ dependencies {
     compile "org.scala-lang:scala-library:${gradle.scala.version}"
     compile "org.apache.openwhisk:openwhisk-tests:${gradle.openwhisk.version}:tests"
     compile "org.apache.openwhisk:openwhisk-tests:${gradle.openwhisk.version}:test-sources"
+    implementation group: 'com.typesafe.akka', name: "akka-http2-support_${gradle.scala.depVersion}", version: "${gradle.akka_http.version}"
+    implementation group: 'com.typesafe.akka', name: "akka-http-xml_${gradle.scala.depVersion}", version: "${gradle.akka_http.version}"
+    implementation group: 'com.typesafe.akka', name: "akka-discovery_${gradle.scala.depVersion}", version: "${gradle.akka.version}"
+    implementation group: 'com.typesafe.akka', name: "akka-protobuf_${gradle.scala.depVersion}", version: "${gradle.akka.version}"
+    implementation group: 'com.typesafe.akka', name: "akka-remote_${gradle.scala.depVersion}", version: "${gradle.akka.version}"
+    implementation group: 'com.typesafe.akka', name: "akka-cluster-metrics_${gradle.scala.depVersion}", version: "${gradle.akka.version}"
+    implementation group: 'com.typesafe.akka', name: "akka-cluster_${gradle.scala.depVersion}", version: "${gradle.akka.version}"
+    implementation group: 'com.typesafe.akka', name: "akka-cluster-tools_${gradle.scala.depVersion}", version: "${gradle.akka.version}"
+    implementation group: 'com.typesafe.akka', name: "akka-distributed-data_${gradle.scala.depVersion}", version: "${gradle.akka.version}"
 }
 
 tasks.withType(ScalaCompile) {
