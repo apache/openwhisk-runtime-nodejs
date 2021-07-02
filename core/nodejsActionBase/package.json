@@ -18,7 +18,7 @@
     "request": "2.79.0"
   },
   "dependencies": {
-    "openwhisk": "3.21.3",
+    "openwhisk": "3.21.4",
     "body-parser": "1.18.3",
     "express": "4.16.4",
     "serialize-error": "3.0.0",
