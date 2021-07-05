@@ -19,6 +19,9 @@
 
 # NodeJS 14 OpenWhisk Runtime Container
 
+# Next Release
+Node.js version = [14.17.2](https://nodejs.org/en/blog/release/v14.17.2/)
+
 # Apache 1.18
   - Update to openwhisk-client-js 3.21.4 (#194)
   - Constraint all transitive akka-* dependencies (#195)
