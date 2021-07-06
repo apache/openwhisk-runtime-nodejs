@@ -42,10 +42,7 @@ dependencies {
     implementation group: 'com.typesafe.akka', name: "akka-discovery_${gradle.scala.depVersion}", version: "${gradle.akka.version}"
     implementation group: 'com.typesafe.akka', name: "akka-protobuf_${gradle.scala.depVersion}", version: "${gradle.akka.version}"
     implementation group: 'com.typesafe.akka', name: "akka-remote_${gradle.scala.depVersion}", version: "${gradle.akka.version}"
-    implementation group: 'com.typesafe.akka', name: "akka-cluster-metrics_${gradle.scala.depVersion}", version: "${gradle.akka.version}"
     implementation group: 'com.typesafe.akka', name: "akka-cluster_${gradle.scala.depVersion}", version: "${gradle.akka.version}"
-    implementation group: 'com.typesafe.akka', name: "akka-cluster-tools_${gradle.scala.depVersion}", version: "${gradle.akka.version}"
-    implementation group: 'com.typesafe.akka', name: "akka-distributed-data_${gradle.scala.depVersion}", version: "${gradle.akka.version}"
 }
 
 tasks.withType(ScalaCompile) {
