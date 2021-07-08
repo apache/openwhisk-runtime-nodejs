@@ -18,11 +18,9 @@
 include 'tests'
 
 include 'core:nodejsActionBase'
-include 'core:nodejs10Action'
 include 'core:nodejs12Action'
 include 'core:nodejs14Action'
 include 'core:typescript37Action'
-include 'tests:dat:docker:nodejs10docker'
 include 'tests:dat:docker:nodejs12docker'
 include 'tests:dat:docker:nodejs14docker'
 include 'tests:dat:docker:typescript37docker'
