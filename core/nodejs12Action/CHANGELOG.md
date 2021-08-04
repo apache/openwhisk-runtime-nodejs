@@ -19,8 +19,13 @@
 
 # NodeJS 12 OpenWhisk Runtime Container
 
-# Next Release
+# Apache 1.19
+  - Remove Node.js 10 support
+  - Update Node to 14.17.2 and 12.22.2 (#197)
+  - Resolve akka versions explicitly. (#198)
+
 Node.js version = [12.22.2](https://nodejs.org/en/blog/release/v12.22.2/)
+OpenWhisk version = [OpenWhisk v3.21.4](https://www.npmjs.com/package/openwhisk)
 
 # Apache 1.18
   - Update to openwhisk-client-js 3.21.4 (#194)
