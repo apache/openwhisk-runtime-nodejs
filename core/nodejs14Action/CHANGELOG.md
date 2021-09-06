@@ -20,9 +20,9 @@
 # NodeJS 14 OpenWhisk Runtime Container
 
 # Next Release
-  - Update Node to 14.17.5 and 12.22.5 (#201)
+  - Update Node to 14.17.6 and 12.22.6 (#201)
 
-Node.js version = [14.17.5](https://nodejs.org/en/blog/release/v14.17.5/)
+Node.js version = [14.17.6](https://nodejs.org/en/blog/release/v14.17.6/)
 OpenWhisk version = [OpenWhisk v3.21.4](https://www.npmjs.com/package/openwhisk)
 
 # Apache 1.19
