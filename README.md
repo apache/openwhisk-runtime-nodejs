@@ -20,7 +20,7 @@
 # Apache OpenWhisk runtimes for Node.js
 
 [![License](https://img.shields.io/badge/license-Apache--2.0-blue.svg)](http://www.apache.org/licenses/LICENSE-2.0)
-[![Build Status](https://travis-ci.com/apache/openwhisk-runtime-nodejs.svg?branch=master)](https://travis-ci.com/apache/openwhisk-runtime-nodejs)
+[![Build Status](https://travis-ci.com/apache/openwhisk-runtime-nodejs.svg?branch=master)](https://travis-ci.com/github/apache/openwhisk-runtime-nodejs)
 
 This repository contains sources files needed to build the Node.js runtimes for Apache OpenWhisk. The build system will produce a series of docker images for each runtime version. These images are used in the platform to execute Node.js actions.
 
