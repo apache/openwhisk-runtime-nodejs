@@ -22,7 +22,7 @@
 # Next Release
 
 Node.js version = [12.22.7](https://nodejs.org/en/blog/release/v12.22.7/)
-OpenWhisk version = [OpenWhisk v3.21.4](https://www.npmjs.com/package/openwhisk)
+OpenWhisk version = [OpenWhisk v3.21.5](https://www.npmjs.com/package/openwhisk)
 
 # Apache 1.19
   - Remove Node.js 10 support
