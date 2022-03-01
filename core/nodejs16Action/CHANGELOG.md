@@ -1,3 +1,4 @@
+<!--
 #
 # Licensed to the Apache Software Foundation (ASF) under one or more
 # contributor license agreements.  See the NOTICE file distributed with
@@ -14,30 +15,14 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 #
+-->
 
-FROM node:12.22-stretch
+# NodeJS 16 OpenWhisk Runtime Container
 
-# Initial update and some basics.
-#
-RUN apt-get update && apt-get install -y \
-    imagemagick \
-    graphicsmagick \
-    unzip \
-    && rm -rf /var/lib/apt/lists/*
+# Next Release
 
-# Add sources and copy the package.json to root container,
-# so npm packages from user functions take precedence.
-#
-WORKDIR /nodejsAction
-ADD  . /nodejsAction/
-COPY package.json /
+Changes:
+  - Initial release with support for Node.js v1.16
 
-# Customize runtime with additional packages.
-# Install package globally so user packages can override.
-#
-RUN cd / && npm install --no-package-lock --production \
-    && npm cache clean --force
-
-EXPOSE 8080
-
-CMD node --expose-gc app.js
+Node.js version = [16.13.1](https://nodejs.org/en/blog/release/v16.13.1/)
+OpenWhisk version = [OpenWhisk v3.21.2](https://www.npmjs.com/package/openwhisk)

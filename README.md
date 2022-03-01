@@ -28,6 +28,7 @@ The following Node.js runtime versions (with kind & image labels) are generated 
 
 - Node.js 12.22.2 (`nodejs:12` & `openwhisk/action-nodejs-v12`)
 - Node.js 14.17.2 (`nodejs:14` & `openwhisk/action-nodejs-v14`)
+- Node.js 16.13.1 (`nodejs:16` & `openwhisk/action-nodejs-v16`)
 
 This README documents the build, customisation and testing of these runtime images.
 
@@ -49,12 +50,19 @@ wsk action update myAction myAction.js --kind nodejs:12
 wsk action update myAction myAction.js --kind nodejs:14
 ```
 
+### Node.js v16
+
+```
+wsk action update myAction myAction.js --kind nodejs:16
+```
+
 ## Images
 
 All the runtime images are published by the project to Docker Hub @ [https://hub.docker.com/u/openwhisk](https://hub.docker.com/u/openwhisk)
 
 - [https://hub.docker.com/r/openwhisk/action-nodejs-v12](https://hub.docker.com/r/openwhisk/action-nodejs-v12)
 - [https://hub.docker.com/r/openwhisk/action-nodejs-v14](https://hub.docker.com/r/openwhisk/action-nodejs-v14)
+- [https://hub.docker.com/r/openwhisk/action-nodejs-v16](https://hub.docker.com/r/openwhisk/action-nodejs-v16)
 
 These images can be used to execute Node.js actions on any deployment of Apache OpenWhisk, even those without those images defined the in runtime manifest, using the `--docker` action parameter.
 
@@ -83,9 +91,10 @@ The `core/nodejsActionBase` folder contains the Node.js app server used to imple
 ```
 ./gradlew core:nodejs12Action:distDocker
 ./gradlew core:nodejs14Action:distDocker
+./gradlew core:nodejs16Action:distDocker
 ```
 
-This will return the following runtime images with the following names: `action-nodejs-v12` and `action-nodejs-v14`.
+This will return the following runtime images with the following names: `action-nodejs-v12`, `action-nodejs-v14` and `action-nodejs-v16`.
 
 ### Testing
 
@@ -103,6 +112,7 @@ This will return the following runtime images with the following names: `action-
 ```
 ./gradlew tests:dat:docker:nodejs12docker:distDocker
 ./gradlew tests:dat:docker:nodejs14docker:distDocker
+./gradlew tests:dat:docker:nodejs16docker:distDocker
 ```
 
 - Run the project tests.
