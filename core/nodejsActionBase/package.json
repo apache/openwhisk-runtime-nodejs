@@ -21,7 +21,7 @@
     "openwhisk": "3.21.6",
     "body-parser": "1.19.2",
     "express": "4.17.3",
-    "serialize-error": "9.1.0",
+    "serialize-error": "3.0.0",
     "redis": "4.0.4",
     "uuid": "8.3.2"
   }
