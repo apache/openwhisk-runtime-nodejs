@@ -23,18 +23,18 @@
  * Runtime functionality and is able to register endpoints/handlers
  * allowing to host OpenWhisk Actions and process OpenWhisk Activations.
  */
-
+ import {PlatformOpenWhiskImpl}  from './openwhisk.js';
+ import {PlatformKnativeImpl} from './knative.js';
 
 // Export supported platform impls.
 const PLATFORM_OPENWHISK = 'openwhisk';
 const PLATFORM_KNATIVE =  'knative';
-
 const SUPPORTED_PLATFORMS = [
     PLATFORM_OPENWHISK,
     PLATFORM_KNATIVE
 ];
 
-module.exports = class PlatformFactory {
+export class PlatformFactory {
 
     /**
      * Object constructor
@@ -95,12 +95,10 @@ module.exports = class PlatformFactory {
         // Load the appropriate implementation module and return reference to it
         switch (id.toLowerCase()) {
             case PLATFORM_KNATIVE:
-                const knPlatformImpl = require('./knative.js');
-                this._platformImpl = new knPlatformImpl(this);
+                this._platformImpl = new PlatformKnativeImpl(this);
                 break;
             case PLATFORM_OPENWHISK:
-                const owPlatformImpl = require('./openwhisk.js');
-                this._platformImpl = new owPlatformImpl(this);
+                this._platformImpl = new PlatformOpenWhiskImpl(this);
                 break;
             default:
                 console.error("Platform ID is not a known value (" + id + ").");

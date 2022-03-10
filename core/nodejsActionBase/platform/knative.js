@@ -366,7 +366,7 @@ function postProcessResponse(req, result, res) {
     res.header(headers).status(statusCode).send(body);
 }
 
-function PlatformKnativeImpl(platformFactory) {
+export function PlatformKnativeImpl(platformFactory) {
 
     var http_method = {
         get: 'GET',
@@ -510,5 +510,3 @@ function PlatformKnativeImpl(platformFactory) {
         });
     };
 }
-
-module.exports = PlatformKnativeImpl;

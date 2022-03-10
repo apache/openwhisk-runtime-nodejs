@@ -20,11 +20,13 @@
  *
  * This file (runner.js) must currently live in root directory for nodeJsAction.
  */
-const fs = require('fs');
-const path = require('path');
+ 
+ import * as fs from 'fs';
+import * as path from 'path';
+import {serializeError} from 'serialize-error';
 
 /** Initializes the handler for the user function. */
-function initializeActionHandler(message) {
+export function initializeActionHandler(message) {
     if (message.binary) {
         // The code is a base64-encoded zip file.
         return unzipInTmpDir(message.code)
@@ -70,7 +72,7 @@ function initializeActionHandler(message) {
     }
 }
 
-class NodeActionRunner {
+export class NodeActionRunner {
 
     constructor(handler) {
         this.userScriptMain = handler;
@@ -104,7 +106,6 @@ class NodeActionRunner {
             if (!error) {
                 resolve({error: {}});
             } else {
-                const serializeError = require('serialize-error');
                 resolve({error: serializeError(error)});
             }
         });
@@ -173,8 +174,3 @@ function assertMainIsFunction(handler, name) {
         return Promise.reject("Action entrypoint '" + name + "' is not a function.");
     }
 }
-
-module.exports = {
-    NodeActionRunner,
-    initializeActionHandler
-};

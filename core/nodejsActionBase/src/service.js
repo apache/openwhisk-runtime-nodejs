@@ -15,9 +15,9 @@
  * limitations under the License.
  */
 
-const { initializeActionHandler, NodeActionRunner } = require('../runner');
+import { initializeActionHandler, NodeActionRunner } from '../runner.js';
 
-function NodeActionService(config) {
+export function NodeActionService(config) {
 
     const Status = {
         ready: 'ready',
@@ -214,5 +214,3 @@ function NodeActionService(config) {
 }
 
 NodeActionService.getService = config => new NodeActionService(config);
-
-module.exports = NodeActionService;

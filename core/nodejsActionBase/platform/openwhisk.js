@@ -16,7 +16,7 @@
  */
 
 
-function PlatformOpenWhiskImpl(platformFactory) {
+export function PlatformOpenWhiskImpl(platformFactory) {
     // Provide access to common runtime services
     var service = platformFactory.service;
 
@@ -25,5 +25,3 @@ function PlatformOpenWhiskImpl(platformFactory) {
         app.post('/run', platformFactory.wrapEndpoint(service.runCode));
     };
 }
-
-module.exports = PlatformOpenWhiskImpl;

@@ -22,9 +22,7 @@ var config = {
     'allowConcurrent': process.env.__OW_ALLOW_CONCURRENT,
     'requestBodyLimit': "48mb"
 };
-
-var bodyParser = require('body-parser');
-var express    = require('express');
+import express from 'express';
 
 /**
  * instantiate app as an instance of Express
@@ -35,27 +33,28 @@ var app = express();
 /**
  * instantiate an object which handles REST calls from the Invoker
  */
-var service = require('./src/service').getService(config);
+import {NodeActionService} from './src/service.js';
+var service = NodeActionService.getService(config)
 
 /**
  * setup a middleware layer to restrict the request body size
  * this middleware is called every time a request is sent to the server
  */
-app.use(bodyParser.json({ limit: config.requestBodyLimit }));
+app.use(express.json({ limit: config.requestBodyLimit }));
 
 // identify the target Serverless platform
-const platformFactory = require('./platform/platform.js');
-const factory = new platformFactory(app, config, service);
+import {PlatformFactory} from './platform/platform.js';
+const factory = new PlatformFactory(app, config, service);
 var targetPlatform = process.env.__OW_RUNTIME_PLATFORM;
 
 // default to "openwhisk" platform initialization if not defined
 // TODO export isvalid() from platform, if undefined this is OK to default, but if not valid value then error out
 if (typeof targetPlatform === "undefined") {
-    targetPlatform = platformFactory.PLATFORM_OPENWHISK;
+    targetPlatform = PlatformFactory.PLATFORM_OPENWHISK;
     // console.log("__OW_RUNTIME_PLATFORM is undefined; defaulting to 'openwhisk' ...");
 }
 
-if (!platformFactory.isSupportedPlatform(targetPlatform)) {
+if (!PlatformFactory.isSupportedPlatform(targetPlatform)) {
     console.error("__OW_RUNTIME_PLATFORM ("+targetPlatform+") is not supported by the runtime.");
     process.exit(9);
 }
