@@ -20,8 +20,8 @@
  *
  * This file (runner.js) must currently live in root directory for nodeJsAction.
  */
- 
- import * as fs from 'fs';
+
+import * as fs from 'fs';
 import * as path from 'path';
 import {serializeError} from 'serialize-error';
 
