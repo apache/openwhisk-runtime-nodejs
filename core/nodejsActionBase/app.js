@@ -41,7 +41,7 @@ var service = require('./src/service').getService(config);
  * setup a middleware layer to restrict the request body size
  * this middleware is called every time a request is sent to the server
  */
-app.use(bodyParser.json({ limit: config.requestBodyLimit }));
+app.use(express.json({ limit: config.requestBodyLimit }));
 
 // identify the target Serverless platform
 const platformFactory = require('./platform/platform.js');

@@ -104,8 +104,17 @@ class NodeActionRunner {
             if (!error) {
                 resolve({error: {}});
             } else {
-                const serializeError = require('serialize-error');
-                resolve({error: serializeError(error)});
+                // Replace unsupported require statement with
+                // dynamically import npm serialize-error package returning a promise
+                import('serialize-error')
+                .then(module => {
+                    // if serialize-error is imported correctly the function resolves with a serializedError
+                    resolve({error: module.serializeError(error)});
+                })
+                .catch(err => {
+                    // When there is an error to serialize the error object, resolve with the error message
+                    resolve({error: err.message });
+                });
             }
         });
     }
