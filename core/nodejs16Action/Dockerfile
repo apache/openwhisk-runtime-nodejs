@@ -15,7 +15,7 @@
 # limitations under the License.
 #
 
-FROM node:16.13-stretch
+FROM node:16.14-bullseye
 
 # Initial update and some basics.
 #
