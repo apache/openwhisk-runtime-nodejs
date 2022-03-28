@@ -22,6 +22,7 @@ FROM node:16.14-bullseye
 RUN apt-get update && apt-get install -y \
     imagemagick \
     graphicsmagick \
+    zip \
     unzip \
     && rm -rf /var/lib/apt/lists/*
 
