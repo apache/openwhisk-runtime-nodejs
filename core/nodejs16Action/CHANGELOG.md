@@ -19,10 +19,8 @@
 
 # NodeJS 16 OpenWhisk Runtime Container
 
-# Next Release
-
-Changes:
+# Apache 1.20
   - Initial release with support for Node.js v1.16
 
-Node.js version = [16.13.1](https://nodejs.org/en/blog/release/v16.13.1/)
-OpenWhisk version = [OpenWhisk v3.21.2](https://www.npmjs.com/package/openwhisk)
+Node.js version = [16.15.0](https://nodejs.org/en/blog/release/v16.15.0/)
+OpenWhisk version = [OpenWhisk v3.21.6](https://www.npmjs.com/package/openwhisk)
