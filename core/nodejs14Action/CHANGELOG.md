@@ -19,10 +19,10 @@
 
 # NodeJS 14 OpenWhisk Runtime Container
 
-# Next Release
-- Update Node to 1.19.x
-Node.js version = [14.19.0](https://nodejs.org/en/blog/release/v14.19.0/)
-OpenWhisk version = [OpenWhisk v3.21.4](https://www.npmjs.com/package/openwhisk)
+# Apache 1.20
+- Update Node to 14.19.x
+Node.js version = [14.19.1](https://nodejs.org/en/blog/release/v14.19.1/)
+OpenWhisk version = [OpenWhisk v3.21.6](https://www.npmjs.com/package/openwhisk)
 
 # Apache 1.19
   - Remove Node.js 10 support
