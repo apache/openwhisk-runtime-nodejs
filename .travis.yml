@@ -42,7 +42,7 @@ deploy:
       all_branches: true
       repo: apache/openwhisk-runtime-nodejs
   - provider: script
-    script: "./tools/travis/publish.sh openwhisk nodejs14Action nightly && ./tools/travis/publish.sh openwhisk nodejs16Action nightly && ./tools/travis/publish.sh openwhisk typescript37Action nightly"
+    script: "./tools/travis/publish.sh openwhisk nodejs14Action nightly && ./tools/travis/publish.sh openwhisk nodejs16Action nightly && ./tools/travis/publish.sh openwhisk nodejs18Action nightly && ./tools/travis/publish.sh openwhisk typescript37Action nightly"
     on:
       branch: master
       repo: apache/openwhisk-runtime-nodejs
