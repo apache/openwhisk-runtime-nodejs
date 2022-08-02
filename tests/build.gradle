@@ -34,9 +34,9 @@ tasks.withType(Test) {
 }
 
 dependencies {
-    compile "org.scala-lang:scala-library:${gradle.scala.version}"
-    compile "org.apache.openwhisk:openwhisk-tests:${gradle.openwhisk.version}:tests"
-    compile "org.apache.openwhisk:openwhisk-tests:${gradle.openwhisk.version}:test-sources"
+    implementation "org.scala-lang:scala-library:${gradle.scala.version}"
+    implementation "org.apache.openwhisk:openwhisk-tests:${gradle.openwhisk.version}:tests"
+    implementation "org.apache.openwhisk:openwhisk-tests:${gradle.openwhisk.version}:test-sources"
     implementation group: 'com.typesafe.akka', name: "akka-http2-support_${gradle.scala.depVersion}", version: "${gradle.akka_http.version}"
     implementation group: 'com.typesafe.akka', name: "akka-http-xml_${gradle.scala.depVersion}", version: "${gradle.akka_http.version}"
     implementation group: 'com.typesafe.akka', name: "akka-discovery_${gradle.scala.depVersion}", version: "${gradle.akka.version}"
