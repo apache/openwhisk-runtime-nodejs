@@ -143,7 +143,7 @@ function NodeActionService(config) {
                     setStatus(Status.ready);
                 }
                 if (typeof result !== 'object') {
-                    return errorMessage(502, 'The action did not return a dictionary or array.');
+                    return errorMessage(502, 'The action did not return a dictionary.');
                 } else {
                     return responseMessage(200, result);
                 }
