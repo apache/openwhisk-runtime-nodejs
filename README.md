@@ -28,6 +28,7 @@ The following Node.js runtime versions (with kind & image labels) are generated 
 
 - Node.js 14.19 (`nodejs:14` & `openwhisk/action-nodejs-v14`)
 - Node.js 16.15 (`nodejs:16` & `openwhisk/action-nodejs-v16`)
+- Node.js 18 (`nodejs:18` & `openwhisk/action-nodejs-v16`)
 
 This README documents the build, customisation and testing of these runtime images.
 
