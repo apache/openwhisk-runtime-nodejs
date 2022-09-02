@@ -15,7 +15,7 @@
 # limitations under the License.
 #
 
-FROM node:16.15-bullseye
+FROM node:16-bullseye
 
 # Initial update and some basics.
 #
