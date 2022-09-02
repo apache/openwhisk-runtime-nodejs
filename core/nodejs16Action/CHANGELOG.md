@@ -19,6 +19,9 @@
 
 # NodeJS 16 OpenWhisk Runtime Container
 
+# Next release
+  - use node:16-bullseye as base image to automatically get vulnerability fixes
+
 # Apache 1.20
   - Initial release with support for Node.js v1.16
 
