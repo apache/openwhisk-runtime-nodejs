@@ -16,7 +16,7 @@
 #
 
 sudo: required
-dist: xenial
+dist: focal
 jdk: openjdk8
 language: java
 services:
