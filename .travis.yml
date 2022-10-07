@@ -17,7 +17,7 @@
 
 sudo: required
 dist: focal
-jdk: openjdk8
+jdk: openjdk11
 language: java
 services:
   - docker
