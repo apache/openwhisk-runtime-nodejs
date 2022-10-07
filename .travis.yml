@@ -16,8 +16,8 @@
 #
 
 sudo: required
-dist: xenial
-jdk: openjdk8
+dist: focal
+jdk: openjdk11
 language: java
 services:
   - docker
