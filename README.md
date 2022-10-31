@@ -114,3 +114,4 @@ This will return the following runtime images with the following names: `action-
 ```
 ./gradlew :tests:test
 ```
+An update about the details of verifying a standalone container can be found [here](https://github.com/apache/openwhisk-runtime-nodejs/pull/227/files#diff-c115bfeccd5f4a2e984d66e08ad3b677350baecacc248bc20d7585c2b6fe11e8)
