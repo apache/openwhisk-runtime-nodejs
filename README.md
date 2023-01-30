@@ -91,6 +91,7 @@ The `core/nodejsActionBase` folder contains the Node.js app server used to imple
 This will return the following runtime images with the following names: `action-nodejs-v14`, `action-nodejs-v16`, and `action-nodejs-v18`.
 
 ### Testing
+( A new section on building and testing the standalone runtime container is available here. )
 
 - Install project dependencies from the top-level Apache OpenWhisk [project](https://github.com/apache/openwhisk), which ensures correct versions of dependent libraries are available in the Maven cache.
 
@@ -114,4 +115,3 @@ This will return the following runtime images with the following names: `action-
 ```
 ./gradlew :tests:test
 ```
-An update about the details of verifying a standalone container can be found [here](https://github.com/apache/openwhisk-runtime-nodejs/tree/master/docs/users)

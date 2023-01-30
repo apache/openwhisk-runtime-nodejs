@@ -18,8 +18,6 @@
 -->
 
 # Tests for OpenWhisk NodeJS Runtime as Standalone Container
-[![License](https://img.shields.io/badge/license-Apache--2.0-blue.svg)](http://www.apache.org/licenses/LICENSE-2.0)
-
 This README walks you through how to build, customise and test Apache OpenWhisk Node.js runtime images.
 ## Pre-requisites
 - [Gradle](https://gradle.org/)
@@ -57,7 +55,7 @@ In our example, the `Action` container exposes `port 8080` (see the Dockerfile f
 ```
 docker run --publish 3008:8080 --name=bloom_whisker -i -t action-nodejs-v18:latest
 ```
-A simpler way is to map `port 80 ` on `localhost ` to the container's `port 8080`. The port number assigned to the HTTP protocol is `80`. Since we will be sending actions against the runtime using HTTP, using this number will allow us to omit the port in the request later. Oftentimes, `port 80 ` could already be occupied by another process. Without loss of generality, the following examples will use the arbitrarily chosen `port 3008`.
+A simpler way is to map `port 80` on `localhost` to the container's `port 8080`. The port number assigned to the HTTP protocol is `80`. Since we will be sending actions against the runtime using HTTP, using this number will allow us to omit the port in the request later. Oftentimes, `port 80` could already be occupied by another process. Without loss of generality, the following examples will use the arbitrarily chosen `port 3008`.
 
 Lists all running containers
 ```
