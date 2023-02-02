@@ -28,9 +28,9 @@ Choose a NodeJS version. All build files reside inside `core/nodejsActionBase`. 
 ```
 FROM node:lts-stretch
 ```
-This will use the latest NodeJS version. But we want to be more specific. Now if you look into each of the Dockerfile within `core/nodejs14Action`, `core/nodejs16Action`, `core/nodejs18Action`, you’ll notice different NodeJS versions. Let’s go ahead with the 18 version. We are going to use this version throughout the README, for the others, you merely have to modify the version number.
+This will use the latest NodeJS version. But we want to be more specific. Now if you look into each of the Dockerfile within `core/nodejs14Action`, `core/nodejs16Action`, `core/nodejs18Action`, you’ll notice different NodeJS versions. Let’s go ahead with the 18 version, we are going to use this throughout this README. For the other versions, you merely have to modify the version number.
 
-Gradle will a create `build` folder that will contain all the necessary files to build our NodeJS container. Next, it will copy the NodeJS application (server used to implement the [action interface](https://github.com/apache/openwhisk/blob/master/docs/actions-new.md#action-interface)) as well as the target Dockerfile with the NodeJS version 18.
+Gradle will a create `build` folder that will contain all the necessary files to build our NodeJS container. Next, it will copy the NodeJS application ( server used to implement the [action interface](https://github.com/apache/openwhisk/blob/master/docs/actions-new.md#action-interface) ) as well as the target Dockerfile with the NodeJS version 18.
 
 What Gradle does is equivalent to running these commands
 ```
@@ -84,7 +84,7 @@ The json file contains a simple JavaScript (the target runtime language) functio
 ## Initialze the Runtime
 Before issuing the action against the runtime, we first initialize the function with by invoking the ```/init``` endpoint.
 ```
-curl -H "Content-Type:application/json" -X POST --data '@/$FILEPATH/js-init.json' http://localhost:3008/init
+curl -H "Content-Type:application/json" -X POST --data '@/docs/users/standalone/helloworld/js-init.json' http://localhost:3008/init
 ```
 the expected response being
 ```
@@ -93,7 +93,7 @@ the expected response being
 
 As mentioned above, if `port 80` on `localhost` was used, the command could simply be
 ```
-curl -H "Content-Type:application/json" -X POST --data '@/$FILEPATH/js-init.json' http://localhost/init
+curl -H "Content-Type:application/json" -X POST --data '@/docs/users/standalone/helloworld/js-init.json' http://localhost/init
 ```
 
 ## Run the function
@@ -101,7 +101,7 @@ curl -H "Content-Type:application/json" -X POST --data '@/$FILEPATH/js-init.json
 Invoke the function using the ```/run``` endpoint.
 
 ```
-curl -H ""Content-Type:application/json" -X POST --data '@/$FILEPATH/js-init.json' http://localhost:3008/run
+curl -H ""Content-Type:application/json" -X POST --data '@//docs/users/standalone/helloworld/js-init.json' http://localhost:3008/run
 ```
 
 The JavaScript function in this example is one without arguments (nullary function). Using the same json file as during initialization won't be a problem. Ideally, we should have provided another file `js-params.json` with the arguments to trigger the function.
@@ -112,7 +112,7 @@ The JavaScript function in this example is one without arguments (nullary functi
 ```
 In this case the command to trigger the function should be
 ```
-curl -H ""Content-Type:application/json" -X POST --data '/$FILEPATH/js-params.json' http://localhost:3008/run
+curl -H ""Content-Type:application/json" -X POST --data '@/docs/users/standalone/helloworld/js-params.json' http://localhost:3008/run
 ```
 
 The expected response should be
@@ -153,12 +153,12 @@ These files shall be sent via the `init` API and via the `run` API respectively.
 To initialize the function, please make sure your NodeJS runtime container is running.
 First, issue a `POST` request against the `init` API using curl:
 ```
-curl -H "Content-Type:application/json" -X POST --data '@/$FILEPATH/js-init-params.json' http://localhost:3008/init
+curl -H "Content-Type:application/json" -X POST --data '@/docs/users/standalone/helloworldwithparams/js-init-params.json' http://localhost:3008/init
 ```
 
 Next, trigger the function by issuing this request against the `run` API using curl:
 ```
-curl -H ""Content-Type:application/json" -X POST --data '/$FILEPATH/js-run-params.json' http://localhost:3008/run
+curl -H ""Content-Type:application/json" -X POST --data '@/docs/users/standalone/helloworldwithparams/js-run-params.json' http://localhost:3008/run
 ```
 
 You should expect the following client response:
