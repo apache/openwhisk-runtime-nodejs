@@ -82,7 +82,7 @@ A container can only hold one function. This first example prepared a `js-init.j
 The json file contains a simple JavaScript (the target runtime language) function, which is the actual payload.
 
 ## Initialze the Runtime
-Before issuing the action against the runtime, we first initialize the function with by invoking the ```/init``` endpoint.
+Before issuing the action against the runtime, we first initialize the function with by invoking the ```/init``` endpoint with the  `js-init.json` payload.
 ```
 curl -H "Content-Type:application/json" -X POST --data '@/docs/users/standalone/helloworld/js-init.json' http://localhost:3008/init
 ```
