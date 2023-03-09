@@ -48,17 +48,12 @@ function initializeActionHandler(message) {
 
                 // install npm modules during init if source code zip doesn´t containt them
                 // check if package.json exists and node_modules don`t
-                if (fs.existsSync('package.json') && !fs.existsSync('./node_modules')) {
-                    let folderfiles = fs.readdirSync('./')
-                    console.log(folderfiles)
-                    let jsfilePaths = folderfiles
-                        .filter(file=> file.endsWith('.js'))
-                        .map(file=> path.resolve(__dirname, file))
-                    // check to make sure that at least 1 javascript source file exists
-                    if (jsfilePaths.length > 0) {
-                        exec("npm install")
-                    } else {
-                        return Promise.reject('There is no javascript source code.');
+                if (fs.existsSync('package.json') && !fs.existsSync('./node_modules/')) {
+                    var package_json = require('package.json'); 
+                    if (package_json.hasOwnProperty('dependencies')) {
+                        if (Object.keys(package_json.dependencies).length > 0) {
+                            exec("npm install")
+                        } 
                     }
                 }
 
