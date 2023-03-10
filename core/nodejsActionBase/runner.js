@@ -46,6 +46,17 @@ function initializeActionHandler(message) {
                     return Promise.reject('Zipped actions must contain either package.json or index.js at the root.');
                 }
 
+                // install npm modules during init if source code zip doesn´t containt them
+                // check if package.json exists and node_modules don`t
+                if (fs.existsSync('package.json') && !fs.existsSync('./node_modules/')) {
+                    var package_json = JSON.parse(fs.readFileSync('package.json', 'utf8'));
+                    if (package_json.hasOwnProperty('dependencies')) {
+                        if (Object.keys(package_json.dependencies).length > 0) {
+                            exec("npm install")
+                        }
+                    }
+                }
+
                 //  The module to require.
                 let whatToRequire = index !== undefined ? path.join(moduleDir, index) : moduleDir;
                 let handler = eval('require("' + whatToRequire + '").' + main);
