@@ -27,7 +27,11 @@ const path = require('path');
 function initializeActionHandler(message) {
     if (message.binary) {
         // The code is a base64-encoded zip file.
-        return unzipInTmpDir(message.code)
+        ext = detectFileType(message.code)
+        if (ext == 'unsupported'){
+            return Promise.reject("The Filetype is not supported");
+        }
+        return extractInTmpDir(message.code)
             .then(moduleDir => {
                 let parts = splitMainHandler(message.main);
                 if (parts === undefined) {
@@ -138,21 +142,33 @@ class NodeActionRunner {
  * Note that this makes heavy use of shell commands because the environment is expected
  * to provide the required executables.
  */
-function unzipInTmpDir(zipFileContents) {
+function extractInTmpDir(archiveFileContents) {
     const mkTempCmd = "mktemp -d XXXXXXXX";
     return exec(mkTempCmd).then(tmpDir => {
         return new Promise((resolve, reject) => {
-            const zipFile = path.join(tmpDir, "action.zip");
-            fs.writeFile(zipFile, zipFileContents, "base64", err => {
-                if (!err) resolve(zipFile);
+            ext = detectFileType(archiveFileContents)
+            if (ext == 'unsupported'){
+                reject("There was an error Detecting the File type");
+            }
+            const archiveFile = path.join(tmpDir, "action."+ ext);
+            fs.writeFile(archiveFile, archiveFileContents, "base64", err => {
+                if (!err) resolve(archiveFile);
                 else reject("There was an error reading the action archive.");
             });
         });
-    }).then(zipFile => {
+    }).then(archiveFile => {
         return exec(mkTempCmd).then(tmpDir => {
-            return exec("unzip -qq " + zipFile + " -d " + tmpDir)
+            if (ext === 'zip') {
+                return exec("unzip -qq " + archiveFile + " -d " + tmpDir)
                 .then(res => path.resolve(tmpDir))
                 .catch(error => Promise.reject("There was an error uncompressing the action archive."));
+            } else if (ext === 'tar.gz') {     
+                return exec("tar -xzf " + archiveFile + " -C " + tmpDir + " > /dev/null")
+                .then(res => path.resolve(tmpDir))
+                .catch(error => Promise.reject("There was an error uncompressing the action archive."));
+            } else {
+                  return Promise.reject("Unsupported archive type.");
+            }
         });
     });
 }
@@ -198,3 +214,22 @@ module.exports = {
     NodeActionRunner,
     initializeActionHandler
 };
+
+// helper function to detect if base64string is zip or tar.gz
+// and returns the file ending
+function detectFileType(base64String) {
+    // Decode the base64 string into binary data
+    const binaryData = Buffer.from(base64String, 'base64');
+  
+    // Examine the first few bytes of the binary data to determine the file type
+    const magicNumber = binaryData.slice(0, 4).toString('hex');
+  
+    if (magicNumber === '504b0304') {
+      return 'zip';
+    // GZIP: 1f8b0808 maximum compression level,  1f8b0800 default compression
+    } else if (magicNumber === '1f8b0808' || magicNumber === '1f8b0800') {      
+      return 'tar.gz';
+    } else {
+        return 'unsupported';
+    }
+  }
