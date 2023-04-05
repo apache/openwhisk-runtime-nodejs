@@ -232,5 +232,4 @@ function detectFileType(base64String) {
     } else {
         return 'unsupported';
     }
-  }
-  
+}
