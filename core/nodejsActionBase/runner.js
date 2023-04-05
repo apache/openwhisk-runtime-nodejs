@@ -162,7 +162,7 @@ function extractInTmpDir(archiveFileContents) {
                 return exec("unzip -qq " + archiveFile + " -d " + tmpDir)
                 .then(res => path.resolve(tmpDir))
                 .catch(error => Promise.reject("There was an error uncompressing the action archive."));
-            } else if (ext === 'tar.gz') {     
+            } else if (ext === 'tar.gz') {
                 return exec("tar -xzf " + archiveFile + " -C " + tmpDir + " > /dev/null")
                 .then(res => path.resolve(tmpDir))
                 .catch(error => Promise.reject("There was an error uncompressing the action archive."));
@@ -220,16 +220,17 @@ module.exports = {
 function detectFileType(base64String) {
     // Decode the base64 string into binary data
     const binaryData = Buffer.from(base64String, 'base64');
-  
+
     // Examine the first few bytes of the binary data to determine the file type
     const magicNumber = binaryData.slice(0, 4).toString('hex');
-  
+
     if (magicNumber === '504b0304') {
       return 'zip';
     // GZIP: 1f8b0808 maximum compression level,  1f8b0800 default compression
-    } else if (magicNumber === '1f8b0808' || magicNumber === '1f8b0800') {      
+    } else if (magicNumber === '1f8b0808' || magicNumber === '1f8b0800') {
       return 'tar.gz';
     } else {
         return 'unsupported';
     }
   }
+  
