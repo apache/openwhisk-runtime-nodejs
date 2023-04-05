@@ -29,7 +29,7 @@ function initializeActionHandler(message) {
         // The code is a base64-encoded zip file.
         ext = detectFileType(message.code)
         if (ext == 'unsupported'){
-            return Promise.reject("The Filetype is not supported");
+            return Promise.reject("There was an error uncompressing the action archive.");
         }
         return extractInTmpDir(message.code)
             .then(moduleDir => {
@@ -167,7 +167,7 @@ function extractInTmpDir(archiveFileContents) {
                 .then(res => path.resolve(tmpDir))
                 .catch(error => Promise.reject("There was an error uncompressing the action archive."));
             } else {
-                  return Promise.reject("Unsupported archive type.");
+                  return Promise.reject("There was an error uncompressing the action archive.");
             }
         });
     });
