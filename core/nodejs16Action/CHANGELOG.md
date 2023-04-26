@@ -19,8 +19,14 @@
 
 # NodeJS 16 OpenWhisk Runtime Container
 
-# Next release
+# Apache 1.21
+  - Add tar.gz support to the nodejs runtime Proxy (#235)
+  - Add functionality to install modules during init (#233)
+  - Use openwhisk-client-js 3.21.7 (#223)
   - use node:16-bullseye as base image to automatically get vulnerability fixes
+
+Node.js version = [16.20.0](https://nodejs.org/en/blog/release/v16.20.0/)
+OpenWhisk version = [OpenWhisk v3.21.7](https://www.npmjs.com/package/openwhisk)
 
 # Apache 1.20
   - Initial release with support for Node.js v1.16
