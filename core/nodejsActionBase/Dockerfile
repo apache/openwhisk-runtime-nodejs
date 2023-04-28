@@ -15,13 +15,14 @@
 # limitations under the License.
 #
 
-FROM node:lts-stretch
+FROM node:lts-bullseye
 
 # Initial update and some basics.
 #
 RUN apt-get update && apt-get install -y \
     imagemagick \
     graphicsmagick \
+    zip \
     unzip \
     && rm -rf /var/lib/apt/lists/*
 
