@@ -20,10 +20,8 @@ include 'tests'
 include 'core:nodejsActionBase'
 include 'core:nodejs16Action'
 include 'core:nodejs18Action'
-include 'core:typescript37Action'
 include 'tests:dat:docker:nodejs16docker'
 include 'tests:dat:docker:nodejs18docker'
-include 'tests:dat:docker:typescript37docker'
 
 rootProject.name = 'runtime-nodejs'
 
