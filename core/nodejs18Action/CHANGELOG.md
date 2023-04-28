@@ -19,8 +19,8 @@
 
 # NodeJS 18 OpenWhisk Runtime Container
 
-# Next Release
+# Apache 1.21
   - Initial release with support for Node.js v1.18
 
-Node.js version = [18.4.0](https://nodejs.org/en/blog/release/v18.4.0/)
-OpenWhisk version = [OpenWhisk v3.21.6](https://www.npmjs.com/package/openwhisk)
+Node.js version = [18.16.0](https://nodejs.org/en/blog/release/v18.16.0/)
+OpenWhisk version = [OpenWhisk v3.21.7](https://www.npmjs.com/package/openwhisk)
