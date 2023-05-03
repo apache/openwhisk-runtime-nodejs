@@ -167,7 +167,7 @@ function extractInTmpDir(archiveFileContents) {
                 .then(res => path.resolve(tmpDir))
                 .catch(error => Promise.reject("There was an error uncompressing the action Tar GZ archive."));
             } else {
-                  return Promise.reject("There was an error uncompressing the action archive. file ext didn+t Match");
+                  return Promise.reject("There was an error uncompressing the action archive. file ext did not Match");
             }
         });
     });
