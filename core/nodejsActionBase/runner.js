@@ -29,7 +29,7 @@ function initializeActionHandler(message) {
         // The code is a base64-encoded zip file.
         ext = detectFileType(message.code)
         if (ext == 'unsupported'){
-            return Promise.reject("There was an error uncompressing the action archive.");
+            return Promise.reject("There was an error uncompressing the action archive. The file type is unsupported");
         }
         return extractInTmpDir(message.code)
             .then(moduleDir => {
@@ -161,13 +161,13 @@ function extractInTmpDir(archiveFileContents) {
             if (ext === 'zip') {
                 return exec("unzip -qq " + archiveFile + " -d " + tmpDir)
                 .then(res => path.resolve(tmpDir))
-                .catch(error => Promise.reject("There was an error uncompressing the action archive."));
+                .catch(error => Promise.reject("There was an error uncompressing the action Zip archive."));
             } else if (ext === 'tar.gz') {
                 return exec("tar -xzf " + archiveFile + " -C " + tmpDir + " > /dev/null")
                 .then(res => path.resolve(tmpDir))
-                .catch(error => Promise.reject("There was an error uncompressing the action archive."));
+                .catch(error => Promise.reject("There was an error uncompressing the action Tar GZ archive."));
             } else {
-                  return Promise.reject("There was an error uncompressing the action archive.");
+                  return Promise.reject("There was an error uncompressing the action archive. file ext did not Match");
             }
         });
     });
