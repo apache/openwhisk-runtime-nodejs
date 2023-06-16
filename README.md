@@ -28,6 +28,7 @@ The following Node.js runtime versions (with kind & image labels) are generated 
 
 - Node.js 16 (`nodejs:16` & `openwhisk/action-nodejs-v16`)
 - Node.js 18 (`nodejs:18` & `openwhisk/action-nodejs-v18`)
+- Node.js 18 (`nodejs:20` & `openwhisk/action-nodejs-v20`)
 
 This README documents the build, customisation and testing of these runtime images.
 
@@ -49,6 +50,7 @@ All the runtime images are published by the project to Docker Hub @ [https://hub
 
 - [https://hub.docker.com/r/openwhisk/action-nodejs-v16](https://hub.docker.com/r/openwhisk/action-nodejs-v16)
 - [https://hub.docker.com/r/openwhisk/action-nodejs-v18](https://hub.docker.com/r/openwhisk/action-nodejs-v18)
+- [https://hub.docker.com/r/openwhisk/action-nodejs-v20](https://hub.docker.com/r/openwhisk/action-nodejs-v20)
 
 These images can be used to execute Node.js actions on any deployment of Apache OpenWhisk, even those without those images defined the in runtime manifest, using the `--docker` action parameter.
 
@@ -97,6 +99,7 @@ This will return the following runtime images with the following names: `action-
 ```
 ./gradlew tests:dat:docker:nodejs16docker:distDocker
 ./gradlew tests:dat:docker:nodejs18docker:distDocker
+./gradlew tests:dat:docker:nodejs20docker:distDocker
 ```
 
 - Run the project tests.
