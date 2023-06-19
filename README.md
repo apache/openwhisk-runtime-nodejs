@@ -28,7 +28,7 @@ The following Node.js runtime versions (with kind & image labels) are generated 
 
 - Node.js 16 (`nodejs:16` & `openwhisk/action-nodejs-v16`)
 - Node.js 18 (`nodejs:18` & `openwhisk/action-nodejs-v18`)
-- Node.js 18 (`nodejs:20` & `openwhisk/action-nodejs-v20`)
+- Node.js 20 (`nodejs:20` & `openwhisk/action-nodejs-v20`)
 
 This README documents the build, customisation and testing of these runtime images.
 
