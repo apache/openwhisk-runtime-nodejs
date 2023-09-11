@@ -88,8 +88,6 @@ jobs:
         working-directory: runtime
         run: |
           SHORT_COMMIT=$(git rev-parse --short "$GITHUB_SHA")
-          ./gradlew :core:nodejs16Action:distDocker -PdockerRegistry=docker.io -PdockerImagePrefix=openwhisk -PdockerImageTag=nightly
-          ./gradlew :core:nodejs16Action:distDocker -PdockerRegistry=docker.io -PdockerImagePrefix=openwhisk -PdockerImageTag=$SHORT_COMMIT
           ./gradlew :core:nodejs18Action:distDocker -PdockerRegistry=docker.io -PdockerImagePrefix=openwhisk -PdockerImageTag=nightly
           ./gradlew :core:nodejs18Action:distDocker -PdockerRegistry=docker.io -PdockerImagePrefix=openwhisk -PdockerImageTag=$SHORT_COMMIT
           ./gradlew :core:nodejs20Action:distDocker -PdockerRegistry=docker.io -PdockerImagePrefix=openwhisk -PdockerImageTag=nightly

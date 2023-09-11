@@ -18,10 +18,8 @@
 include 'tests'
 
 include 'core:nodejsActionBase'
-include 'core:nodejs16Action'
 include 'core:nodejs18Action'
 include 'core:nodejs20Action'
-include 'tests:dat:docker:nodejs16docker'
 include 'tests:dat:docker:nodejs18docker'
 include 'tests:dat:docker:nodejs20docker'
 
