@@ -19,6 +19,11 @@
 
 # NodeJS 18 OpenWhisk Runtime Container
 
+# Apache 1.22
+- Make 'npm install' during init configurable. (#240)
+- Add support for Node.js 20 (#239)
+- Make error loging clearer (#238)
+
 # Apache 1.21
   - Initial release with support for Node.js v1.18
 
