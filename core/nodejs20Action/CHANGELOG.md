@@ -19,8 +19,8 @@
 
 # NodeJS 20 OpenWhisk Runtime Container
 
-# Next Release
-  - Initial release with support for Node.js v1.18
+# Apache 1.22
+  - Initial release with support for Node.js v1.20
 
 Node.js version = [20.3.0](https://nodejs.org/en/blog/release/v20.3.0/)
 OpenWhisk version = [OpenWhisk v3.21.7](https://www.npmjs.com/package/openwhisk)
