@@ -1,0 +1,92 @@
+# Licensed to the Apache Software Foundation (ASF) under one
+# or more contributor license agreements.  See the NOTICE file
+# distributed with this work for additional information
+# regarding copyright ownership.  The ASF licenses this file
+# to you under the Apache License, Version 2.0 (the
+# "License"); you may not use this file except in compliance
+# with the License.  You may obtain a copy of the License at
+#
+#   http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing,
+# software distributed under the License is distributed on an
+# "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+# KIND, either express or implied.  See the License for the
+# specific language governing permissions and limitations
+# under the License.
+#
+name: On Demand Tests
+
+on:
+  workflow_dispatch:
+    inputs:
+      enable_ngrok_debug:
+        description: "Enable Ngrok Debugging"
+        required: true
+        type: boolean
+        default: false
+
+env:
+  # (optional) you need to add as secrets an ngrok token and a password to debug a build on demand
+  NGROK_DEBUG: ${{ inputs.enable_ngrok_debug }}
+  NGROK_TOKEN: ${{ secrets.NGROK_TOKEN }}
+  NGROK_PASSWORD: ${{ secrets.NGROK_PASSWORD }}
+
+permissions: read-all
+
+jobs:
+  ci:
+    runs-on: ubuntu-22.04
+    env:
+      PUSH_NIGHTLY: ${{ (github.event_name == 'push' || github.event_name == 'schedule') && github.ref == 'refs/heads/master' }}
+      PUSH_RELEASE: ${{ github.event_name == 'push' && github.ref_type == 'tag' }}
+    steps:
+      # Checkout just this repo and run scanCode before we do anything else
+      - name: Checkout runtime repo
+        uses: actions/checkout@v3
+        with:
+          path: runtime
+      - name: Scan Code
+        uses: apache/openwhisk-utilities/scancode@master
+
+      # Install core OpenWhisk artifacts needed to build/test anything else
+      - name: Checkout OpenWhisk core repo
+        uses: actions/checkout@v4
+        with:
+          repository: apache/openwhisk
+          path: core
+      - name: Setup Java
+        uses: actions/setup-java@v3
+        with:
+          distribution: 'temurin'
+          java-version: '11'
+      - name: Compile and Install Core OpenWhisk
+        working-directory: core
+        run: |
+          ./gradlew :tests:compileTestScala
+          ./gradlew install
+
+      # Build this repository
+      - name: Build Runtime
+        working-directory: runtime
+        run: |
+          ./gradlew distDocker
+
+      # Test this repository
+      - name: Test Runtime
+        id: tests
+        working-directory: runtime
+        run: |
+          ./gradlew :tests:checkScalafmtAll
+          ./gradlew :tests:test
+        continue-on-error: true
+
+      # (Optional) Enable debugging
+      - name: Debug Action (if requested)
+        working-directory: core
+        run:  ./tools/github/debugAction.sh
+      - name: Wait for Debug (if requested)
+        working-directory: core
+        run: ./tools/github/waitIfDebug.sh
+      - name: Results
+        run: test "${{ steps.tests.outcome }}" ==  "success"
