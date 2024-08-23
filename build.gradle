@@ -17,10 +17,11 @@
 
 buildscript {
     repositories {
-        jcenter()
+        mavenCentral()
+        gradlePluginPortal()
     }
     dependencies {
-        classpath "cz.alenkacz:gradle-scalafmt:${gradle.scalafmt.version}"
+        classpath "gradle.plugin.cz.alenkacz:gradle-scalafmt:${gradle.scalafmt.version}"
     }
 }
 
