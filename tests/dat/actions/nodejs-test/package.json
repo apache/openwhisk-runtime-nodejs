@@ -9,6 +9,6 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
-    "openwhisk": "^2.0.0"
+    "openwhisk": "^3.21.8"
   }
 }
