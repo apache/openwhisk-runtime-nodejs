@@ -19,6 +19,10 @@
 
 # NodeJS 18 OpenWhisk Runtime Container
 
+# Apache 1.23
+- Update express from 4.17.3 to 4.19.2 (#252)
+- Use openwhisk-client-js 3.21.8 (#248)
+
 # Apache 1.22
 - Make 'npm install' during init configurable. (#240)
 - Add support for Node.js 20 (#239)
@@ -27,5 +31,5 @@
 # Apache 1.21
   - Initial release with support for Node.js v1.18
 
-Node.js version = [18.16.0](https://nodejs.org/en/blog/release/v18.16.0/)
+Node.js version = [18.20.0](https://nodejs.org/en/blog/release/v18.20.0/)
 OpenWhisk version = [OpenWhisk v3.21.7](https://www.npmjs.com/package/openwhisk)
