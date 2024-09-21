@@ -19,7 +19,7 @@
   },
   "dependencies": {
     "openwhisk": "3.21.8",
-    "express": "4.19.2",
+    "express": "4.20.0",
     "serialize-error": "9.1.0",
     "redis": "4.0.4",
     "uuid": "8.3.2"
