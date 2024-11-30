@@ -82,6 +82,7 @@ The `core/nodejsActionBase` folder contains the Node.js app server used to imple
 This will return the following runtime images with the following names: `action-nodejs-v18`, and `action-nodejs-v20`.
 
 ### Testing
+( A new section on building and testing the standalone runtime container is available here. )
 
 - Install project dependencies from the top-level Apache OpenWhisk [project](https://github.com/apache/openwhisk), which ensures correct versions of dependent libraries are available in the Maven cache.
 
