@@ -55,7 +55,7 @@ function initializeActionHandler(message) {
                 let enableInitInstall= !process.env.OW_ENABLE_INIT_INSTALL ? 'true' : process.env.OW_ENABLE_INIT_INSTALL;
 
                 if (enableInitInstall === 'true') {
-                    // install npm modules during init if source code zip doesn´t containt them
+                    // install npm modules during init if source code zip doesn´t contain them
                     // check if package.json exists and node_modules don`t
                     if (fs.existsSync('package.json') && !fs.existsSync('./node_modules/')) {
                         var package_json = JSON.parse(fs.readFileSync('package.json', 'utf8'));
