@@ -218,7 +218,7 @@ NAME                        SECRETS   AGE
 openwhisk-runtime-builder   2         3m46s
 ```
 
-## Install the BuildTemplate for the NodeJS runtime
+## Install the BuildTemplate for the Node.js runtime
 
 ```
 $ kubectl apply --filename buildtemplate.yaml
@@ -308,7 +308,7 @@ metadata:
 ```
 </details>
 
-## Building a Knative service using the NodeJS BuildTemplate
+## Building a Knative service using the Node.js BuildTemplate
 
 We will use the simple "helloworld" test case to demonstrate how to use Knative to Build your function into container image and then deploy it as a Service.
 
@@ -372,7 +372,7 @@ spec:
 kubectl apply -f build.yaml
 ```
 
-This creates a pod with a NodeJS runtime and all the action metadata (action code, main function name, etc) integrated into the container image. If for any reason there is a failure creating the pod, we can troubleshoot the deployment with:
+This creates a pod with a Node.js runtime and all the action metadata (action code, main function name, etc.) integrated into the container image. If for any reason there is a failure creating the pod, we can troubleshoot the deployment with:
 
 #### `kubectl get pods`
 
@@ -416,7 +416,7 @@ kubectl exec <build-pod-name> -- env
 
 #### Configure service.yaml
 
-Now that you have built the OpenWhisk NodeJS runtime image with the `helloworld` function "baked" into it, you can can deploy the image as a Knative Service.
+Now that you have built the OpenWhisk Node.js runtime image with the `helloworld` function "baked" into it, you can deploy the image as a Knative Service.
 
 You will need to configure the Service template to point to the Docker Hub repo. where your Knative OpenWhisk runtime (with the Hello World function) will be "pulled" from.
 
@@ -482,7 +482,7 @@ namespace "default" labeled
 #### PROBLEM: Kubernetes and Istio resources do not all say "created" on "apply"
 
 1. Verify that you have configured Docker Desktop to have the required CPU and Memory values recommended above.
-2. Verify that all resources installed by applying either tha Knative or Istio YAML files show **"created"** during the installation.
+2. Verify that all resources installed by applying either the Knative or Istio YAML files show **"created"** during the installation.
 - If any of your resources were NOT **created**, then we recommend uninstalling Knative and Istio and trying again until you get the **created** result for all resources WITHOUT trying to apply a second time. Below is an example of successful creation of Knative resources:
 
 <p>
