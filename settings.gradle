@@ -20,8 +20,12 @@ include 'tests'
 include 'core:nodejsActionBase'
 include 'core:nodejs18Action'
 include 'core:nodejs20Action'
+include 'core:nodejs22Action'
+include 'core:nodejs24Action'
 include 'tests:dat:docker:nodejs18docker'
 include 'tests:dat:docker:nodejs20docker'
+include 'tests:dat:docker:nodejs22docker'
+include 'tests:dat:docker:nodejs24docker'
 
 rootProject.name = 'runtime-nodejs'
 
